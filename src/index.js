@@ -1,5 +1,6 @@
 const NONE = 'none';
 const MOVE = 'move';
+const SETTINGS = 'settings';
 const actions = [
   MOVE,
   NONE,
@@ -11,11 +12,12 @@ const actions = [
   NONE,
   NONE,
   NONE,
+  SETTINGS,
 ];
 let selected = 0;
 
-const W = 10;
-const H = 8;
+const W = 11;
+const H = 9;
 const mapElt = document.getElementById('map');
 const actionsElt = document.getElementById('actions');
 

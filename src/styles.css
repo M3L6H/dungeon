@@ -11,28 +11,34 @@ body {
 
 section {
   width: 100vw;
+  margin-bottom: 4px;
+  padding: 2px;
 }
 
 #map {
-  aspect-ratio: 10/8;
+  aspect-ratio: 11/9;
  
   display: grid;
-  grid-template-columns: repeat(10, 1fr [col-start]);
-  grid-template-rows: repeat(8, 1fr [row-start]);
+  grid-template-columns: repeat(11, 1fr [col-start]);
+  grid-template-rows: repeat(9, 1fr [row-start]);
   gap: 2px;
 }
 
 #actions {
-  aspect-ratio: 10/1;
+  aspect-ratio: 11/1;
   
   display: grid;
-  grid-template-columns: repeat(10, 1fr [col-start]);
+  grid-template-columns: repeat(11, 1fr [col-start]);
   gap: 2px;
 }
 
 .action {
   background-color: #ababbb;
-  border-radius: 2px;
+  border-radius: 4px;
+  
+  display: flex;
+  align-content: center;
+  justify-content: center;
 }
 
 .action .selected {
@@ -41,6 +47,10 @@ section {
 
 .action[data-action='move']::after {
   content: 'open_with';
+}
+
+.action[data-action='settings']::after {
+  content: 'settings';
 }
 
 .tile {
