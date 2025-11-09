@@ -37,7 +37,7 @@ function renderActions() {
 
 function createTile() {
   const tileElt = document.createElement('div');
-  tile.classList.add('tile');
+  tileElt.classList.add('tile');
   return tileElt;
 }
 
