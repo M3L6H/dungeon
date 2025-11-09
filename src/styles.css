@@ -1,18 +1,19 @@
 body, div, section {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #232333;
+  padding: 2px;
 }
 
 section {
-  width: 100vw;
+  width: 100%;
   margin-bottom: 4px;
-  padding: 2px;
 }
 
 #map {
@@ -22,6 +23,26 @@ section {
   grid-template-columns: repeat(11, 1fr [col-start]);
   grid-template-rows: repeat(9, 1fr [row-start]);
   gap: 2px;
+}
+
+#vitals {
+  height: 10px;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#health .fill {
+  background-color: red;
+}
+
+#mana .fill {
+  background-color: blue;
+}
+
+#stamina .fill {
+  background-color: green;
 }
 
 #actions {
@@ -37,12 +58,16 @@ section {
   border-radius: 4px;
   
   display: flex;
-  align-content: center;
+  align-items: center;
   justify-content: center;
 }
 
-.action .selected {
+.action.selected {
   background-color: #9abb9a;
+}
+
+.action[data-action='none'] {
+  background-color: #454555;
 }
 
 .action[data-action='move']::after {
@@ -51,6 +76,23 @@ section {
 
 .action[data-action='settings']::after {
   content: 'settings';
+}
+
+.bar {
+  position: relative;
+  background-color: #454555;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bar .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 75%;
 }
 
 .tile {
