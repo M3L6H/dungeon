@@ -1,3 +1,17 @@
+const W = 11;
+const H = 9;
+const mapElt = document.getElementById('map');
+
+let maxHealth = 10;
+let health = maxHealth;
+const healthElt = document.getElementById('health');
+let maxMana = 10;
+let mana = maxMana;
+const manaElt = document.getElementById('mana');
+let maxStamina = 10;
+let stamina = maxStamina;
+const staminaElt = document.getElementById('stamina');
+
 const NONE = 'none';
 const MOVE = 'move';
 const SETTINGS = 'settings';
@@ -15,14 +29,24 @@ const actions = [
   SETTINGS,
 ];
 let selected = 0;
-
-const W = 11;
-const H = 9;
-const mapElt = document.getElementById('map');
 const actionsElt = document.getElementById('actions');
 
-function render() {
+function renderMap() {
 }
+
+function renderBar(elt, curr, max) {
+  const fillElt = elt.querySelector('.fill');
+  const textElt = elt.querySelector('.bar-text');
+  
+  fillElt.style.width = `${curr / max * 100}%`;
+  textElt.textContent = `${curr} / ${max}`;
+}
+
+function renderBars() {
+  renderBar(healthElt, health, maxHealth);
+  renderBar(manaElt, mana, maxMana);
+  renderBar(staminaElt, stamina, maxStamina);
+};
 
 function renderActions() {
   actions.forEach((action, i) => {
@@ -54,7 +78,8 @@ function init() {
   for (let i = 0; i < W * H; ++i) {
     mapElt.appendChild(createTile());
   }
-  actions.forEach(action => actionsElt.appendChild(createAction()));
+  renderBars();
+  actions.forEach(action => actionsElt.appendChild(createAction())); 
   renderActions();
 }
 
