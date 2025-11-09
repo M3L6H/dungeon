@@ -4,13 +4,14 @@ body, div, section {
 }
 
 #map {
-  width: 100vw
+  width: 100vw;
+  aspect-ratio: 10/8;
+  background-color: green;
  
   display: grid;
   grid-template-columns: repeat(10, 1fr [col-start]);
   grid-template-rows: repeat(8, 1fr [row-start]);
-  column-gap: 2px;
-  row-gap: 2px;
+  gap: 2px;
 }
 
 .tile {
