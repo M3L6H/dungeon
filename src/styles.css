@@ -6,9 +6,12 @@ body, div, section, span {
 
 body {
   width: 100vw;
-  min-height: 100vh;
+  height: 100vh;
   background-color: #232333;
   padding: 2px;
+  
+  display: flex;
+  flex-direction: column;
 }
 
 section {
@@ -57,6 +60,7 @@ section {
 }
 
 #log {
+  flex: 1;
   overflow-y: scroll;
 }
 
