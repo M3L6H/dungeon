@@ -122,6 +122,10 @@ section {
   z-index: 10;
 }
 
+.log {
+  color: white;
+}
+
 .tile {
   background-color: black;
 }

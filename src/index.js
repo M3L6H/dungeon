@@ -79,10 +79,10 @@ function createAction() {
   actionElt.classList.add('material-symbols-outlined');
   actionElt.addEventListener('click', () => {
     const action = actionElt.dataset.action;
-    if (action === NONE) return; 
-    selected = actions.indexOf(action);
+    if (action === NONE || actions[selection] === action) return; 
+    selection = actions.indexOf(action);
     renderActions();
-    addLog(`Changed selected action to ${action}`);
+    addLog(`Changed selected action to '${action}'`);
   });
   return actionElt;
 }
