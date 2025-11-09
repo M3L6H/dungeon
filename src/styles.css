@@ -23,6 +23,8 @@ section {
   grid-template-columns: repeat(11, 1fr [col-start]);
   grid-template-rows: repeat(9, 1fr [row-start]);
   gap: 2px;
+  
+  overflow: hidden;
 }
 
 #vitals {
@@ -54,6 +56,10 @@ section {
   gap: 2px;
 }
 
+#log {
+  overflow-y: scroll;
+}
+
 .action {
   background-color: #ababbb;
   border-radius: 8px;
@@ -78,6 +84,14 @@ section {
 
 .action[data-action='move']::after {
   content: 'open_with';
+}
+
+.action[data-action='examine']::after {
+  content: 'visibility';
+}
+
+.action[data-action='interact']::after {
+  content: 'touch_app';
 }
 
 .action[data-action='settings']::after {

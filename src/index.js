@@ -14,11 +14,13 @@ const staminaElt = document.getElementById('stamina');
 
 const NONE = 'none';
 const MOVE = 'move';
+const EXAMINE = 'examine';
+const INTERACT = 'interact';
 const SETTINGS = 'settings';
 const actions = [
   MOVE,
-  NONE,
-  NONE,
+  EXAMINE,
+  INTERACT,
   NONE,
   NONE,
   NONE,
@@ -30,6 +32,10 @@ const actions = [
 ];
 let selected = 0;
 const actionsElt = document.getElementById('actions');
+
+const logsElt = document.getElementById('logs');
+
+let time = 0;
 
 function renderMap() {
 }
@@ -71,7 +77,22 @@ function createAction() {
   const actionElt = document.createElement('div');
   actionElt.classList.add('action');
   actionElt.classList.add('material-symbols-outlined');
+  actionElt.addEventListener('click', () => {
+    const action = actionElt.dataset.action;
+    if (action === NONE) return; 
+    selected = actions.indexOf(action);
+    renderActions();
+    addLog(`Changed selected action to ${action}`);
+  });
   return actionElt;
+}
+
+function addLog(msg) {
+  const logElt = document.createElement('p');
+  logElt.classList.add('log');
+  logElt.textContent = `${time}: ${msg}`;
+  logsElt.appendChild(logElt);
+  logsElt.scrollTop = logsElt.scrollHeight;
 }
 
 function init() {
