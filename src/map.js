@@ -101,7 +101,7 @@ const DIRS = [
 function generateRooms(origins) {
   return origins.map(({ x, y, radius }) => {
     const arms = DIRS.map(() => {
-      const width = randInRange(MIN_RADIUS, radius - ((radius + 1) % 2)));
+      const width = randInRange(MIN_RADIUS, radius - ((radius + 1) % 2));
       return (width - (width % 2)) / 2;
     });
     const points = [];
