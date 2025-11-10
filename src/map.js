@@ -48,6 +48,14 @@ function randRadius(radius) {
   );
 }
 
+function randArm(min, max) {
+  if (max < min) return 0;
+  
+  let arm = randInRange(min, max);
+  arm = MIN_RADIUS + 2 * (arm - MIN_RADIUS);
+  return (arm - 1) / 2;
+}
+
 function dSquared(x1, y1, x2, y2) {
   return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 }
@@ -91,41 +99,63 @@ function generateOrigins() {
   return origins;
 }
 
-const DIRS = [
-  [ 0, 1 ],
-  [ 1, 0 ],
-  [ 0, -1 ],
-  [ -1, 0 ],
-];
-
 function generateRooms(origins) {
   return origins.map(({ x, y, radius }) => {
-    let arm1 = randInRange(MIN_RADIUS, MIN_RADIUS + 2 * (radius - MIN_RADIUS));
-    arm1 = (arm1 - 1) / 2;
+    const min = Math.max(MIN_RADIUS, Math.floor(radius / 3));
+    const arm1 = randArm(min, radius);
+    const arm2 = randArm(min, radius - arm1);
     const points = []; 
  
     if (Math.random() < 0.5) {
       points.push({
         x: x - arm1,
-        y: y + radius - 1 - arm1,
+        y: y - (radius - 1 - arm1),
       });
       points.push({
         x: x + arm1,
-        y: y + radius - 1 - arm1,
+        y: y - (radius - 1 - arm1),
       });
       for (let i = 0; i < 4; ++i) {
         points.push({ x: x + arm1, y });
       }
       points.push({
         x: x + arm1,
-        y: y - (radius - 1 - arm1),
+        y: y + radius - 1 - arm1,
       });
       points.push({
         x: x - arm1,
-        y: y - (radius - 1 - arm1),
+        y: y + radius - 1 - arm1,
       });
       for (let i = 0; i < 4; ++i) {
         points.push({ x: x - arm1, y });
+      }
+      
+      if (Math.random() < 0.5 && arm2 > 0) {
+        const side = Math.random();
+        if (side < 0.375 || side >= 0.75) {
+          points[2].y = y - arm2;
+          points[3] = {
+            x: x + radius - 1 - arm2,
+            y: y - arm2,
+          };
+          points[4] = {
+            x: x + radius - 1 - arm2,
+            y: y + arm2,
+          };
+          points[5].y = y + arm2;
+        }
+        if (side >= 0.375) {
+          points[8].y = y + arm2;
+          points[9] = {
+            x: x - (radius - 1 - arm2),
+            y: y + arm2,
+          };
+          points[10] = {
+            x: x - (radius - 1 - arm2),
+            y: y - arm2,
+          };
+          points[11].y = y - arm2;
+        }
       }
     } else {
       for (let i = 0; i < 3; ++i) {
@@ -151,6 +181,34 @@ function generateRooms(origins) {
         y: y - arm1,
       });
       points.push({ x, y: y - arm1 });
+      
+      if (Math.random() < 0.5 && arm2 > 0) {
+        const side = Math.random();
+        if (side < 0.375 || side >= 0.75) {
+          points[11].x = x - arm2;
+          points[0] = {
+            x: x - arm2,
+            y: y - (radius - 1 - arm2),
+          };
+          points[1] = {
+            x: x + arm2,
+            y: y - (radius - 1 - arm2),
+          };
+          points[2].x = x + arm2;
+        }
+        if (side >= 0.375) {
+          points[5].x = x + arm2;
+          points[6] = {
+            x: x + arm2,
+            y: y + radius - 1 - arm2,
+          };
+          points[7] = {
+            x: x - arm2,
+            y: y + radius - 1 - arm2,
+          };
+          points[8].x = x - arm2;
+        }
+      }
     }
 
     return points;
@@ -163,7 +221,7 @@ function generateMap() {
 function init() {
   const origins = generateOrigins();
   origins.forEach(circle => drawCircle(circle));
-  drawRoom([
+  /*drawRoom([
     { x: 100, y: 100 }, 
     { x: 200, y: 100 }, 
     { x: 200, y: 200 },
@@ -176,7 +234,7 @@ function init() {
     { x: 0, y: 300 },
     { x: 0, y: 200 },
     { x: 100, y: 200 },
-  ]);
+  ]);*/
   const rooms = generateRooms(origins);
   rooms.forEach(room => drawRoom(room));
 }
