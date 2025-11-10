@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 function drawCircle({ x, y, radius }) {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = 'rgba(0, 0, 255, 0.25)';
+  ctx.strokeStyle = 'rgba(255, 0, 0, 1)';
   ctx.lineWidth = 1;
   ctx.stroke();
 }
@@ -233,10 +233,20 @@ function roomsToNodes(rooms) {
       
       if (dx === 0 && dy === 0) continue;
       
-      const offsets = new Set();
+      const offsets = [];
       
       for (let j = 0; j < 3; ++j) {
-        offsets.add(randInRange(1, Math.max(Math.abs(dx), Math.abs(dy)) - 1));
+        const offset = randInRange(1, Math.max(Math.abs(dx), Math.abs(dy)) - 1);
+        
+        let pass = true;
+        for (const other of offsets) {
+          if (Math.abs(offset - other) < 10) {
+            pass = false;
+            break;
+          }
+        }
+        
+        if (pass) offsets.push(offset);
       }
       
       offsets.forEach(offset => {
