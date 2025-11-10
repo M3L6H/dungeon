@@ -381,6 +381,7 @@ function validDir(a, b) {
 
 function generateMST(count, nodes) {
   const inTree = new Array(count).fill(false);
+  const usedNode = new Array(nodes.length).fill(false);
   const edgeHeap = new EdgeHeap();
 
   for (let i = 0; i < nodes.length; ++i) {
@@ -389,6 +390,8 @@ function generateMST(count, nodes) {
       if (!validDir(nodes[i], nodes[j]) || !validDir(nodes[j], nodes[i]))
         continue;
       edgeHeap.push({
+        aId: i,
+        bId: j,
         a: nodes[i],
         b: nodes[j],
       });
@@ -400,9 +403,12 @@ function generateMST(count, nodes) {
   while (edgeHeap.length > 0) {
     const edge = edgeHeap.pop();
 
+    if (usedNode[edge.aId] || usedNode[edge.bId]) continue;
     if (inTree[edge.a.id] && inTree[edge.b.id]) continue;
 
     edges.push(edge);
+    usedNode[edge.aId] = true;
+    usedNode[edge.bId] = true;
     inTree[edge.a.id] = true;
     inTree[edge.b.id] = true;
   }
@@ -419,7 +425,9 @@ function init() {
   const nodes = roomsToNodes(rooms);
   nodes.forEach((node) => drawCircle({ radius: 1, ...node }));
   const edges = generateMST(origins.length, nodes);
-  edges.forEach((edge) => drawEdge(edge));
+  for (let i = 0; i < 10; ++i) {
+    drawEdge(edges[i]);
+  }
 }
 
 addEventListener("load", () => init());
