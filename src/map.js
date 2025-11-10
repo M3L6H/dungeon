@@ -17,7 +17,7 @@ function drawRoom(points) {
     const dy = i > 3 && i <= 9 ? -0.5 : 0.5;
     
     if (i === 0) {
-      ctx.moveTo(points[i].x - dx, points[i] + dy);
+      ctx.moveTo(points[i].x + dx, points[i] + dy);
     } else {
       ctx.lineTo(points[i].x + dx, points[i] + dy);
     }
@@ -101,7 +101,7 @@ const DIRS = [
 function generateRooms(origins) {
   return origins.map(({ x, y, radius }) => {
     const arms = DIRS.map(() => {
-      const width = randInRange(MIN_RADIUS, radius - ((radius + 1) % 2));
+      const width = randInRange(MIN_RADIUS, MIN_RADIUS + 2 * (radius - MIN_RADIUS));
       return (width - (width % 2)) / 2;
     });
     const points = [];
@@ -147,6 +147,20 @@ function generateMap() {
 function init() {
   const origins = generateOrigins();
   origins.forEach(circle => drawCircle(circle));
+  drawRoom([
+    { x: 100, y: 100 }, 
+    { x: 200, y: 100 }, 
+    { x: 200, y: 200 },
+    { x: 300, y: 200 },
+    { x: 300, y: 300 },
+    { x: 200, y: 300 },
+    { x: 200, y: 400 },
+    { x: 100, y: 400 },
+    { x: 100, y: 300 },
+    { x: 0, y: 300 },
+    { x: 0, y: 200 },
+    { x: 100, y: 200 },
+  ]);
   const rooms = generateRooms(origins);
   rooms.forEach(room => drawRoom(room));
 }
