@@ -49,7 +49,7 @@ function randRadius(radius) {
 }
 
 function randArm(min, max, radiusSq) {
-  if (max < min) return 0;
+  if (max < min) return [0, 0];
   
   const arm = randInRange(min, max);
   return [
@@ -136,7 +136,7 @@ function generateRooms(origins) {
         points.push({ x: x - arm1, y });
       }
       
-      /*if (Math.random() < 0.5 && arm2 > 0) {
+      if (Math.random() < 0.5 && arm2 > 0) {
         const side = Math.random();
         if (side < 0.375 || side >= 0.75) {
           points[2].y = y - arm2;
@@ -162,7 +162,7 @@ function generateRooms(origins) {
           };
           points[11].y = y - arm2;
         }
-      }*/
+      }
     } else {
       for (let i = 0; i < 3; ++i) {
         points.push({ x, y: y - arm1 });
@@ -188,7 +188,7 @@ function generateRooms(origins) {
       });
       points.push({ x, y: y - arm1 });
       
-      /*if (Math.random() < 0.5 && arm2 > 0) {
+      if (Math.random() < 0.5 && arm2 > 0) {
         const side = Math.random();
         if (side < 0.375 || side >= 0.75) {
           points[11].x = x - arm2;
@@ -214,7 +214,7 @@ function generateRooms(origins) {
           };
           points[8].x = x - arm2;
         }
-      }*/
+      }
     }
 
     return points;
