@@ -107,7 +107,7 @@ function generateRooms(origins) {
     const min = Math.ceil(radius * 0.35);
     const max = Math.floor(radius * 0.75);
     const [depth1, arm1] = randArm(min, max, radiusSq);
-    // const [depth2, arm2] = randArm(arm1, max, radiusSq);
+    const [depth2, arm2] = randArm(arm1, max, radiusSq);
     
     const points = []; 
  
@@ -136,7 +136,7 @@ function generateRooms(origins) {
         points.push({ x: x - arm1, y });
       }
       
-      /*if (Math.random() < 0.5 && arm2 > 0) {
+      if (Math.random() < 0.5 && arm2 > 0) {
         const side = Math.random();
         if (side < 0.375 || side >= 0.75) {
           points[2].y = y - arm2;
@@ -162,7 +162,7 @@ function generateRooms(origins) {
           };
           points[11].y = y - arm2;
         }
-      }*/
+      }
     } else {
       for (let i = 0; i < 3; ++i) {
         points.push({ x, y: y - arm1 });
