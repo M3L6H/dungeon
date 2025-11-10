@@ -4,10 +4,30 @@ const ctx = canvas.getContext("2d");
 function drawCircle({ x, y, radius }) {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = 'blue';
+  ctx.strokeStyle = 'rgb(0 0 255 / 50%)';
   ctx.lineWidth = 1;
   ctx.stroke();
 }
+
+function drawRoom(points) {
+  ctx.beginPath();
+ 
+  for (let i = 0; i < points.length; ++i) {
+    const dx = i > 0 && i <= 6 ? 0.5 : -0.5;
+    const dy = i > 3 && i <= 9 ? -0.5 : 0.5;
+    
+    if (i === 0) {
+      ctx.moveTo(points[i].x - dx, points[i] + dy);
+    } else {
+      ctx.lineTo(points[i].x + dx, points[i] + dy);
+    }
+  }
+  
+  ctx.closePath();
+  ctx.strokeStyle = 'rgb(0 0 255)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+};
 
 const ROWS = 1000;
 const COLS = 1000;
@@ -71,13 +91,64 @@ function generateOrigins() {
   return origins;
 }
 
+const DIRS = [
+  [ 0, 1 ],
+  [ 1, 0 ],
+  [ 0, -1 ],
+  [ -1, 0 ],
+];
+
+function generateRooms(origins) {
+  return origins.map(({ x, y, radius }) => {
+    const arms = DIRS.map(() => {
+      const width = randInRange(MIN_RADIUS, radius - ((radius + 1) % 2)));
+      return (width - (width % 2)) / 2;
+    });
+    const points = [];
+    
+    for (let i = 0; i < 4; ++i) {
+      const [ dx, dy ] = DIRS[i];
+      const arm = arms[i];
+      points.push({
+        x: x + dx * (radius - 1 - arm) - (dy * arm),
+        y: y + dy * (radius - 1 - arm) - (dx * arm),
+      });
+      points.push({
+        x: x + dx * (radius - 1 - arm) + (dy * arm),
+        y: y + dy * (radius - 1 - arm) + (dx * arm),
+      });
+      points.push({});
+    }
+
+    points[2] = {
+      x: points[1].x,
+      y: points[3].y,
+    };
+    points[5] = {
+      x: points[6].x,
+      y: points[4].y,
+    };
+    points[8] = {
+      x: points[7].x,
+      y: points[9].y,
+    };
+    points[11] = {
+      x: points[10].x,
+      y: points[0].y,
+    };
+
+    return points;
+  });
+}
+
 function generateMap() {
 }
 
 function init() {
-  generateOrigins().forEach(circle => {
-    drawCircle(circle);
-  });
+  const origins = generateOrigins();
+  origins.forEach(circle => drawCircle(circle));
+  const rooms = generateRooms(origins);
+  rooms.forEach(room => drawRoom(room));
 }
 
 addEventListener('load', () => init());
