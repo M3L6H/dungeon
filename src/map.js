@@ -111,11 +111,11 @@ function generateRooms(origins) {
       const arm = arms[i];
       points.push({
         x: x + dx * (radius - 1 - arm) - (dy * arm),
-        y: y + dy * (radius - 1 - arm) - (dx * arm),
+        y: y + dy * (radius - 1 - arm) + (dx * arm),
       });
       points.push({
         x: x + dx * (radius - 1 - arm) + (dy * arm),
-        y: y + dy * (radius - 1 - arm) + (dx * arm),
+        y: y + dy * (radius - 1 - arm) - (dx * arm),
       });
       points.push({});
     }
