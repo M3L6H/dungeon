@@ -27,7 +27,7 @@ function drawRoom(points) {
   ctx.strokeStyle = 'rgba(0, 0, 255, 1)';
   ctx.lineWidth = 1;
   ctx.stroke();
-};
+}
 
 const ROWS = 1000;
 const COLS = 1000;
@@ -44,7 +44,7 @@ function randInRange(min, max) {
 function randRadius(radius) {
   return randInRange(
     Math.max(MIN_RADIUS, Math.floor(radius * 0.75)),
-    Math.min(ROWS, COLS, Math.ceil(radius * 1.25)),
+    Math.min(ROWS, COLS, Math.ceil(radius * 1.25))
   );
 }
 
@@ -107,7 +107,7 @@ function generateRooms(origins) {
     const min = Math.ceil(radius * 0.35);
     const max = Math.floor(radius * 0.75);
     const [depth1, arm1] = randArm(min, max, radiusSq);
-    const [depth2, arm2] = randArm(arm1, max, radiusSq);
+    const [depth2, arm2] = randArm(arm1 + 1, max, radiusSq);
     
     const points = []; 
  
