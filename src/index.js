@@ -1,8 +1,5 @@
 import { setUpActions } from './actions.js';
-
-const W = 11;
-const H = 9;
-const mapElt = document.getElementById('map');
+import { setUpViewport } from './viewport.js';
 
 let maxHealth = 10;
 let health = maxHealth;
@@ -13,9 +10,6 @@ const manaElt = document.getElementById('mana');
 let maxStamina = 10;
 let stamina = maxStamina;
 const staminaElt = document.getElementById('stamina');
-
-function renderMap() {
-}
 
 function renderBar(elt, curr, max) {
   const fillElt = elt.querySelector('.fill');
@@ -31,16 +25,8 @@ function renderBars() {
   renderBar(staminaElt, stamina, maxStamina);
 };
 
-function createTile() {
-  const tileElt = document.createElement('div');
-  tileElt.classList.add('tile');
-  return tileElt;
-}
-
 function init() {
-  for (let i = 0; i < W * H; ++i) {
-    mapElt.appendChild(createTile());
-  }
+  setUpViewport();
   renderBars();
   setUpActions();
 }
