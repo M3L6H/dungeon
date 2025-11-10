@@ -29,6 +29,16 @@ function drawRoom(points) {
   ctx.stroke();
 }
 
+function drawEdge({ a, b }) {
+  ctx.beginPath();
+ 
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = 'rgba(0, 255, 0, 1)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
 const ROWS = 1000;
 const COLS = 1000;
 const ROOMS = Math.floor(ROWS * COLS / 500);
@@ -102,7 +112,7 @@ function generateOrigins() {
 }
 
 function generateRooms(origins) {
-  return origins.map(({ x, y, radius }) => {
+  return origins.map(({ x, y, radius }, id) => {
     const radiusSq = radius * radius;
     const min = Math.ceil(radius * 0.35);
     const max = Math.floor(radius * 0.95);
@@ -114,26 +124,30 @@ function generateRooms(origins) {
     // TODO: clean this up
     if (Math.random() < 0.5) {
       points.push({
+        id,
         x: x - arm1,
         y: y - depth1,
       });
       points.push({
+        id,
         x: x + arm1,
         y: y - depth1,
       });
       for (let i = 0; i < 4; ++i) {
-        points.push({ x: x + arm1, y });
+        points.push({ id, x: x + arm1, y });
       }
       points.push({
+        id,
         x: x + arm1,
         y: y + depth1,
       });
       points.push({
+        id,
         x: x - arm1,
         y: y + depth1,
       });
       for (let i = 0; i < 4; ++i) {
-        points.push({ x: x - arm1, y });
+        points.push({ id, x: x - arm1, y });
       }
       
       if (Math.random() < 0.5 && arm2 > 0) {
@@ -165,28 +179,32 @@ function generateRooms(origins) {
       }
     } else {
       for (let i = 0; i < 3; ++i) {
-        points.push({ x, y: y - arm1 });
+        points.push({ id, x, y: y - arm1 });
       }
       points.push({
+        id,
         x: x + depth1,
         y: y - arm1,
       });
       points.push({
+        id,
         x: x + depth1,
         y: y + arm1,
       });
       for (let i = 0; i < 4; ++i) {
-        points.push({ x, y: y + arm1 });
+        points.push({ id, x, y: y + arm1 });
       }
       points.push({
+        id,
         x: x - depth1,
         y: y + arm1,
       });
       points.push({
+        id,
         x: x - depth1,
         y: y - arm1,
       });
-      points.push({ x, y: y - arm1 });
+      points.push({ id, x, y: y - arm1 });
       
       if (Math.random() < 0.5 && arm2 > 0) {
         const side = Math.random();
@@ -227,16 +245,18 @@ function roomsToNodes(rooms) {
     for (let i = 0; i < points.length; i += 3) {
       const curr = points[i];
       const next = points[i + 1];
-      
+
       const dx = next.x - curr.x;
-      const dy = next.y - curr.y;
-      
+      const dy = next.y - curr.y; 
+ 
       if (dx === 0 && dy === 0) continue;
-      
+
+      const diff = Math.max(Math.abs(dx), Math.abs(dy));
+
       const offsets = [];
       
       for (let j = 0; j < 3; ++j) {
-        const offset = randInRange(1, Math.max(Math.abs(dx), Math.abs(dy)) - 1);
+        const offset = randInRange(1, diff - 1);
         
         let pass = true;
         for (const other of offsets) {
@@ -252,21 +272,29 @@ function roomsToNodes(rooms) {
       offsets.forEach(offset => {
         if (dx > 0) {
           nodes.push({
+            id: curr.id,
+            dir: i / 3,
             x: curr.x + offset,
             y: curr.y,
           });
         } else if (dy > 0) {
           nodes.push({
+            id: curr.id,
+            dir: i / 3,
             x: curr.x,
             y: curr.y + offset,
           });
         } else if (dx < 0) {
           nodes.push({
+            id: curr.id,
+            dir: i / 3,
             x: curr.x - offset,
             y: curr.y,
           });
         } else if (dy < 0) {
           nodes.push({
+            id: curr.id,
+            dir: i / 3,
             x: curr.x,
             y: curr.y - offset,
           });
@@ -275,6 +303,105 @@ function roomsToNodes(rooms) {
     }
   });
   return nodes;
+}
+
+class EdgeHeap {
+  constructor() {
+    this.values = [];
+  }
+  
+  get length() {
+    return this.values.length;
+  }
+  
+  push(edge) {
+    this.values.push(edge);
+    this._bubbleUp(this.length - 1);
+  }
+  
+  pop() {
+    if (this.length === 0) return undefined;
+    if (this.length === 1) return this.values.pop();
+    const value = this.values[0];
+    this.values[0] = this.values.pop();
+    this._bubbleDown(0);
+    return value;
+  }
+  
+  _bubbleUp(idx) {
+    if (idx === 0) return;
+    const pIdx = Math.floor(idx / 2);
+    const curr = this.values[idx];
+    if (this._lt(this.values[pIdx], this.values[idx])) {
+      return;
+    }
+    this.values[idx] = this.values[pIdx];
+    this.values[pIdx] = curr;
+    this._bubbleUp(pIdx);
+  }
+  
+  _bubbleDown(idx) {
+    const lIdx = idx * 2 + 1;
+    const rIdx = idx * 2 + 2;
+    const mIdx = this._lt(this.values[lIdx], this.values[rIdx]) ? lIdx : rIdx;
+    const curr = this.values[idx];
+    if (this._lt(curr, this.values[mIdx]) {
+      return;
+    }
+    this.values[idx] = this.values[mIdx];
+    this.values[mIdx] = curr;
+    this._bubbleUp(mIdx);
+  }
+  
+  _lt(a, b) {
+    return this._city(a) < this._city(b);
+  }
+  
+  _city(e) {
+    return Math.abs(e.a.x - e.b.x) + Math.abs(e.a.y - e.b.y);
+  }
+}
+
+function validDir(a, b) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  
+  switch (a.dir) {
+    case 0: return dy < 0;
+    case 1: return dx > 0;
+    case 2: return dy > 0;
+    default: return dx < 0;
+  }
+}
+
+function generateMST(count, nodes) {
+  const inTree = new Array(count).fill(false);
+  const edgeHeap = new EdgeHeap();
+  
+  for (let i = 0; i < nodes.length; ++i) {
+    for (let j = i + 1; j < nodes.length; ++j) {
+      if (nodes[i].id === nodes[j].id) continue;
+      if (!validDir(nodes[i], nodes[j]) || !validDir(nodes[j], nodes[i])) continue;
+      edgeHeap.push({
+        a: nodes[i],
+        b: nodes[j],
+      });
+    }
+  }
+  
+  const edges = [];
+  
+  while (edgeHeap.length > 0) {
+    const edge = edgeHeap.pop();
+    
+    if (inTree[edge.a.id] && inTree[edge.b.id]) continue;
+    
+    edges.push(edge);
+    inTree[edge.a.id] = true;
+    inTree[edge.b.id] = true;
+  }
+  
+  return edges;
 }
 
 function generateMap() {
@@ -286,6 +413,8 @@ function init() {
   rooms.forEach(room => drawRoom(room));
   const nodes = roomsToNodes(rooms);
   nodes.forEach(node => drawCircle({ radius: 1, ...node }));
+  const edges = generateMST(origins.length, nodes);
+  edges.forEach(edge => drawEdge(edge));
 }
 
 addEventListener('load', () => init());
