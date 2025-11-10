@@ -17,9 +17,9 @@ function drawRoom(points) {
     const dy = i > 3 && i <= 9 ? -0.5 : 0.5;
     
     if (i === 0) {
-      ctx.moveTo(points[i].x + dx, points[i] + dy);
+      ctx.moveTo(points[i].x + dx, points[i].y + dy);
     } else {
-      ctx.lineTo(points[i].x + dx, points[i] + dy);
+      ctx.lineTo(points[i].x + dx, points[i].y + dy);
     }
   }
   
