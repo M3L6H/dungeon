@@ -105,7 +105,7 @@ function generateRooms(origins) {
   return origins.map(({ x, y, radius }) => {
     const radiusSq = radius * radius;
     const min = Math.ceil(radius * 0.35);
-    const max = Math.floor(radius * 0.9);
+    const max = Math.floor(radius * 0.95);
     const [depth1, arm1] = randArm(min, max, radiusSq);
     const [depth2, arm2] = randArm(arm1 + 1, max, radiusSq);
     
