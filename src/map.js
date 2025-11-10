@@ -100,42 +100,58 @@ const DIRS = [
 
 function generateRooms(origins) {
   return origins.map(({ x, y, radius }) => {
-    const arms = DIRS.map(() => {
-      const width = randInRange(MIN_RADIUS, MIN_RADIUS + 2 * (radius - MIN_RADIUS));
-      return (width - (width % 2)) / 2;
-    });
-    const points = [];
-    
-    for (let i = 0; i < 4; ++i) {
-      const [ dx, dy ] = DIRS[i];
-      const arm = arms[i];
+    let arm1 = randInRange(MIN_RADIUS, MIN_RADIUS + 2 * (radius - MIN_RADIUS));
+    arm1 = (arm1 - 1) / 2;
+    const points = []; 
+ 
+    if (Math.random() < 0.5) {
       points.push({
-        x: x + dx * (radius - 1 - arm) - (dy * arm),
-        y: y + dy * (radius - 1 - arm) + (dx * arm),
+        x: x - arm1,
+        y: y + radius - 1 - arm1,
       });
       points.push({
-        x: x + dx * (radius - 1 - arm) + (dy * arm),
-        y: y + dy * (radius - 1 - arm) - (dx * arm),
+        x: x + arm1,
+        y: y + radius - 1 - arm1,
       });
-      points.push({});
+      for (let i = 0; i < 4; ++i) {
+        points.push({ x: x + arm1, y });
+      }
+      points.push({
+        x: x + arm1,
+        y: y - (radius - 1 - arm1),
+      });
+      points.push({
+        x: x - arm1,
+        y: y - (radius - 1 - arm1),
+      });
+      for (let i = 0; i < 4; ++i) {
+        points.push({ x: x - arm1, y });
+      }
+    } else {
+      for (let i = 0; i < 3; ++i) {
+        points.push({ x, y: y - arm1 });
+      }
+      points.push({
+        x: x + radius - 1 - arm1,
+        y: y - arm1,
+      });
+      points.push({
+        x: x + radius - 1 - arm1,
+        y: y + arm1,
+      });
+      for (let i = 0; i < 4; ++i) {
+        points.push({ x, y: y + arm1 });
+      }
+      points.push({
+        x: x - (radius - 1 - arm1),
+        y: y + arm1,
+      });
+      points.push({
+        x: x - (radius - 1 - arm1),
+        y: y - arm1,
+      });
+      points.push({ x, y: y - arm1 });
     }
-
-    points[2] = {
-      x: points[1].x,
-      y: points[3].y,
-    };
-    points[5] = {
-      x: points[6].x,
-      y: points[4].y,
-    };
-    points[8] = {
-      x: points[7].x,
-      y: points[9].y,
-    };
-    points[11] = {
-      x: points[10].x,
-      y: points[0].y,
-    };
 
     return points;
   });
