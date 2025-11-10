@@ -5,13 +5,14 @@ function drawCircle({ x, y, radius }) {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
   ctx.strokeStyle = 'blue';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1;
   ctx.stroke();
 }
 
 const ROWS = 1000;
 const COLS = 1000;
-const ROOMS = 5000;
+const ROOMS = Math.floor(ROWS * COLS / 500);
+const MIN_RADIUS = 3;
 const map = new Array(ROWS * COLS);
 
 function randInRange(min, max) {
@@ -22,7 +23,7 @@ function randInRange(min, max) {
 
 function randRadius(radius) {
   return randInRange(
-    Math.max(1, Math.floor(radius * 0.75)),
+    Math.max(MIN_RADIUS, Math.floor(radius * 0.75)),
     Math.min(ROWS, COLS, Math.ceil(radius * 1.25)),
   );
 }
@@ -42,7 +43,7 @@ function generateOrigins() {
     if (failures > maxFail) {
       failures = 0;
       maxFail *= 2;
-      currRadius = Math.max(1, Math.floor(currRadius / 2));
+      currRadius = Math.max(MIN_RADIUS, Math.floor(currRadius / 2));
     }
 
     const radius = randRadius(currRadius);
