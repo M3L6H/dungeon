@@ -54,7 +54,7 @@ function randArm(min, max, radiusSq) {
   const arm = randInRange(min, max);
   return [
     arm,
-    Math.floor(Math.sqrt(radiuSq - (arm * arm))),
+    Math.floor(Math.sqrt(radiusSq - (arm * arm))),
   ];
 }
 
