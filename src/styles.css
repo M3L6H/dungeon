@@ -1,15 +1,20 @@
-body, div, section, span {
+body,
+div,
+section,
+span {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
+  margin: auto;
   width: 100vw;
+  max-width: 960px;
   max-height: 100vh;
   background-color: #232333;
   padding: 2px;
-  
+
   display: flex;
   flex-direction: column;
 }
@@ -20,23 +25,22 @@ section {
 }
 
 #viewport {
-  flex: none;
- 
   aspect-ratio: 11/11;
- 
+  margin: auto;
+  max-width: 70vh;
+  max-height: 70vh;
+
   display: grid;
   grid-template-columns: repeat(11, 1fr [col-start]);
   grid-template-rows: repeat(11, 1fr [row-start]);
   gap: 2px;
-  
+
   overflow: hidden;
 }
 
 #vitals {
-  flex: none;
- 
   height: 10px;
- 
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -44,37 +48,34 @@ section {
 }
 
 #health .fill {
-  background-color: #FF4000;
+  background-color: #ff4000;
 }
 
 #mana .fill {
-  background-color: #3185FC;
+  background-color: #3185fc;
 }
 
 #stamina .fill {
-  background-color: #0AC848;
+  background-color: #0ac848;
 }
 
 #actions {
-  flex: none;
- 
   aspect-ratio: 11/1;
-  
+
   display: grid;
   grid-template-columns: repeat(11, 1fr [col-start]);
   gap: 2px;
 }
 
-#log {
-  flex: 1;
-  min-height: 0;
-  overflow-y: scroll;
+#logs {
+  height: 20vh;
+  overflow-y: auto;
 }
 
 .action {
   background-color: #ababbb;
   border-radius: 8px;
-  
+
   position: relative;
 }
 
@@ -89,32 +90,32 @@ section {
   background-color: #9abb9a;
 }
 
-.action[data-action='none'] {
+.action[data-action="none"] {
   background-color: #454555;
 }
 
-.action[data-action='move']::after {
-  content: 'open_with';
+.action[data-action="move"]::after {
+  content: "open_with";
 }
 
-.action[data-action='examine']::after {
-  content: 'visibility';
+.action[data-action="examine"]::after {
+  content: "visibility";
 }
 
-.action[data-action='interact']::after {
-  content: 'touch_app';
+.action[data-action="interact"]::after {
+  content: "touch_app";
 }
 
-.action[data-action='settings']::after {
-  content: 'settings';
+.action[data-action="settings"]::after {
+  content: "settings";
 }
 
 .bar {
   flex: 1;
- 
+
   position: relative;
   background-color: #454555;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,5 +139,7 @@ section {
 }
 
 .tile {
+  aspect-ratio: 1 / 1;
   background-color: black;
 }
+
