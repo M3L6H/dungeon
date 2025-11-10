@@ -104,8 +104,9 @@ function generateOrigins() {
 function generateRooms(origins) {
   return origins.map(({ x, y, radius }) => {
     const radiusSq = radius * radius;
-    const [depth1, arm1] = randArm(2, Math.floor(radius * 0.75));
-    const [depth2, arm2] = randArm(arm1, Math.floor(radius * 0.75));
+    const max = Math.floor(radius * 0.75);
+    const [depth1, arm1] = randArm(2, max, radiusSq);
+    const [depth2, arm2] = randArm(arm1, max, radiusSq);
     
     const points = []; 
  
