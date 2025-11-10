@@ -221,14 +221,61 @@ function generateRooms(origins) {
   });
 }
 
+function roomsToNodes(rooms) {
+  const nodes = [];
+  rooms.forEach(points => {
+    for (let i = 0; i < points.length; i += 3) {
+      const curr = points[i];
+      const next = points[i + 1];
+      
+      const dx = next.x - curr.x;
+      const dy = next.y - curr.y;
+      
+      if (dx === 0 && dy === 0) continue;
+      
+      const offsets = new Set();
+      
+      for (let j = 0; j < 3; ++j) {
+        offsets.add(randInRange(1, Math.max(Math.abs(dx), Math.abs(dy)) - 1));
+      }
+      
+      offsets.forEach(offset => {
+        if (dx > 0) {
+          nodes.push({
+            x: curr.x + offset,
+            y: curr.y,
+          });
+        } else if (dy > 0) {
+          nodes.push({
+            x: curr.x,
+            y: curr.y + offset,
+          });
+        } else if (dx < 0) {
+          nodes.push({
+            x: curr.x - offset,
+            y: curr.y,
+          });
+        } else if (dy < 0) {
+          nodes.push({
+            x: curr.x,
+            y: curr.y - offset,
+          });
+        }
+      });
+    }
+  });
+  return nodes;
+}
+
 function generateMap() {
 }
 
 function init() {
   const origins = generateOrigins();
-  origins.forEach(circle => drawCircle(circle));
   const rooms = generateRooms(origins);
   rooms.forEach(room => drawRoom(room));
+  const nodes = roomsToNodes(rooms);
+  nodes.forEach(node => drawCircle({ radius: 1, ...node }));
 }
 
 addEventListener('load', () => init());
