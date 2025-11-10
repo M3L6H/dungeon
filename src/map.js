@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 function drawCircle({ x, y, radius }) {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = 'rgb(0 0 255 / 50%)';
+  ctx.strokeStyle = 'rgba(0, 0, 255, 0.5)';
   ctx.lineWidth = 1;
   ctx.stroke();
 }
@@ -24,7 +24,7 @@ function drawRoom(points) {
   }
   
   ctx.closePath();
-  ctx.strokeStyle = 'rgb(0 0 255)';
+  ctx.strokeStyle = 'rgba(0, 0, 255, 1)';
   ctx.lineWidth = 1;
   ctx.stroke();
 };
