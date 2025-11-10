@@ -327,7 +327,7 @@ class EdgeHeap {
 
   _bubbleUp(idx) {
     if (idx === 0) return;
-    const pIdx = Math.floor(idx / 2);
+    const pIdx = Math.floor((idx - 1) / 2);
     const curr = this.values[idx];
     if (this._lt(this.values[pIdx], curr)) {
       return;
