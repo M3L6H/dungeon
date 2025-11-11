@@ -351,7 +351,7 @@ class EdgeHeap {
     }
     this.values[idx] = this.values[mIdx];
     this.values[mIdx] = curr;
-    this._bubbleUp(mIdx);
+    this._bubbleDown(mIdx);
   }
 
   _lt(a, b) {
