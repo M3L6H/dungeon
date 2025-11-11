@@ -361,51 +361,8 @@ export async function generateMap() {
 async function init() {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
-
-  const drawCircle = ({ x, y, radius }) => {
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = "rgba(255, 0, 0, 0.25)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  };
-
-  const drawRoom = (points) => {
-    ctx.beginPath();
-
-    for (let i = 0; i < points.length; ++i) {
-      const dx = i > 0 && i <= 6 ? 0.5 : -0.5;
-      const dy = i > 3 && i <= 9 ? -0.5 : 0.5;
-
-      if (i === 0) {
-        ctx.moveTo(points[i].x + dx, points[i].y + dy);
-      } else {
-        ctx.lineTo(points[i].x + dx, points[i].y + dy);
-      }
-    }
-
-    ctx.closePath();
-    ctx.strokeStyle = "rgba(0, 0, 255, 1)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  };
-
-  const drawEdge = ({ a, b }) => {
-    ctx.beginPath();
-
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.strokeStyle = "rgba(0, 255, 0, 1)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  };
-
-  const drawMap = (map) => {
-    const imageData = ctx.createImageData(canvas.width, canvas.height);
-    map.writeToImage(imageData);
-    ctx.putImageData(imageData, 0, 0);
-  };
-
   const map = await generateMap();
-  drawMap(map);
+  const imageData = ctx.createImageData(canvas.width, canvas.height);
+  map.writeToImage(imageData);
+  ctx.putImageData(imageData, 0, 0);
 }
