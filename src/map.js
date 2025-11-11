@@ -152,10 +152,12 @@ function generateRooms(origins) {
         if (side < 0.375 || side >= 0.75) {
           points[2].y = y - arm2;
           points[3] = {
+            id,
             x: x + depth2,
             y: y - arm2,
           };
           points[4] = {
+            id,
             x: x + depth2,
             y: y + arm2,
           };
@@ -164,10 +166,12 @@ function generateRooms(origins) {
         if (side >= 0.375) {
           points[8].y = y + arm2;
           points[9] = {
+            id,
             x: x - depth2,
             y: y + arm2,
           };
           points[10] = {
+            id,
             x: x - depth2,
             y: y - arm2,
           };
@@ -208,10 +212,12 @@ function generateRooms(origins) {
         if (side < 0.375 || side >= 0.75) {
           points[11].x = x - arm2;
           points[0] = {
+            id,
             x: x - arm2,
             y: y - depth2,
           };
           points[1] = {
+            id,
             x: x + arm2,
             y: y - depth2,
           };
@@ -220,10 +226,12 @@ function generateRooms(origins) {
         if (side >= 0.375) {
           points[5].x = x + arm2;
           points[6] = {
+            id,
             x: x + arm2,
             y: y + depth2,
           };
           points[7] = {
+            id,
             x: x - arm2,
             y: y + depth2,
           };
@@ -355,11 +363,7 @@ class EdgeHeap {
   }
 
   _lt(a, b) {
-    return this._city(a) < this._city(b);
-  }
-
-  _city(e) {
-    return Math.abs(e.a.x - e.b.x) + Math.abs(e.a.y - e.b.y);
+    return a.len < b.len;
   }
 }
 
@@ -370,18 +374,18 @@ class UnionFind {
       this.elts.push(i);
     }
   }
-  
+
   union(a, b) {
     const pA = this.find(a);
     const pB = this.find(b);
-    
+
     if (pA === pB) return false;
-    
+
     this.elts[pB] = pA;
-    
+
     return true;
-  } 
-  
+  }
+
   find(n) {
     let curr = n;
     while (this.elts[curr] !== curr) {
@@ -408,6 +412,10 @@ function validDir(a, b) {
   }
 }
 
+function cityBlockDist(a, b) {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
 function generateMST(count, nodes) {
   const inTree = new UnionFind(count);
   const usedNode = new Array(nodes.length).fill(false);
@@ -423,9 +431,12 @@ function generateMST(count, nodes) {
         bId: j,
         a: nodes[i],
         b: nodes[j],
+        len: cityBlockDist(nodes[i], nodes[j]), // Pre-compute length
       });
     }
   }
+
+  console.debug(`Filled edge heap with ${edgeHeap.length} possible edges`);
 
   const edges = [];
 
@@ -446,16 +457,33 @@ function generateMST(count, nodes) {
 function generateMap() {}
 
 function init() {
+  let startTime = Date.now();
+  console.log("Generating origins...");
   const origins = generateOrigins();
+  console.log(
+    `Generated ${origins.length} origins in ${Date.now() - startTime}ms`,
+  );
+  startTime = Date.now();
+  console.log("Generating rooms...");
   const rooms = generateRooms(origins);
+  console.log(`Generated ${rooms.length} rooms in ${Date.now() - startTime}ms`);
   rooms.forEach((room) => drawRoom(room));
+  startTime = Date.now();
+  console.log("Generating nodes...");
   const nodes = roomsToNodes(rooms);
+  console.log(
+    `Generated ${nodes.length} nodes on ${rooms.length} rooms in ${Date.now() - startTime}ms`,
+  );
   nodes.forEach((node) => drawCircle({ radius: 1, ...node }));
+  startTime = Date.now();
+  console.log("Generating edges...");
   const edges = generateMST(origins.length, nodes);
+  console.log(
+    `Generated ${edges.length} edges to connect ${rooms.length} rooms in ${Date.now() - startTime}ms`,
+  );
   for (let i = 0; i < edges.length; ++i) {
     drawEdge(edges[i]);
   }
 }
 
 addEventListener("load", () => init());
-
