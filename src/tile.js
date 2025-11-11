@@ -1,7 +1,8 @@
 export class Tile {
   static floor() {
     return new Tile({
-      name: "Bedrock",
+      name: "Dungeon Floor",
+      url: url('../images/floor.png'),
       indestructible: true,
     });
   }
@@ -17,6 +18,8 @@ export class Tile {
 
   constructor(props) {
     this.name = props.name ?? "Unknown";
+    this.url = props.url;
+ 
     this.looksLike = props.looksLike ?? "nothing interesting";
     this.feelsLike = props.feelsLike;
     this.smellsLike = props.smellsLike;

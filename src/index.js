@@ -1,5 +1,6 @@
 import { setUpActions } from './actions.js';
-import { setUpViewport } from './viewport.js';
+import { generateMap } from './map.js';
+import { renderViewport, setUpViewport } from './viewport.js';
 
 let maxHealth = 10;
 let health = maxHealth;
@@ -25,10 +26,17 @@ function renderBars() {
   renderBar(staminaElt, stamina, maxStamina);
 };
 
-function init() {
+async function init() {
   setUpViewport();
   renderBars();
   setUpActions();
+  
+  const map = await generateMap();
+  renderViewport(
+    Math.floor(Math.random() * 1000),
+    Math.floor(Math.random() * 1000),
+    map
+  );
 }
 
-addEventListener('load', () => init());
+addEventListener('load', async () => await init());

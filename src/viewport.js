@@ -1,8 +1,25 @@
 const W = 11;
+const HW = Math.floor(W / 2);
 const H = 11;
+const HH = Math.floor(H / 2);
 const viewportElt = document.getElementById('viewport');
 
-function renderViewport() {
+export function renderViewport(x, y, map) {
+  for (let i = 0; i < W; ++i) {
+    for (let j = 0; j < H; ++j) {
+      const tileElt = viewport
+      const tX = x - HW + i;
+      const tY = y - HH + j;
+      
+      if (tX < 0 || tX >= map.w || tY < 0 || tY >= map.h) {
+        tileElt.style.backgroundImage = undefined;
+        continue;
+      }
+      
+      const tile = map.getTile(tX, tY);
+      tileElt.style.backgroundImage = tile.url;
+    }
+  }
 }
 
 function createTile() {
@@ -15,5 +32,4 @@ export function setUpViewport() {
   for (let i = 0; i < W * H; ++i) {
     viewportElt.appendChild(createTile());
   }
-  renderViewport();
 }

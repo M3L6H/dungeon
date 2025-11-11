@@ -360,6 +360,9 @@ export async function generateMap() {
 
 async function init() {
   const canvas = document.getElementById("canvas");
+  
+  if (!canvas) return;
+  
   const ctx = canvas.getContext("2d");
   const map = await generateMap();
   const imageData = ctx.createImageData(canvas.width, canvas.height);
