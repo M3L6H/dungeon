@@ -425,7 +425,7 @@ function init() {
   const nodes = roomsToNodes(rooms);
   nodes.forEach((node) => drawCircle({ radius: 1, ...node }));
   const edges = generateMST(origins.length, nodes);
-  for (let i = 0; i < 10; ++i) {
+  for (let i = 0; i < edges.length; ++i) {
     drawEdge(edges[i]);
   }
 }
