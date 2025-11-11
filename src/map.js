@@ -338,6 +338,10 @@ class Tile {
   }
 }
 
+function isL(a, b) {
+  return Math.abs(a.dir - b.dir) % 2 === 1;
+}
+
 class Map {
   constructor(width, height, rooms, edges) {
     this.w = width;
@@ -351,6 +355,17 @@ class Map {
     rooms.forEach((points) => {
       this._fillRect(points[0], points[6], Tile.floor);
       this._fillRect(points[10], points[4], Tile.floor);
+    });
+    
+    edges.forEach(({ a, b }) => {
+      if (isL(a, b)) {
+        const m = {
+          x: a.dir % === 0 ? a.x : b.x,
+          y: a.dir % === 1 ? a.y : b.y,
+        };
+        this._fillRect(a, m, Tile.floor);
+        this._fillRect(m, b, Tile.floor);
+      }
     });
   }
 
@@ -385,8 +400,12 @@ class Map {
   }
 
   _fillRect(a, b, tileFn) {
-    for (let x = a.x; x <= b.x; ++x) {
-      for (let y = a.y; y <= b.y; ++y) {
+    const x0 = Math.min(a.x, b.x);
+    const x1 = Math.max(a.x, b.x);
+    const y0 = Math.min(a.y, b.y);
+    const y1 = Math.max(a.y, b.y);
+    for (let x = x0; x <= x1; ++x) {
+      for (let y = y0; y <= y1; ++y) {
         this._setTile(x, y, tileFn());
       }
     }
