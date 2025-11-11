@@ -52,7 +52,7 @@ const MIN_RADIUS = 3;
 
 function randInRange(min, max) {
   min = Math.ceil(min);
-  max = Math.floor(max);
+  max = Math.floor(max); 
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -365,7 +365,21 @@ class Map {
         };
         this._fillRect(a, m, Tile.floor);
         this._fillRect(m, b, Tile.floor);
+        return;
       }
+      
+      const mCoord = a.dir % 2 === 0 ? randInRange(Math.min(a.y, b.y) + 1, Math.max(a.y, b.y) - 1) : randInRange(Math.min(a.x, b.x) + 1, Math.max(a.x, b.x) - 1);
+      const m1 = {
+        x: a.dir % 2 === 0 ? a.x : mCoord,
+        y: a.dir % 2 === 1 ? a.y : mCoord,
+      };
+      const m2 = {
+        x: b.dir % 2 === 0 ? b.x : mCoord,
+        y: b.dir % 2 === 1 ? b.y : mCoord,
+      };
+      this._fillRect(a, m1, Tile.floor);
+      this._fillRect(m1, m2, Tile.floor);
+      this._fillRect(m2, b, Tile.floor);
     });
   }
 
