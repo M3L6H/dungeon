@@ -366,3 +366,5 @@ async function init() {
   map.writeToImage(imageData);
   ctx.putImageData(imageData, 0, 0);
 }
+
+window.addEventListener('load', async () => await init());
