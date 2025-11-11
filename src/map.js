@@ -153,34 +153,23 @@ function generateRooms(origins) {
       }
 
       if (Math.random() < 0.5 && arm2 > 0) {
+        points[2].y = y - arm2;
+        points[3].y = y - arm2;
+        points[4].y = y + arm2;
+        points[5].y = y + arm2;
+        points[8].y = y + arm2;
+        points[9].y = y + arm2;
+        points[10].y = y - arm2;
+        points[11].y = y - arm2;
+
         const side = Math.random();
         if (side < 0.375 || side >= 0.75) {
-          points[2].y = y - arm2;
-          points[3] = {
-            id,
-            x: x + depth2,
-            y: y - arm2,
-          };
-          points[4] = {
-            id,
-            x: x + depth2,
-            y: y + arm2,
-          };
-          points[5].y = y + arm2;
+          points[3].x = x + depth2;
+          points[4].x = x + depth2;
         }
         if (side >= 0.375) {
-          points[8].y = y + arm2;
-          points[9] = {
-            id,
-            x: x - depth2,
-            y: y + arm2,
-          };
-          points[10] = {
-            id,
-            x: x - depth2,
-            y: y - arm2,
-          };
-          points[11].y = y - arm2;
+          points[9].x = x - depth2;
+          points[10].x = x - depth2;
         }
       }
     } else {
@@ -213,34 +202,23 @@ function generateRooms(origins) {
       points.push({ id, x, y: y - arm1 });
 
       if (Math.random() < 0.5 && arm2 > 0) {
+        points[0].x = x - arm2;
+        points[1].x = x + arm2;
+        points[2].x = x + arm2;
+        points[5].x = x + arm2;
+        points[6].x = x + arm2;
+        points[7].x = x - arm2;
+        points[8].x = x - arm2;
+        points[11].x = x - arm2;
+
         const side = Math.random();
         if (side < 0.375 || side >= 0.75) {
-          points[11].x = x - arm2;
-          points[0] = {
-            id,
-            x: x - arm2,
-            y: y - depth2,
-          };
-          points[1] = {
-            id,
-            x: x + arm2,
-            y: y - depth2,
-          };
-          points[2].x = x + arm2;
+          points[0].y = y - depth2;
+          points[1].y = y - depth2;
         }
         if (side >= 0.375) {
-          points[5].x = x + arm2;
-          points[6] = {
-            id,
-            x: x + arm2,
-            y: y + depth2,
-          };
-          points[7] = {
-            id,
-            x: x - arm2,
-            y: y + depth2,
-          };
-          points[8].x = x - arm2;
+          points[6].y = y + depth2;
+          points[7].y = y + depth2;
         }
       }
     }
@@ -328,34 +306,34 @@ function generateEdges(count, nodes) {
 class Tile {
   static floor() {
     return new Tile({
-      name: 'Bedrock',
+      name: "Bedrock",
       indestructible: true,
     });
   }
- 
+
   static wall() {
     return new Tile({
-      name: 'Dungeon Wall',
+      name: "Dungeon Wall",
       indestructible: true,
       obstructing: true,
       opaque: true,
     });
   }
- 
+
   constructor(props) {
-    this.name = props.name ?? 'Unknown';
-    this.looksLike = props.looksLike ?? 'nothing interesting';
+    this.name = props.name ?? "Unknown";
+    this.looksLike = props.looksLike ?? "nothing interesting";
     this.feelsLike = props.feelsLike;
     this.smellsLike = props.smellsLike;
     this.soundsLike = props.soundsLike;
     this.tastesLike = props.tastesLike;
- 
+
     this.indestructible = props.indestructible ?? false;
     this.obstructing = props.obstructing ?? false;
     this.opaque = props.opaque ?? false;
   }
-  
-  get isTraversible() {
+
+  get isTraversable() {
     return !this.obstructing;
   }
 }
@@ -369,40 +347,43 @@ class Map {
     for (let i = 0; i < this.tiles.length; ++i) {
       this.tiles[i] = Tile.wall();
     }
-    
-    rooms.forEach(points => {
+
+    rooms.forEach((points) => {
       this._fillRect(points[0], points[6], Tile.floor);
       this._fillRect(points[10], points[4], Tile.floor);
     });
   }
-  
+
   writeToImage(imageData) {
-    for (let x = a.x; x <= b.x; ++x) {
-      for (let y = a.y; y <= b.y; ++y) {
+    for (let x = 0; x < this.w; ++x) {
+      for (let y = 0; y < this.h; ++y) {
         const tile = this.getTile(x, y);
         const r = (x + y * this.w) * 4;
         const g = r + 1;
         const b = r + 2;
         const a = r + 3;
         imageData.data[a] = 255;
-        
-        if (tile.isTraversible) {
-          imageData[r] = 255;
-          imageData[g] = 255;
-          imageData[b] = 255;
+
+        if (tile.isTraversable) {
+          imageData.data[r] = 255;
+          imageData.data[g] = 255;
+          imageData.data[b] = 255;
         } else {
-          imageData[r] = 0;
-          imageData[g] = 0;
-          imageData[b] = 0;
+          imageData.data[r] = 0;
+          imageData.data[g] = 0;
+          imageData.data[b] = 0;
         }
       }
     }
   }
-  
+
+  /**
+   * @returns {Tile} The tile at x, y
+   */
   getTile(x, y) {
     return this.tiles[x + y * this.w];
   }
-  
+
   _fillRect(a, b, tileFn) {
     for (let x = a.x; x <= b.x; ++x) {
       for (let y = a.y; y <= b.y; ++y) {
@@ -410,7 +391,7 @@ class Map {
       }
     }
   }
-  
+
   _setTile(x, y, tile) {
     this.tiles[x + y * this.w] = tile;
   }
