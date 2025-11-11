@@ -360,8 +360,8 @@ class Map {
     edges.forEach(({ a, b }) => {
       if (isL(a, b)) {
         const m = {
-          x: a.dir % === 0 ? a.x : b.x,
-          y: a.dir % === 1 ? a.y : b.y,
+          x: a.dir % 2 === 0 ? a.x : b.x,
+          y: a.dir % 2 === 1 ? a.y : b.y,
         };
         this._fillRect(a, m, Tile.floor);
         this._fillRect(m, b, Tile.floor);
