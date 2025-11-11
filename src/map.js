@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 function drawCircle({ x, y, radius }) {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = "rgba(255, 0, 0, 1)";
+  ctx.strokeStyle = "rgba(255, 0, 0, 0.25)";
   ctx.lineWidth = 1;
   ctx.stroke();
 }
@@ -310,153 +310,19 @@ function roomsToNodes(rooms) {
   return nodes;
 }
 
-class EdgeHeap {
-  constructor() {
-    this.values = [];
-  }
-
-  get length() {
-    return this.values.length;
-  }
-
-  push(edge) {
-    this.values.push(edge);
-    this._bubbleUp(this.length - 1);
-  }
-
-  pop() {
-    if (this.length === 0) return undefined;
-    if (this.length === 1) return this.values.pop();
-    const value = this.values[0];
-    this.values[0] = this.values.pop();
-    this._bubbleDown(0);
-    return value;
-  }
-
-  _bubbleUp(idx) {
-    if (idx === 0) return;
-    const pIdx = Math.floor((idx - 1) / 2);
-    const curr = this.values[idx];
-    if (this._lt(this.values[pIdx], curr)) {
-      return;
-    }
-    this.values[idx] = this.values[pIdx];
-    this.values[pIdx] = curr;
-    this._bubbleUp(pIdx);
-  }
-
-  _bubbleDown(idx) {
-    const lIdx = idx * 2 + 1;
-    const rIdx = idx * 2 + 2;
-    let mIdx = lIdx;
-    if (lIdx >= this.length) return;
-    if (rIdx < this.length && this._lt(this.values[rIdx], this.values[lIdx])) {
-      mIdx = rIdx;
-    }
-    const curr = this.values[idx];
-    if (this._lt(curr, this.values[mIdx])) {
-      return;
-    }
-    this.values[idx] = this.values[mIdx];
-    this.values[mIdx] = curr;
-    this._bubbleDown(mIdx);
-  }
-
-  _lt(a, b) {
-    return a.len < b.len;
-  }
-}
-
-class UnionFind {
-  constructor(size) {
-    this.elts = [];
-    for (let i = 0; i < size; ++i) {
-      this.elts.push(i);
-    }
-  }
-
-  union(a, b) {
-    const pA = this.find(a);
-    const pB = this.find(b);
-
-    if (pA === pB) return false;
-
-    this.elts[pB] = pA;
-
-    return true;
-  }
-
-  find(n) {
-    let curr = n;
-    while (this.elts[curr] !== curr) {
-      curr = this.elts[curr];
-    }
-    this.elts[n] = curr;
-    return curr;
-  }
-}
-
-function validDir(a, b) {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-
-  switch (a.dir) {
-    case 0:
-      return dy < 0;
-    case 1:
-      return dx > 0;
-    case 2:
-      return dy > 0;
-    default:
-      return dx < 0;
-  }
-}
-
-function cityBlockDist(a, b) {
-  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
-}
-
-function generateMST(count, nodes) {
-  const inTree = new UnionFind(count);
-  const usedNode = new Array(nodes.length).fill(false);
-  const edgeHeap = new EdgeHeap();
-
-  for (let i = 0; i < nodes.length; ++i) {
-    for (let j = i + 1; j < nodes.length; ++j) {
-      if (nodes[i].id === nodes[j].id) continue;
-      if (!validDir(nodes[i], nodes[j]) || !validDir(nodes[j], nodes[i]))
-        continue;
-      edgeHeap.push({
-        aId: i,
-        bId: j,
-        a: nodes[i],
-        b: nodes[j],
-        len: cityBlockDist(nodes[i], nodes[j]), // Pre-compute length
-      });
-    }
-  }
-
-  console.debug(`Filled edge heap with ${edgeHeap.length} possible edges`);
-
-  const edges = [];
-
-  while (edgeHeap.length > 0) {
-    const edge = edgeHeap.pop();
-
-    if (usedNode[edge.aId] || usedNode[edge.bId]) continue;
-    if (!inTree.union(edge.a.id, edge.b.id)) continue;
-
-    edges.push(edge);
-    usedNode[edge.aId] = true;
-    usedNode[edge.bId] = true;
-  }
-
-  return edges;
+function generateEdges(count, nodes) {
+  return new Promise((resolve) => {
+    const edgeWorker = new Worker("edgeWorker.js");
+    edgeWorker.postMessage({ count, nodes });
+    edgeWorker.onmessage = function (event) {
+      resolve(event.data);
+    };
+  });
 }
 
 function generateMap() {}
 
-function init() {
+async function init() {
   let startTime = Date.now();
   console.log("Generating origins...");
   const origins = generateOrigins();
@@ -477,7 +343,7 @@ function init() {
   nodes.forEach((node) => drawCircle({ radius: 1, ...node }));
   startTime = Date.now();
   console.log("Generating edges...");
-  const edges = generateMST(origins.length, nodes);
+  const edges = await generateEdges(origins.length, nodes);
   console.log(
     `Generated ${edges.length} edges to connect ${rooms.length} rooms in ${Date.now() - startTime}ms`,
   );
@@ -486,4 +352,4 @@ function init() {
   }
 }
 
-addEventListener("load", () => init());
+addEventListener("load", async () => await init());
