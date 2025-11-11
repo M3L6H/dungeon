@@ -39,11 +39,16 @@ function drawEdge({ a, b }) {
   ctx.stroke();
 }
 
+function drawMap(map) {
+  const imageData = ctx.createImageData(canvas.width, canvas.height);
+  map.writeToImage(imageData);
+  ctx.putImageData(imageData, 0, 0);
+}
+
 const ROWS = 1000;
 const COLS = 1000;
 const ROOMS = Math.floor((ROWS * COLS) / 500);
 const MIN_RADIUS = 3;
-const map = new Array(ROWS * COLS);
 
 function randInRange(min, max) {
   min = Math.ceil(min);
@@ -320,10 +325,107 @@ function generateEdges(count, nodes) {
   });
 }
 
-function generateMap() {}
+class Tile {
+  static floor() {
+    return new Tile({
+      name: 'Bedrock',
+      indestructible: true,
+    });
+  }
+ 
+  static wall() {
+    return new Tile({
+      name: 'Dungeon Wall',
+      indestructible: true,
+      obstructing: true,
+      opaque: true,
+    });
+  }
+ 
+  constructor(props) {
+    this.name = props.name ?? 'Unknown';
+    this.looksLike = props.looksLike ?? 'nothing interesting';
+    this.feelsLike = props.feelsLike;
+    this.smellsLike = props.smellsLike;
+    this.soundsLike = props.soundsLike;
+    this.tastesLike = props.tastesLike;
+ 
+    this.indestructible = props.indestructible ?? false;
+    this.obstructing = props.obstructing ?? false;
+    this.opaque = props.opaque ?? false;
+  }
+  
+  get isTraversible() {
+    return !this.obstructing;
+  }
+}
+
+class Map {
+  constructor(width, height, rooms, edges) {
+    this.w = width;
+    this.h = height;
+    this.tiles = new Array(width * height);
+
+    for (let i = 0; i < this.tiles.length; ++i) {
+      this.tiles[i] = Tile.wall();
+    }
+    
+    rooms.forEach(points => {
+      this._fillRect(points[0], points[6], Tile.floor);
+      this._fillRect(points[10], points[4], Tile.floor);
+    });
+  }
+  
+  writeToImage(imageData) {
+    for (let x = a.x; x <= b.x; ++x) {
+      for (let y = a.y; y <= b.y; ++y) {
+        const tile = this.getTile(x, y);
+        const r = (x + y * this.w) * 4;
+        const g = r + 1;
+        const b = r + 2;
+        const a = r + 3;
+        imageData.data[a] = 255;
+        
+        if (tile.isTraversible) {
+          imageData[r] = 255;
+          imageData[g] = 255;
+          imageData[b] = 255;
+        } else {
+          imageData[r] = 0;
+          imageData[g] = 0;
+          imageData[b] = 0;
+        }
+      }
+    }
+  }
+  
+  getTile(x, y) {
+    return this.tiles[x + y * this.w];
+  }
+  
+  _fillRect(a, b, tileFn) {
+    for (let x = a.x; x <= b.x; ++x) {
+      for (let y = a.y; y <= b.y; ++y) {
+        this._setTile(x, y, tileFn());
+      }
+    }
+  }
+  
+  _setTile(x, y, tile) {
+    this.tiles[x + y * this.w] = tile;
+  }
+}
+
+async function generateMap() {
+  const origins = generateOrigins();
+  const rooms = generateRooms(origins);
+  const nodes = roomsToNodes(rooms);
+  const edges = await generateEdges(origins.length, nodes);
+  return new Map(COLS, ROWS, rooms, edges);
+}
 
 async function init() {
-  let startTime = Date.now();
+  /*let startTime = Date.now();
   console.log("Generating origins...");
   const origins = generateOrigins();
   console.log(
@@ -349,7 +451,9 @@ async function init() {
   );
   for (let i = 0; i < edges.length; ++i) {
     drawEdge(edges[i]);
-  }
+  }*/
+  const map = await generateMap();
+  drawMap(map);
 }
 
 addEventListener("load", async () => await init());
