@@ -1,49 +1,4 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-function drawCircle({ x, y, radius }) {
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = "rgba(255, 0, 0, 0.25)";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-}
-
-function drawRoom(points) {
-  ctx.beginPath();
-
-  for (let i = 0; i < points.length; ++i) {
-    const dx = i > 0 && i <= 6 ? 0.5 : -0.5;
-    const dy = i > 3 && i <= 9 ? -0.5 : 0.5;
-
-    if (i === 0) {
-      ctx.moveTo(points[i].x + dx, points[i].y + dy);
-    } else {
-      ctx.lineTo(points[i].x + dx, points[i].y + dy);
-    }
-  }
-
-  ctx.closePath();
-  ctx.strokeStyle = "rgba(0, 0, 255, 1)";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-}
-
-function drawEdge({ a, b }) {
-  ctx.beginPath();
-
-  ctx.moveTo(a.x, a.y);
-  ctx.lineTo(b.x, b.y);
-  ctx.strokeStyle = "rgba(0, 255, 0, 1)";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-}
-
-function drawMap(map) {
-  const imageData = ctx.createImageData(canvas.width, canvas.height);
-  map.writeToImage(imageData);
-  ctx.putImageData(imageData, 0, 0);
-}
+import { Tile } from './tile.js';
 
 const ROWS = 1000;
 const COLS = 1000;
@@ -303,41 +258,6 @@ function generateEdges(count, nodes) {
   });
 }
 
-class Tile {
-  static floor() {
-    return new Tile({
-      name: "Bedrock",
-      indestructible: true,
-    });
-  }
-
-  static wall() {
-    return new Tile({
-      name: "Dungeon Wall",
-      indestructible: true,
-      obstructing: true,
-      opaque: true,
-    });
-  }
-
-  constructor(props) {
-    this.name = props.name ?? "Unknown";
-    this.looksLike = props.looksLike ?? "nothing interesting";
-    this.feelsLike = props.feelsLike;
-    this.smellsLike = props.smellsLike;
-    this.soundsLike = props.soundsLike;
-    this.tastesLike = props.tastesLike;
-
-    this.indestructible = props.indestructible ?? false;
-    this.obstructing = props.obstructing ?? false;
-    this.opaque = props.opaque ?? false;
-  }
-
-  get isTraversable() {
-    return !this.obstructing;
-  }
-}
-
 function isL(a, b) {
   return Math.abs(a.dir - b.dir) % 2 === 1;
 }
@@ -430,7 +350,7 @@ class Map {
   }
 }
 
-async function generateMap() {
+export async function generateMap() {
   const origins = generateOrigins();
   const rooms = generateRooms(origins);
   const nodes = roomsToNodes(rooms);
@@ -439,35 +359,53 @@ async function generateMap() {
 }
 
 async function init() {
-  /*let startTime = Date.now();
-  console.log("Generating origins...");
-  const origins = generateOrigins();
-  console.log(
-    `Generated ${origins.length} origins in ${Date.now() - startTime}ms`,
-  );
-  startTime = Date.now();
-  console.log("Generating rooms...");
-  const rooms = generateRooms(origins);
-  console.log(`Generated ${rooms.length} rooms in ${Date.now() - startTime}ms`);
-  rooms.forEach((room) => drawRoom(room));
-  startTime = Date.now();
-  console.log("Generating nodes...");
-  const nodes = roomsToNodes(rooms);
-  console.log(
-    `Generated ${nodes.length} nodes on ${rooms.length} rooms in ${Date.now() - startTime}ms`,
-  );
-  nodes.forEach((node) => drawCircle({ radius: 1, ...node }));
-  startTime = Date.now();
-  console.log("Generating edges...");
-  const edges = await generateEdges(origins.length, nodes);
-  console.log(
-    `Generated ${edges.length} edges to connect ${rooms.length} rooms in ${Date.now() - startTime}ms`,
-  );
-  for (let i = 0; i < edges.length; ++i) {
-    drawEdge(edges[i]);
-  }*/
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const drawCircle = ({ x, y, radius }) => {
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = "rgba(255, 0, 0, 0.25)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  };
+
+  const drawRoom = (points) => {
+    ctx.beginPath();
+
+    for (let i = 0; i < points.length; ++i) {
+      const dx = i > 0 && i <= 6 ? 0.5 : -0.5;
+      const dy = i > 3 && i <= 9 ? -0.5 : 0.5;
+
+      if (i === 0) {
+        ctx.moveTo(points[i].x + dx, points[i].y + dy);
+      } else {
+        ctx.lineTo(points[i].x + dx, points[i].y + dy);
+      }
+    }
+
+    ctx.closePath();
+    ctx.strokeStyle = "rgba(0, 0, 255, 1)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  };
+
+  const drawEdge = ({ a, b }) => {
+    ctx.beginPath();
+
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.strokeStyle = "rgba(0, 255, 0, 1)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  };
+
+  const drawMap = (map) => {
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    map.writeToImage(imageData);
+    ctx.putImageData(imageData, 0, 0);
+  };
+
   const map = await generateMap();
   drawMap(map);
 }
-
-addEventListener("load", async () => await init());
