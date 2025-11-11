@@ -2,7 +2,7 @@ export class Tile {
   static floor() {
     return new Tile({
       name: "Dungeon Floor",
-      url: url('../images/floor.png'),
+      url: url('images/floor.png'),
       indestructible: true,
     });
   }
