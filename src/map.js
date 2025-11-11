@@ -363,6 +363,35 @@ class EdgeHeap {
   }
 }
 
+class UnionFind {
+  constructor(size) {
+    this.elts = [];
+    for (let i = 0; i < size; ++i) {
+      this.elts.push(i);
+    }
+  }
+  
+  union(a, b) {
+    const pA = this.find(a);
+    const pB = this.find(b);
+    
+    if (pA === pB) return false;
+    
+    this.elts[pB] = pA;
+    
+    return true;
+  } 
+  
+  find(n) {
+    let curr = n;
+    while (this.elts[curr] !== curr) {
+      curr = this.elts[curr];
+    }
+    this.elts[n] = curr;
+    return curr;
+  }
+}
+
 function validDir(a, b) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
@@ -380,7 +409,7 @@ function validDir(a, b) {
 }
 
 function generateMST(count, nodes) {
-  const inTree = new Array(count).fill(false);
+  const inTree = new UnionFind(count);
   const usedNode = new Array(nodes.length).fill(false);
   const edgeHeap = new EdgeHeap();
 
@@ -404,13 +433,11 @@ function generateMST(count, nodes) {
     const edge = edgeHeap.pop();
 
     if (usedNode[edge.aId] || usedNode[edge.bId]) continue;
-    if (inTree[edge.a.id] && inTree[edge.b.id]) continue;
+    if (!inTree.union(edge.a.id, edge.b.id)) continue;
 
     edges.push(edge);
     usedNode[edge.aId] = true;
     usedNode[edge.bId] = true;
-    inTree[edge.a.id] = true;
-    inTree[edge.b.id] = true;
   }
 
   return edges;
