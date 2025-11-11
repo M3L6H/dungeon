@@ -1,3 +1,6 @@
+const MAX_ADDITIONAL_LEN = 50;
+const ADDITIONAL_CHANCE = 0.5;
+
 class EdgeHeap {
   constructor() {
     this.values = [];
@@ -132,7 +135,9 @@ function generateMST(count, nodes) {
     const edge = edgeHeap.pop();
 
     if (usedNode[edge.aId] || usedNode[edge.bId]) continue;
-    if (!inTree.union(edge.a.id, edge.b.id)) continue;
+    const union = inTree.union(edge.a.id, edge.b.id);
+    const additional = edge.len < MAX_ADDITIONAL_LEN && Math.random() < ADDITIONAL_CHANCE;
+    if (!(union || additional)) continue;
 
     edges.push(edge);
     usedNode[edge.aId] = true;
