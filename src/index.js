@@ -1,5 +1,6 @@
 import { setUpActions } from './actions.js';
 import { generateMap } from './map.js';
+import { getPlayer } from './player.js';
 import { renderViewport, setUpViewport } from './viewport.js';
 
 let maxHealth = 10;
@@ -33,6 +34,10 @@ async function init() {
   
   const map = await generateMap();
   const { x, y } = map.getRandomRoom();
+  const player = getPlayer();
+  player.x = x;
+  player.y = y;
+  player.map = map;
   renderViewport(x, y, map);
 }
 

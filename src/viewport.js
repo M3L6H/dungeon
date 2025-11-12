@@ -1,3 +1,7 @@
+import { act, getSelectedAction } from './actions.js';
+import { getPlayer, inControl, releaseControl } from './player.js';
+import { advance } from './time.js';
+
 const W = 11;
 const HW = Math.floor(W / 2);
 const H = 11;
@@ -13,11 +17,23 @@ export function renderViewport(x, y, map) {
       
       if (tX < 0 || tX >= map.w || tY < 0 || tY >= map.h) {
         tileElt.style.backgroundImage = undefined;
+        tileElt.onclick = undefined;
         continue;
       }
       
       const tile = map.getTile(tX, tY);
       tileElt.style.backgroundImage = tile.url;
+      tileElt.onclick = () => {
+        if (!inControl()) return;
+        if (act(
+          getPlayer(),
+          getSelectedAction(),
+          { x: tX, y: tY },
+        )) {
+          releaseControl();
+          advance();
+        } 
+      }; 
     }
   }
 }

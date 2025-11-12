@@ -1,4 +1,5 @@
 import { addLog } from './logs.js';
+import { schedule } from './time.js';
 
 const NONE = 'none';
 const MOVE = 'move';
@@ -20,6 +21,38 @@ const actions = [
 ];
 let selected = 0;
 const actionsElt = document.getElementById('actions');
+
+export function getSelectedAction() {
+  return actions[selected];
+}
+
+export function act(entity, action, target) {
+  switch (action) {
+  case 'move':
+    return move(entity, target);
+  default:
+    addLog(`${entity.name} cannot ${action}`);
+  }
+  
+  return false;
+}
+
+function move(entity, target) {
+  const { x, y } = target;
+  const dx = Math.abs(x - entity.x);
+  const dy = Math.abs(y - entity.y);
+  if (dx + dy !== 1) return false;
+  const time = getTimeToMove(entity);
+  schedule(entity, time, () => {
+    entity.x = x;
+    entity.y = y;
+    addLog(`${entity.name} moved`);
+  });
+}
+
+function getTimeToMove(entity) {
+  return Math.max(1, 10 - Math.floor(Math.sqrt(entity.speed)));
+}
 
 function renderActions() {
   actions.forEach((action, i) => {
