@@ -263,9 +263,10 @@ function isL(a, b) {
 }
 
 class Map {
-  constructor(width, height, rooms, edges) {
+  constructor(width, height, origins, rooms, edges) {
     this.w = width;
     this.h = height;
+    this.origins = origins;
     this.tiles = new Array(width * height);
 
     for (let i = 0; i < this.tiles.length; ++i) {
@@ -301,6 +302,14 @@ class Map {
       this._fillRect(m1, m2, Tile.floor);
       this._fillRect(m2, b, Tile.floor);
     });
+  }
+  
+  getRandomRoom() {
+    const origin = this.origins[Math.floor(Math.random() * this.origins.length)];
+    return {
+      x: origin.x,
+      y: origin.y,
+    };
   }
 
   writeToImage(imageData) {
@@ -355,7 +364,7 @@ export async function generateMap() {
   const rooms = generateRooms(origins);
   const nodes = roomsToNodes(rooms);
   const edges = await generateEdges(origins.length, nodes);
-  return new Map(COLS, ROWS, rooms, edges);
+  return new Map(COLS, ROWS, origins, rooms, edges);
 }
 
 async function init() {

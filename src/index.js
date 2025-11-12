@@ -32,11 +32,8 @@ async function init() {
   setUpActions();
   
   const map = await generateMap();
-  renderViewport(
-    Math.floor(Math.random() * 1000),
-    Math.floor(Math.random() * 1000),
-    map
-  );
+  const { x, y } = map.getRandomRoom();
+  renderViewport(x, y, map);
 }
 
 addEventListener('load', async () => await init());
