@@ -27,8 +27,8 @@ section {
 #viewport {
   aspect-ratio: 11/11;
   margin: auto;
-  max-width: 70vh;
-  max-height: 70vh;
+  max-width: 75vh;
+  max-height: 75vh;
 
   display: grid;
   grid-template-columns: repeat(11, 1fr [col-start]);
@@ -68,7 +68,7 @@ section {
 }
 
 #logs {
-  height: 20vh;
+  height: 15vh;
   overflow-y: auto;
 }
 

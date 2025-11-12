@@ -1,11 +1,11 @@
-import { addLog } from './logs.js';
-import { schedule } from './time.js';
+import { addLog } from "./logs.js";
+import { schedule } from "./time.js";
 
-const NONE = 'none';
-const MOVE = 'move';
-const EXAMINE = 'examine';
-const INTERACT = 'interact';
-const SETTINGS = 'settings';
+const NONE = "none";
+const MOVE = "move";
+const EXAMINE = "examine";
+const INTERACT = "interact";
+const SETTINGS = "settings";
 const actions = [
   MOVE,
   EXAMINE,
@@ -20,7 +20,7 @@ const actions = [
   SETTINGS,
 ];
 let selected = 0;
-const actionsElt = document.getElementById('actions');
+const actionsElt = document.getElementById("actions");
 
 export function getSelectedAction() {
   return actions[selected];
@@ -28,12 +28,12 @@ export function getSelectedAction() {
 
 export function act(entity, action, target) {
   switch (action) {
-  case 'move':
-    return move(entity, target);
-  default:
-    addLog(`${entity.name} cannot ${action}`);
+    case "move":
+      return move(entity, target);
+    default:
+      addLog(`${entity.name} cannot ${action}`);
   }
-  
+
   return false;
 }
 
@@ -42,38 +42,46 @@ function move(entity, target) {
   const dx = Math.abs(x - entity.x);
   const dy = Math.abs(y - entity.y);
   if (dx + dy !== 1) return false;
+  let dir;
+  if (dx > 0) {
+    dir = entity.x < x ? "East" : "West";
+  } else {
+    dir = entity.y > y ? "North" : "South";
+  }
   const time = getTimeToMove(entity);
   schedule(entity, time, () => {
     entity.x = x;
     entity.y = y;
-    addLog(`${entity.name} moved`);
+    addLog(`${entity.name} moved ${dir}`);
   });
+  addLog(`${entity.name} is moving ${dir}`);
+  return true;
 }
 
 function getTimeToMove(entity) {
-  return Math.max(1, 10 - Math.floor(Math.sqrt(entity.speed)));
+  return Math.max(1, 10 - Math.floor(Math.sqrt(entity.agility)));
 }
 
 function renderActions() {
   actions.forEach((action, i) => {
     const actionElt = actionsElt.children[i];
     actionElt.dataset.action = action;
-    
+
     if (i === selected) {
-      actionElt.classList.add('selected');
+      actionElt.classList.add("selected");
     } else {
-      actionElt.classList.remove('selected');
+      actionElt.classList.remove("selected");
     }
   });
 }
 
 function createAction() {
-  const actionElt = document.createElement('div');
-  actionElt.classList.add('action');
-  actionElt.classList.add('material-symbols-outlined');
-  actionElt.addEventListener('click', () => {
+  const actionElt = document.createElement("div");
+  actionElt.classList.add("action");
+  actionElt.classList.add("material-symbols-outlined");
+  actionElt.addEventListener("click", () => {
     const action = actionElt.dataset.action;
-    if (action === NONE || actions[selected] === action) return; 
+    if (action === NONE || actions[selected] === action) return;
     selected = actions.indexOf(action);
     renderActions();
     addLog(`Changed selected action to '${action}'`);
@@ -82,6 +90,7 @@ function createAction() {
 }
 
 export function setUpActions() {
-  actions.forEach(action => actionsElt.appendChild(createAction())); 
+  actions.forEach((action) => actionsElt.appendChild(createAction()));
   renderActions();
 }
+

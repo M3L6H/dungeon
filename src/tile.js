@@ -14,8 +14,8 @@ export class Tile {
 
   constructor(props) {
     this.name = props.name ?? "Unknown";
-    this.url = props.url;
- 
+    this.url = props.url ?? "none";
+
     this.looksLike = props.looksLike ?? "nothing interesting";
     this.feelsLike = props.feelsLike;
     this.smellsLike = props.smellsLike;

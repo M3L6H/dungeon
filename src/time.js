@@ -1,6 +1,5 @@
-import { getDecision } from './entity.js';
-import { getInput, getPlayer, inControl } from './player.js';
-import { renderViewport } from './viewport.js';
+import { getInput, getPlayer, inControl } from "./player.js";
+import { renderViewport } from "./viewport.js";
 
 let time = 0;
 const timeline = {};
@@ -10,7 +9,7 @@ export function getTime() {
 }
 
 export function advance() {
-  while (!inControl()) {
+  while (!inControl() && Object.keys(timeline).length > 0) {
     tick();
   }
 }
@@ -27,11 +26,14 @@ export function schedule(entity, timeOffset, effect) {
     effect();
     getDecision(entity);
   });
+  timeline[time + timeOffset] = events;
 }
 
 export function tick() {
   const events = timeline[++time] ?? [];
-  events.forEach(event => event());
+  events.forEach((event) => event());
   const { x, y, map } = getPlayer();
   renderViewport(x, y, map);
+  delete timeline[time];
 }
+
