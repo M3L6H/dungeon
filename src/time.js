@@ -1,15 +1,16 @@
-import { getInput, getPlayer, inControl } from "./player.js";
+import {
+  getInput,
+  getMap,
+  getPlayer,
+  getTime,
+  getTimeline,
+  inControl,
+  incrementTime,
+} from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
-let time = 0;
-const timeline = {};
-
-export function getTime() {
-  return time;
-}
-
 export function advance() {
-  while (!inControl() && Object.keys(timeline).length > 0) {
+  while (!inControl() && Object.keys(getTimeline()).length > 0) {
     tick();
   }
 }
@@ -21,6 +22,8 @@ export function getDecision(entity) {
 }
 
 export function schedule(entity, timeOffset, effect) {
+  const timeline = getTimeline();
+  const time = getTime();
   const events = timeline[time + timeOffset] ?? [];
   events.push(() => {
     effect();
@@ -30,9 +33,12 @@ export function schedule(entity, timeOffset, effect) {
 }
 
 export function tick() {
-  const events = timeline[++time] ?? [];
+  const timeline = getTimeline();
+  const time = incrementTime();
+  const events = timeline[time] ?? [];
   events.forEach((event) => event());
-  const { x, y, map } = getPlayer();
+  const { x, y } = getPlayer();
+  const map = getMap();
   renderViewport(x, y, map);
   delete timeline[time];
 }

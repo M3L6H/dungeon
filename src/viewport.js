@@ -1,5 +1,5 @@
 import { act, getSelectedAction } from "./actions.js";
-import { getPlayer, inControl, releaseControl } from "./player.js";
+import { getPlayer, inControl, releaseControl } from "./gameState.js";
 import { advance } from "./time.js";
 
 const W = 11;
