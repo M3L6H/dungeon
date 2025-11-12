@@ -1,5 +1,5 @@
 import { getDecision } from './entity.js';
-import { getPlayer, inControl } from './player.js';
+import { getInput, getPlayer, inControl } from './player.js';
 import { renderViewport } from './viewport.js';
 
 let time = 0;
@@ -12,6 +12,12 @@ export function getTime() {
 export function advance() {
   while (!inControl()) {
     tick();
+  }
+}
+
+export function getDecision(entity) {
+  if (entity.isPlayer) {
+    getInput(entity);
   }
 }
 
