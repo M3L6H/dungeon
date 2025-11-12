@@ -1,3 +1,4 @@
+import { getMap } from "./gameState.js";
 import { addLog } from "./logs.js";
 import { schedule } from "./time.js";
 
@@ -42,6 +43,8 @@ function move(entity, target) {
   const dx = Math.abs(x - entity.x);
   const dy = Math.abs(y - entity.y);
   if (dx + dy !== 1) return false;
+  const tile = getMap().getTile(x, y);
+  if (!tile.isTraversable) return false;
   let dir;
   if (dx > 0) {
     dir = entity.x < x ? "East" : "West";
