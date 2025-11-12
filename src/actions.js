@@ -1,76 +1,21 @@
-import { getMap } from "./gameState.js";
+import {
+  getActions,
+  getSelectedAction,
+  getSelectedIndex,
+  NONE,
+  setSelectedIndex,
+} from "./gameState.js";
 import { addLog } from "./logs.js";
-import { schedule } from "./time.js";
+import { renderViewport } from "./viewport.js";
 
-const NONE = "none";
-const MOVE = "move";
-const EXAMINE = "examine";
-const INTERACT = "interact";
-const SETTINGS = "settings";
-const actions = [
-  MOVE,
-  EXAMINE,
-  INTERACT,
-  NONE,
-  NONE,
-  NONE,
-  NONE,
-  NONE,
-  NONE,
-  NONE,
-  SETTINGS,
-];
-let selected = 0;
 const actionsElt = document.getElementById("actions");
 
-export function getSelectedAction() {
-  return actions[selected];
-}
-
-export function act(entity, action, target) {
-  switch (action) {
-    case "move":
-      return move(entity, target);
-    default:
-      addLog(`${entity.name} cannot ${action}`);
-  }
-
-  return false;
-}
-
-function move(entity, target) {
-  const { x, y } = target;
-  const dx = Math.abs(x - entity.x);
-  const dy = Math.abs(y - entity.y);
-  if (dx + dy !== 1) return false;
-  const tile = getMap().getTile(x, y);
-  if (!tile.isTraversable) return false;
-  let dir;
-  if (dx > 0) {
-    dir = entity.x < x ? "East" : "West";
-  } else {
-    dir = entity.y > y ? "North" : "South";
-  }
-  const time = getTimeToMove(entity);
-  schedule(entity, time, () => {
-    entity.x = x;
-    entity.y = y;
-    addLog(`${entity.name} moved ${dir}`);
-  });
-  addLog(`${entity.name} is moving ${dir}`);
-  return true;
-}
-
-function getTimeToMove(entity) {
-  return Math.max(1, 10 - Math.floor(Math.sqrt(entity.agility)));
-}
-
 function renderActions() {
-  actions.forEach((action, i) => {
+  getActions().forEach((action, i) => {
     const actionElt = actionsElt.children[i];
     actionElt.dataset.action = action;
 
-    if (i === selected) {
+    if (i === getSelectedIndex()) {
       actionElt.classList.add("selected");
     } else {
       actionElt.classList.remove("selected");
@@ -84,16 +29,17 @@ function createAction() {
   actionElt.classList.add("material-symbols-outlined");
   actionElt.addEventListener("click", () => {
     const action = actionElt.dataset.action;
-    if (action === NONE || actions[selected] === action) return;
-    selected = actions.indexOf(action);
+    if (action === NONE || getSelectedAction() === action) return;
+    setSelectedIndex(getActions().indexOf(action));
     renderActions();
+    renderViewport();
     addLog(`Changed selected action to '${action}'`);
   });
   return actionElt;
 }
 
 export function setUpActions() {
-  actions.forEach((action) => actionsElt.appendChild(createAction()));
+  getActions().forEach(() => actionsElt.appendChild(createAction()));
   renderActions();
 }
 

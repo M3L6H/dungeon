@@ -1,4 +1,4 @@
-import { Tile } from './tile.js';
+import { Tile } from "./tile.js";
 
 const ROWS = 1000;
 const COLS = 1000;
@@ -7,7 +7,7 @@ const MIN_RADIUS = 3;
 
 function randInRange(min, max) {
   min = Math.ceil(min);
-  max = Math.floor(max); 
+  max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -32,7 +32,7 @@ function dSquared(x1, y1, x2, y2) {
 function generateOrigins() {
   const origins = [];
 
-  let currRadius = Math.floor((ROWS + COLS) / 20);
+  let currRadius = Math.floor((ROWS + COLS) / 25);
   let maxFail = 10;
   let failures = 0;
 
@@ -277,7 +277,7 @@ class Map {
       this._fillRect(points[0], points[6], Tile.floor);
       this._fillRect(points[10], points[4], Tile.floor);
     });
-    
+
     edges.forEach(({ a, b }) => {
       if (isL(a, b)) {
         const m = {
@@ -288,8 +288,11 @@ class Map {
         this._fillRect(m, b, Tile.floor);
         return;
       }
-      
-      const mCoord = a.dir % 2 === 0 ? randInRange(Math.min(a.y, b.y) + 1, Math.max(a.y, b.y) - 1) : randInRange(Math.min(a.x, b.x) + 1, Math.max(a.x, b.x) - 1);
+
+      const mCoord =
+        a.dir % 2 === 0
+          ? randInRange(Math.min(a.y, b.y) + 1, Math.max(a.y, b.y) - 1)
+          : randInRange(Math.min(a.x, b.x) + 1, Math.max(a.x, b.x) - 1);
       const m1 = {
         x: a.dir % 2 === 0 ? a.x : mCoord,
         y: a.dir % 2 === 1 ? a.y : mCoord,
@@ -303,9 +306,10 @@ class Map {
       this._fillRect(m2, b, Tile.floor);
     });
   }
-  
+
   getRandomRoom() {
-    const origin = this.origins[Math.floor(Math.random() * this.origins.length)];
+    const origin =
+      this.origins[Math.floor(Math.random() * this.origins.length)];
     return {
       x: origin.x,
       y: origin.y,
@@ -369,9 +373,9 @@ export async function generateMap() {
 
 async function init() {
   const canvas = document.getElementById("canvas");
-  
+
   if (!canvas) return;
-  
+
   const ctx = canvas.getContext("2d");
   const map = await generateMap();
   const imageData = ctx.createImageData(canvas.width, canvas.height);
@@ -379,4 +383,4 @@ async function init() {
   ctx.putImageData(imageData, 0, 0);
 }
 
-window.addEventListener('load', async () => await init());
+window.addEventListener("load", async () => await init());

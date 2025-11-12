@@ -134,6 +134,19 @@ section {
   z-index: 10;
 }
 
+.in-range {
+  cursor: pointer;
+  position: relative;
+}
+
+.in-range::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: green;
+  opacity: 0.25;
+}
+
 .log {
   color: white;
 }

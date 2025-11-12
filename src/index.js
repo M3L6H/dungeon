@@ -27,17 +27,17 @@ function renderBars() {
 }
 
 async function init() {
-  setUpViewport();
-  renderBars();
-  setUpActions();
-
   await newGame();
   const map = getMap();
   const { x, y } = map.getRandomRoom();
   const player = getPlayer();
   player.x = x;
   player.y = y;
-  renderViewport(x, y, map);
+
+  setUpViewport();
+  renderBars();
+  setUpActions();
+  renderViewport();
 }
 
 addEventListener("load", async () => await init());

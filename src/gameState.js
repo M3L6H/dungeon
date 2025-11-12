@@ -1,11 +1,33 @@
+import { addLog } from "./logs.js";
 import { generateMap } from "./map.js";
 import { createPlayer } from "./player.js";
+import { schedule } from "./time.js";
+
+export const NONE = "none";
+const MOVE = "move";
+const EXAMINE = "examine";
+const INTERACT = "interact";
+const SETTINGS = "settings";
 
 class GameState {
   constructor(props) {
+    this.actions = [
+      MOVE,
+      EXAMINE,
+      INTERACT,
+      NONE,
+      NONE,
+      NONE,
+      NONE,
+      NONE,
+      NONE,
+      NONE,
+      SETTINGS,
+    ];
     this.controlling = true;
     this.map = props.map;
     this.player = props.player;
+    this.selected = 0;
     this.time = 0;
     this.timeline = {};
   }
@@ -20,6 +42,10 @@ export async function newGame() {
   });
 }
 
+export function getActions() {
+  return gameState.actions;
+}
+
 export function getMap() {
   return gameState.map;
 }
@@ -32,6 +58,14 @@ export function getPlayer() {
   return gameState.player;
 }
 
+export function getSelectedAction() {
+  return gameState.actions[gameState.selected];
+}
+
+export function getSelectedIndex() {
+  return gameState.selected;
+}
+
 export function getTime() {
   return gameState.time;
 }
@@ -40,8 +74,38 @@ export function getTimeline() {
   return gameState.timeline;
 }
 
+export function setSelectedIndex(i) {
+  gameState.selected = i;
+}
+
+export function act(entity, action, target) {
+  if (!inRange(entity, action, target)) return false;
+
+  switch (action) {
+    case "move":
+      return move(entity, target);
+    default:
+      addLog(`${entity.name} cannot ${action}`);
+  }
+
+  return false;
+}
+
 export function inControl() {
   return gameState.controlling;
+}
+
+export function inRange(entity, action, target) {
+  const { x, y } = target;
+  switch (action) {
+    case "move":
+      const dx = Math.abs(x - entity.x);
+      const dy = Math.abs(y - entity.y);
+      const tile = getMap().getTile(x, y);
+      return dx + dy === 1 && tile.isTraversable;
+    default:
+      return false;
+  }
 }
 
 export function incrementTime() {
@@ -50,4 +114,26 @@ export function incrementTime() {
 
 export function releaseControl() {
   gameState.controlling = false;
+}
+
+function move(entity, target) {
+  const { x, y } = target;
+  let dir;
+  if (entity.x !== x) {
+    dir = entity.x < x ? "East" : "West";
+  } else {
+    dir = entity.y > y ? "North" : "South";
+  }
+  const time = getTimeToMove(entity);
+  schedule(entity, time, () => {
+    entity.x = x;
+    entity.y = y;
+    addLog(`${entity.name} moved ${dir}`);
+  });
+  addLog(`${entity.name} is moving ${dir}`);
+  return true;
+}
+
+function getTimeToMove(entity) {
+  return Math.max(1, 10 - Math.floor(Math.sqrt(entity.agility)));
 }

@@ -1,7 +1,5 @@
 import {
   getInput,
-  getMap,
-  getPlayer,
   getTime,
   getTimeline,
   inControl,
@@ -37,9 +35,7 @@ export function tick() {
   const time = incrementTime();
   const events = timeline[time] ?? [];
   events.forEach((event) => event());
-  const { x, y } = getPlayer();
-  const map = getMap();
-  renderViewport(x, y, map);
+  renderViewport();
   delete timeline[time];
 }
 

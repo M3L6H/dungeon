@@ -1,5 +1,12 @@
-import { act, getSelectedAction } from "./actions.js";
-import { getPlayer, inControl, releaseControl } from "./gameState.js";
+import {
+  act,
+  getMap,
+  getPlayer,
+  getSelectedAction,
+  inControl,
+  inRange,
+  releaseControl,
+} from "./gameState.js";
 import { advance } from "./time.js";
 
 const W = 11;
@@ -8,7 +15,9 @@ const H = 11;
 const HH = Math.floor(H / 2);
 const viewportElt = document.getElementById("viewport");
 
-export function renderViewport(x, y, map) {
+export function renderViewport() {
+  const { x, y } = getPlayer();
+  const map = getMap();
   for (let i = 0; i < W; ++i) {
     for (let j = 0; j < H; ++j) {
       const tileElt = viewportElt.children[i + j * W];
@@ -21,11 +30,18 @@ export function renderViewport(x, y, map) {
         continue;
       }
 
+      const target = { x: tX, y: tY };
+      if (inRange(getPlayer(), getSelectedAction(), target)) {
+        tileElt.classList.add("in-range");
+      } else {
+        tileElt.classList.remove("in-range");
+      }
+
       const tile = map.getTile(tX, tY);
       tileElt.style.backgroundImage = tile.url;
       tileElt.onclick = () => {
         if (!inControl()) return;
-        if (act(getPlayer(), getSelectedAction(), { x: tX, y: tY })) {
+        if (act(getPlayer(), getSelectedAction(), target)) {
           releaseControl();
           advance();
         }
