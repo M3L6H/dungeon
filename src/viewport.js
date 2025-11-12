@@ -7,7 +7,7 @@ const viewportElt = document.getElementById('viewport');
 export function renderViewport(x, y, map) {
   for (let i = 0; i < W; ++i) {
     for (let j = 0; j < H; ++j) {
-      const tileElt = viewport
+      const tileElt = viewport.children[i + j * W];
       const tX = x - HW + i;
       const tY = y - HH + j;
       
