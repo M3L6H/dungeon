@@ -269,7 +269,7 @@ class Map {
     this.tiles = new Array(width * height);
 
     for (let i = 0; i < this.tiles.length; ++i) {
-      this.tiles[i] = Tile.wall();
+      this.tiles[i] = Tile.wall;
     }
 
     rooms.forEach((points) => {
@@ -333,14 +333,14 @@ class Map {
     return this.tiles[x + y * this.w];
   }
 
-  _fillRect(a, b, tileFn) {
+  _fillRect(a, b, tile) {
     const x0 = Math.min(a.x, b.x);
     const x1 = Math.max(a.x, b.x);
     const y0 = Math.min(a.y, b.y);
     const y1 = Math.max(a.y, b.y);
     for (let x = x0; x <= x1; ++x) {
       for (let y = y0; y <= y1; ++y) {
-        this._setTile(x, y, tileFn());
+        this._setTile(x, y, tile);
       }
     }
   }

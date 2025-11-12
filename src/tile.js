@@ -1,20 +1,16 @@
 export class Tile {
-  static floor() {
-    return new Tile({
-      name: "Dungeon Floor",
-      url: url('images/floor.png'),
-      indestructible: true,
-    });
-  }
+  static floor = new Tile({
+    name: "Dungeon Floor",
+    url: "url('images/floor.png')",
+    indestructible: true,
+  });
 
-  static wall() {
-    return new Tile({
-      name: "Dungeon Wall",
-      indestructible: true,
-      obstructing: true,
-      opaque: true,
-    });
-  }
+  static wall = new Tile({
+    name: "Dungeon Wall",
+    indestructible: true,
+    obstructing: true,
+    opaque: true,
+  });
 
   constructor(props) {
     this.name = props.name ?? "Unknown";
