@@ -102,7 +102,7 @@ export function inRange(entity, action, target) {
       const dx = Math.abs(x - entity.x);
       const dy = Math.abs(y - entity.y);
       const tile = getMap().getTile(x, y);
-      return dx + dy === 0 || (dx + dy === 1 && tile.isTraversable && entity.stamina > 0);
+      return (dx + dy === 0 && entity.stamina < entity.maxStamina) || (dx + dy === 1 && tile.isTraversable && entity.stamina > 0);
     default:
       return false;
   }
