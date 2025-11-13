@@ -13,7 +13,29 @@ const W = 11;
 const HW = Math.floor(W / 2);
 const H = 11;
 const HH = Math.floor(H / 2);
+
+const healthElt = document.getElementById("health");
+let maxMana = 10;
+let mana = maxMana;
+const manaElt = document.getElementById("mana");
+const staminaElt = document.getElementById("stamina");
 const viewportElt = document.getElementById("viewport");
+
+function renderBar(elt, curr, max) {
+  const fillElt = elt.querySelector(".fill");
+  const textElt = elt.querySelector(".bar-text");
+
+  fillElt.style.width = `${(curr / max) * 100}%`;
+  textElt.textContent = `${curr} / ${max}`;
+}
+
+function renderBars() {
+  const { hitpoints, maxHitpoints, stamina, maxStamina } = getPlayer();
+  renderBar(healthElt, hitpoints, maxHitpoints);
+  renderBar(manaElt, mana, maxMana);
+  renderBar(staminaElt, stamina, maxStamina);
+}
+
 
 export function renderViewport() {
   const { x, y } = getPlayer();
@@ -48,6 +70,8 @@ export function renderViewport() {
       };
     }
   }
+ 
+  renderBars();
 }
 
 function createTile() {
@@ -61,4 +85,3 @@ export function setUpViewport() {
     viewportElt.appendChild(createTile());
   }
 }
-

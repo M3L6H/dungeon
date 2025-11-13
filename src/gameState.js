@@ -102,7 +102,7 @@ export function inRange(entity, action, target) {
       const dx = Math.abs(x - entity.x);
       const dy = Math.abs(y - entity.y);
       const tile = getMap().getTile(x, y);
-      return dx + dy === 1 && tile.isTraversable;
+      return dx + dy === 0 || (dx + dy === 1 && tile.isTraversable && entity.stamina > 0);
     default:
       return false;
   }
@@ -118,12 +118,17 @@ export function releaseControl() {
 
 function move(entity, target) {
   const { x, y } = target;
+  if (x === entity.x && y === entity.y) {
+    return rest();
+  }
+ 
   let dir;
   if (entity.x !== x) {
     dir = entity.x < x ? "East" : "West";
   } else {
     dir = entity.y > y ? "North" : "South";
   }
+  --entity.stamina;
   const time = getTimeToMove(entity);
   schedule(entity, time, () => {
     entity.x = x;
@@ -134,6 +139,15 @@ function move(entity, target) {
   return true;
 }
 
+function rest() {
+  schedule(entity, 1, () => {
+    entity.stamina += entity.constitution;
+    addLog(`${entity.name} rested`);
+  });
+  addLog(`${entity.name} is resting`);
+  return true;
+}
+
 function getTimeToMove(entity) {
-  return Math.max(1, 10 - Math.floor(Math.sqrt(entity.agility)));
+  return Math.max(1, 11 - Math.floor(Math.sqrt(entity.speed)));
 }
