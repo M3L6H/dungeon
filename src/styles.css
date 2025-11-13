@@ -1,5 +1,6 @@
 body,
 div,
+main,
 section,
 span {
   margin: 0;
@@ -15,8 +16,7 @@ body {
   background-color: #232333;
   padding: 2px;
 
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
 }
 
 section {
@@ -24,9 +24,23 @@ section {
   margin-bottom: 16px !important;
 }
 
-#viewport {
-  aspect-ratio: 11/11;
+#main {
   margin: auto;
+  height: 100vh;
+}
+
+#game {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+#viewport {
+  flex-shrink: 0;
+  aspect-ratio: 11/11;
   max-width: 75vh;
   max-height: 75vh;
 
@@ -68,7 +82,7 @@ section {
 }
 
 #logs {
-  height: 15vh;
+  white-space: pre-line;
   overflow-y: auto;
 }
 

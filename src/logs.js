@@ -1,12 +1,10 @@
-import { getTime } from "./gameState.js";
+import { getLogs, getTime } from "./gameState.js";
 
 const logsElt = document.getElementById("logs");
 
 export function addLog(msg) {
-  const logElt = document.createElement("p");
-  logElt.classList.add("log");
-  logElt.textContent = `${getTime()}: ${msg}`;
-  logsElt.appendChild(logElt);
+  const logs = getLogs();
+  logs.push(`${getTime()}: ${msg}`);
+  logsElt.textContent = logs.slice(-100).join("\r\n");
   logsElt.scrollTop = logsElt.scrollHeight;
 }
-

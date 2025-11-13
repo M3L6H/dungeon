@@ -5,6 +5,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
     <link rel="stylesheet" href="./styles.css" />
     <link
       rel="stylesheet"
@@ -13,22 +14,26 @@
     <script src="./index.js" type="module"></script>
   </head>
   <body>
-    <section id="viewport"></section>
-    <section id="vitals">
-      <div class="bar" id="health">
-        <div class="fill"></div>
-        <span class="bar-text">75/100</span>
+    <main id="main">
+      <div id="game">
+        <section id="viewport"></section>
+        <section id="vitals">
+          <div class="bar" id="health">
+            <div class="fill"></div>
+            <span class="bar-text">75/100</span>
+          </div>
+          <div class="bar" id="mana">
+            <div class="fill"></div>
+            <span class="bar-text">75/100</span>
+          </div>
+          <div class="bar" id="stamina">
+            <div class="fill"></div>
+            <span class="bar-text">75/100</span>
+          </div>
+        </section>
+        <section id="actions"></section>
+        <section id="logs"></section>
       </div>
-      <div class="bar" id="mana">
-        <div class="fill"></div>
-        <span class="bar-text">75/100</span>
-      </div>
-      <div class="bar" id="stamina">
-        <div class="fill"></div>
-        <span class="bar-text">75/100</span>
-      </div>
-    </section>
-    <section id="actions"></section>
-    <section id="logs"></section>
+    </main>
   </body>
 </html>

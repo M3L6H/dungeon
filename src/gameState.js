@@ -25,6 +25,7 @@ class GameState {
       SETTINGS,
     ];
     this.controlling = true;
+    this.logs = [];
     this.map = props.map;
     this.player = props.player;
     this.selected = 0;
@@ -46,16 +47,23 @@ export function getActions() {
   return gameState.actions;
 }
 
-export function getMap() {
-  return gameState.map;
-}
-
 export function getInput() {
   if (getPlayer().stamina === 0) {
     return rest(getPlayer(), true);
   }
 
   gameState.controlling = true;
+}
+
+/**
+ * @returns {string[]} List of logs
+ */
+export function getLogs() {
+  return gameState.logs;
+}
+
+export function getMap() {
+  return gameState.map;
 }
 
 export function getPlayer() {
