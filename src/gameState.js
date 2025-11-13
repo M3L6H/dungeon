@@ -119,7 +119,7 @@ export function releaseControl() {
 function move(entity, target) {
   const { x, y } = target;
   if (x === entity.x && y === entity.y) {
-    return rest();
+    return rest(entity);
   }
  
   let dir;
@@ -139,7 +139,7 @@ function move(entity, target) {
   return true;
 }
 
-function rest() {
+function rest(entity) {
   schedule(entity, 1, () => {
     entity.stamina += entity.constitution;
     addLog(`${entity.name} rested`);
