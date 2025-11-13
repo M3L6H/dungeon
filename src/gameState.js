@@ -51,6 +51,10 @@ export function getMap() {
 }
 
 export function getInput() {
+  if (getPlayer().stamina === 0) {
+    return rest(getPlayer(), true);
+  }
+
   gameState.controlling = true;
 }
 
@@ -102,7 +106,10 @@ export function inRange(entity, action, target) {
       const dx = Math.abs(x - entity.x);
       const dy = Math.abs(y - entity.y);
       const tile = getMap().getTile(x, y);
-      return (dx + dy === 0 && entity.stamina < entity.maxStamina) || (dx + dy === 1 && tile.isTraversable && entity.stamina > 0);
+      return (
+        (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
+        (dx + dy === 1 && tile.isTraversable && entity.stamina > 0)
+      );
     default:
       return false;
   }
@@ -121,7 +128,7 @@ function move(entity, target) {
   if (x === entity.x && y === entity.y) {
     return rest(entity);
   }
- 
+
   let dir;
   if (entity.x !== x) {
     dir = entity.x < x ? "East" : "West";
@@ -139,9 +146,10 @@ function move(entity, target) {
   return true;
 }
 
-function rest(entity) {
-  schedule(entity, 1, () => {
-    entity.stamina += entity.constitution;
+function rest(entity, full = false) {
+  const time = full ? Math.ceil(entity.maxStamina / entity.constitution) : 1;
+  schedule(entity, time, () => {
+    entity.stamina += full ? entity.maxStamina : entity.constitution;
     addLog(`${entity.name} rested`);
   });
   addLog(`${entity.name} is resting`);

@@ -92,15 +92,19 @@ function validDir(a, b) {
   const dy = b.y - a.y;
 
   switch (a.dir) {
-    case 0:
-      return dy < 0;
-    case 1:
-      return dx > 0;
-    case 2:
-      return dy > 0;
+    case 0: // NORTH
+      return dy < -3; // b.y is NORTH of a.y (b.y < a.y)
+    case 1: // EAST
+      return dx > 3; // b.x is EAST of a.x (b.x > a.x)
+    case 2: // SOUTH
+      return dy > 3; // b.y is SOUTH of a.y (b.y > a.y)
+    case 3: // WEST
+      return dx < -3; // b.x is WEST of a.x (b.x < a.x)
     default:
-      return dx < 0;
+      console.error(`Invalid dir ${a.dir}`);
   }
+
+  return false;
 }
 
 function cityBlockDist(a, b) {
@@ -115,8 +119,10 @@ function generateMST(count, nodes) {
   for (let i = 0; i < nodes.length; ++i) {
     for (let j = i + 1; j < nodes.length; ++j) {
       if (nodes[i].id === nodes[j].id) continue;
-      if (!validDir(nodes[i], nodes[j]) || !validDir(nodes[j], nodes[i]))
+      if (!validDir(nodes[i], nodes[j]) || !validDir(nodes[j], nodes[i])) {
         continue;
+      }
+
       edgeHeap.push({
         aId: i,
         bId: j,
@@ -136,7 +142,8 @@ function generateMST(count, nodes) {
 
     if (usedNode[edge.aId] || usedNode[edge.bId]) continue;
     const union = inTree.union(edge.a.id, edge.b.id);
-    const additional = edge.len < MAX_ADDITIONAL_LEN && Math.random() < ADDITIONAL_CHANCE;
+    const additional =
+      edge.len < MAX_ADDITIONAL_LEN && Math.random() < ADDITIONAL_CHANCE;
     if (!(union || additional)) continue;
 
     edges.push(edge);

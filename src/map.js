@@ -250,7 +250,7 @@ function roomsToNodes(rooms) {
 
 function generateEdges(count, nodes) {
   return new Promise((resolve) => {
-    const edgeWorker = new Worker("edgeWorker.js");
+    const edgeWorker = new Worker("edgeWorker.js" + `?${Math.random()}`);
     edgeWorker.postMessage({ count, nodes });
     edgeWorker.onmessage = function (event) {
       resolve(event.data);
@@ -291,8 +291,8 @@ class Map {
 
       const mCoord =
         a.dir % 2 === 0
-          ? randInRange(Math.min(a.y, b.y) + 1, Math.max(a.y, b.y) - 1)
-          : randInRange(Math.min(a.x, b.x) + 1, Math.max(a.x, b.x) - 1);
+          ? randInRange(Math.min(a.y, b.y) + 2, Math.max(a.y, b.y) - 2)
+          : randInRange(Math.min(a.x, b.x) + 2, Math.max(a.x, b.x) - 2);
       const m1 = {
         x: a.dir % 2 === 0 ? a.x : mCoord,
         y: a.dir % 2 === 1 ? a.y : mCoord,
