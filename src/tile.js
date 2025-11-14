@@ -31,6 +31,10 @@ export class Tile {
     this.obstructing = props.obstructing ?? false;
     this.opaque = props.opaque ?? false;
   }
+  
+  get isOpaque() {
+    return this.opaque;
+  }
 
   get isTraversable() {
     return !this.obstructing;

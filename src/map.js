@@ -320,7 +320,7 @@ class Map {
       (tX - x) * dirMod2 * -(dir - 2) + (tY - y) * invDirMod2 * (dir - 1);
     const dj = (tY - y) * dirMod2 + (tX - x) * invDirMod2;
 
-    return 0 <= di && di <= sightRange && Math.abs(dj) <= di + 1;
+    return 0 <= di && di <= sightRange && Math.abs(dj) <= di + 1 && this._rayCast(x, y, tX, tY) === { x: tX, y: tY };
   }
 
   getEntities(x, y) {
@@ -402,6 +402,36 @@ class Map {
       }
     }
   }
+  
+  _rayCast(x1, y1, x2, y2) {
+    if (x1 < x2) {
+      const m = (y2 - y1) / (x2 - x1);
+      for (let i = x1; i <= x2; ++i) {
+        const j = Math.round(m * i);
+        const tile = this.getTile(i, j);
+        if (tile.isOpaque) return { x: i, y: j }; 
+      }
+    } else if (x2 < x1) {
+      const m = (y1 - y2) / (x1 - x2);
+      for (let i = x2; i <= x1; ++i) {
+        const j = Math.round(m * i);
+        const tile = this.getTile(i, j);
+        if (tile.isOpaque) return { x: i, y: j }; 
+      }
+    } else if (y1 < y2) {
+      for (let j = y1; j <= y2; ++j) {
+        const tile = this.getTile(x1, j);
+        if (tile.isOpaque) return { x: x1, y: j }; 
+      }
+    } else {
+      for (let j = y2; j <= y1; ++j) {
+        const tile = this.getTile(x1, j);
+        if (tile.isOpaque) return { x: x1, y: j }; 
+      }
+    }
+    
+    return { x: x2, y: y2 };
+  }
 
   _setTile(x, y, tile) {
     this.tiles[x + y * this.w] = tile;
@@ -417,7 +447,7 @@ class Map {
         const x = entity.x + dx;
         const y = entity.y + dy;
 
-        if (x < 0 || x > this.w || y < 0 || y > this.h) continue;
+        if (x < 0 || x > this.w || y < 0 || y > this.h || !this.canEntitySeeTile(entity, x, y)) continue;
 
         entity.setTileInMemory(x, y, this.getTile(x, y).name);
       }

@@ -40,7 +40,6 @@ function renderBars() {
 function renderTile(tX, tY, tileElt) {
   const tile = getMap().getTile(tX, tY);
   tileElt.style.backgroundImage = tile.url;
-  tileElt.classList.remove("memory");
 }
 
 function renderMemoryTile(tileName, tileElt) {
@@ -92,6 +91,8 @@ export function renderViewport() {
       const tileElt = viewportElt.children[i + j * W];
       const tX = x - HW + i;
       const tY = y - HH + j;
+ 
+      tileElt.classList.remove("memory");
 
       if (tX < 0 || tX >= map.w || tY < 0 || tY >= map.h) {
         tileElt.style.backgroundImage = "none";
