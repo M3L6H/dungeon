@@ -410,17 +410,19 @@ class Map {
   _rayCast(x1, y1, x2, y2) {
     if (x1 < x2) {
       const m = (y2 - y1) / (x2 - x1);
-      for (let i = x1; i <= x2; ++i) {
-        const j = y1 + Math.round(m * (i - x1));
-        const tile = this.getTile(i, j);
-        if (tile.isOpaque) return { x: i, y: j }; 
+      for (let i = x1; i <= x2; i += 0.25) {
+        const x = Math.round(i);
+        const y = y1 + Math.round(m * (i - x1));
+        const tile = this.getTile(x, y);
+        if (tile.isOpaque) return { x, y }; 
       }
     } else if (x2 < x1) {
       const m = (y1 - y2) / (x1 - x2);
-      for (let i = x1; i >= x2; --i) {
-        const j = y1 + Math.round(m * (i - x1));
-        const tile = this.getTile(i, j);
-        if (tile.isOpaque) return { x: i, y: j }; 
+      for (let i = x1; i >= x2; i -= 0.25) {
+        const x = Math.round(i);
+        const y = y1 + Math.round(m * (i - x1));
+        const tile = this.getTile(x, y);
+        if (tile.isOpaque) return { x, y }; 
       }
     } else if (y1 < y2) {
       for (let j = y1; j <= y2; ++j) {
