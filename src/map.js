@@ -417,7 +417,7 @@ class Map {
         if (tile.isOpaque) return { x, y }; 
       }
     } else if (x2 < x1) {
-      const m = (y1 - y2) / (x1 - x2);
+      const m = (y2 - y1) / (x2 - x1);
       for (let i = x1; i >= x2; i -= 0.25) {
         const x = Math.round(i);
         const y = y1 + Math.round(m * (i - x1));
