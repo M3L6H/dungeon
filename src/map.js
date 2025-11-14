@@ -267,9 +267,11 @@ class Map {
     this.w = width;
     this.h = height;
     this.origins = origins;
+    this.entities = new Array(width * height);
     this.tiles = new Array(width * height);
 
     for (let i = 0; i < this.tiles.length; ++i) {
+      this.entities[i] = [];
       this.tiles[i] = Tile.wall;
     }
 
@@ -306,6 +308,10 @@ class Map {
       this._fillRect(m2, b, Tile.floor);
     });
   }
+  
+  getEntities(x, y) {
+    return this.entities[x + y * this.w];
+  }
 
   getRandomRoom() {
     const origin =
@@ -314,6 +320,30 @@ class Map {
       x: origin.x,
       y: origin.y,
     };
+  }
+  
+  /**
+   * UPDATES the entityToMove with tX, tY
+   */
+  moveEntity(entityToMove, tX, tY) {
+    const { name, x, y } = entityToMove;
+    const entities = this.getEntities(x, y);
+    if (entities.length === 1 && entities[0].name === name) {
+      entities.pop();
+    } else if (entities.length > 1) {
+      const replacement = entities.pop();
+      for (let i = 0; i < entities.length && replacement.name !== name; ++i) {
+        if (entities[i].name === name) {
+          entities[i] = replacement;
+          break;
+        }
+      }
+    }
+    
+    this.getEntities(tX, tY).push(entityToMove);
+    entityToMove.x = tX;
+    entityToMovr.y = tY;
+    return entityToMove;
   }
 
   writeToImage(imageData) {

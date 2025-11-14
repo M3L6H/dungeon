@@ -25,6 +25,7 @@ class GameState {
       SETTINGS,
     ];
     this.controlling = true;
+    this.entities = [props.player];
     this.logs = [];
     this.map = props.map;
     this.player = props.player;
@@ -45,6 +46,10 @@ export async function newGame() {
 
 export function getActions() {
   return gameState.actions;
+}
+
+export function getEntities() {
+  return gameState.entities;
 }
 
 export function getInput() {
@@ -131,26 +136,30 @@ export function releaseControl() {
   gameState.controlling = false;
 }
 
+const DIRS = [
+  "North",
+  "East",
+  "South",
+  "West", 
+];
+
 function move(entity, target) {
   const { x, y } = target;
   if (x === entity.x && y === entity.y) {
     return rest(entity);
   }
 
-  let dir;
-  if (entity.x !== x) {
-    dir = entity.x < x ? "East" : "West";
-  } else {
-    dir = entity.y > y ? "North" : "South";
-  }
+  const dx = x - entity.x;
+  const dy = y - entity.y;
+  const dir = dx * (dx + 2) + dy * (dy + 1);
+  entiry.dir = dir;
   --entity.stamina;
   const time = getTimeToMove(entity);
   schedule(entity, time, () => {
-    entity.x = x;
-    entity.y = y;
-    addLog(`${entity.name} moved ${dir}`);
+    getMap().moveEntity(entity, x, y);
+    addLog(`${entity.name} moved ${DIRS[dir]}`);
   });
-  addLog(`${entity.name} is moving ${dir}`);
+  addLog(`${entity.name} is moving ${DIRS[dir]}`);
   return true;
 }
 

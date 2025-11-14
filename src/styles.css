@@ -148,6 +148,14 @@ section {
   z-index: 10;
 }
 
+.entity {
+  background-size: cover;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  position: absolute;
+  inset: 0;
+}
+
 .in-range {
   cursor: pointer;
   position: relative;
@@ -171,4 +179,5 @@ section {
   background-size: cover;
   background-repeat: no-repeat;
   image-rendering: pixelated;
+  position: relative;
 }

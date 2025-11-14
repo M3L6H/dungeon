@@ -15,8 +15,7 @@ async function init() {
   const map = getMap();
   const { x, y } = map.getRandomRoom();
   const player = getPlayer();
-  player.x = x;
-  player.y = y;
+  map.moveEntity(player, x, y);
 
   setUpViewport();
   setUpActions();

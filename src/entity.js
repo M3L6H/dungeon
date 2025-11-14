@@ -4,10 +4,12 @@ const STAMINA_PER_ENDURANCE = 2;
 export class Entity {
   constructor(props) {
     this.name = props.name ?? 'Unknown';
+    this.gender = props.gender;
     this.isPlayer = props.isPlayer ?? false;
     
     this.x = props.x;
     this.y = props.y;
+    this.dir = 2;
     
     this.agility = props.agility ?? 1;
     this.constitution = props.constitution ?? 1;
@@ -27,6 +29,15 @@ export class Entity {
   
   get speed() {
     return this.agility;
+  }
+  
+  get sprite() {
+    const file = [
+      this.name.toLowerCase(),
+      this.gender,
+      this.dir,
+    ].filter(part => !!part).join('-');
+    return `url('images/${file}.png')`;
   }
   
   get stamina() {
