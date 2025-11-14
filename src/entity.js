@@ -1,16 +1,22 @@
 const HITPOINTS_PER_CONSTITUTION = 3;
 const STAMINA_PER_ENDURANCE = 2;
 
+let id = 0;
+
 export class Entity {
   constructor(props) {
     this.displayName = props.displayName ?? "Unknown";
+    this.id = ++id;
     this.name = props.name;
-    this.gender = props.gender;
+    this.variant = props.variant;
 
     this.x = props.x ?? 0;
     this.y = props.y ?? 0;
     this.dir = 2;
 
+    this.level = 1;
+    this.xp = 0;
+ 
     this.agility = props.agility ?? 1;
     this.constitution = props.constitution ?? 1;
     this.endurance = props.endurance ?? 1;
@@ -19,6 +25,7 @@ export class Entity {
     this._stamina = this.maxStamina;
 
     this.w = props.w;
+    this.behaviors = props.behaviors ?? [];
     this.memory = new Array(props.w * props.h);
   }
 
@@ -51,7 +58,7 @@ export class Entity {
   }
 
   get sprite() {
-    const file = [this.name.toLowerCase(), this.gender, this.dir]
+    const file = [this.name.toLowerCase().replaceAll(' ', '-', this.variant, this.dir]
       .filter((part) => part !== undefined)
       .join("-");
     return `url('images/${file}.png')`;
@@ -68,4 +75,21 @@ export class Entity {
 
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
+}
+
+/**
+ * Creates a slime entity of the given color and variant.
+ * @returns {Entity} A slime entity
+ */
+export function createSlime(w, h, color = 'Blue', variant = 'small') {
+  return new Entity({
+    name: `${color} Slime`,
+    variant,
+    w,
+    h,
+  });
+}
+
+function wander(entity) {
+  
 }

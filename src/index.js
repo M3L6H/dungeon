@@ -1,5 +1,6 @@
 import { setUpActions } from "./actions.js";
-import { getMap, getPlayer, newGame } from "./gameState.js";
+import { createSlime } from "./entities.js";
+import { getEntities, getMap, getPlayer, newGame } from "./gameState.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
 function setSize() {
@@ -16,6 +17,9 @@ async function init() {
   const { x, y } = map.getRandomRoom();
   const player = getPlayer();
   map.moveEntity(player, x, y);
+  const slime = createSlime(map.w, map.h);
+  getEntities.push(slime);
+  map.moveEntity(slime, x + 1, y + 1);
 
   setUpViewport();
   setUpActions();
