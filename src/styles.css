@@ -82,6 +82,7 @@ section {
 }
 
 #logs {
+  color: white;
   white-space: pre-line;
   overflow-y: auto;
 }
@@ -168,10 +169,6 @@ section {
   inset: 0;
   background-color: green;
   opacity: 0.25;
-}
-
-.log {
-  color: white;
 }
 
 .memory {
