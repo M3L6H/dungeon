@@ -1,5 +1,5 @@
 import { setUpActions } from "./actions.js";
-import { createSlime } from "./entities.js";
+import { createSlime } from "./entity.js";
 import { getEntities, getMap, getPlayer, newGame } from "./gameState.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
@@ -18,7 +18,7 @@ async function init() {
   const player = getPlayer();
   map.moveEntity(player, x, y);
   const slime = createSlime(map.w, map.h);
-  getEntities.push(slime);
+  getEntities().push(slime);
   map.moveEntity(slime, x + 1, y + 1);
 
   setUpViewport();

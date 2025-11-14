@@ -71,6 +71,7 @@ function renderEntities(tX, tY, tileElt) {
   for (let i = 0; i < entityMaxIdx; ++i) {
     if (i >= entities.length) {
       tileElt.children[i].style.backgroundImage = "none";
+      continue;
     } else if (i >= tileElt.children.length) {
       const entityElt = document.createElement("div");
       entityElt.classList.add("entity");
@@ -91,7 +92,7 @@ export function renderViewport() {
       const tileElt = viewportElt.children[i + j * W];
       const tX = x - HW + i;
       const tY = y - HH + j;
- 
+
       tileElt.classList.remove("memory");
 
       if (tX < 0 || tX >= map.w || tY < 0 || tY >= map.h) {

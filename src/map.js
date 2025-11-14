@@ -320,7 +320,12 @@ class Map {
       (tX - x) * dirMod2 * -(dir - 2) + (tY - y) * invDirMod2 * (dir - 1);
     const dj = (tY - y) * dirMod2 + (tX - x) * invDirMod2;
 
-    return 0 <= di && di <= sightRange && Math.abs(dj) <= di + 1 && this._coordsEqual(this._rayCast(x, y, tX, tY), { x: tX, y: tY });
+    return (
+      0 <= di &&
+      di <= sightRange &&
+      Math.abs(dj) <= di + 1 &&
+      this._coordsEqual(this._rayCast(x, y, tX, tY), { x: tX, y: tY })
+    );
   }
 
   getEntities(x, y) {
@@ -340,6 +345,7 @@ class Map {
    * UPDATES the entityToMove with tX, tY and moves them in the map.
    */
   moveEntity(entityToMove, tX, tY) {
+    console.log("Moving", entityToMove, tX, tY);
     const { name, x, y } = entityToMove;
     const entities = this.getEntities(x, y);
     if (entities.length === 1 && entities[0].name === name) {
@@ -406,7 +412,7 @@ class Map {
       }
     }
   }
-  
+
   _rayCast(x1, y1, x2, y2) {
     if (x1 < x2) {
       const m = (y2 - y1) / (x2 - x1);
@@ -414,7 +420,7 @@ class Map {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
-        if (tile.isOpaque) return { x, y }; 
+        if (tile.isOpaque) return { x, y };
       }
     } else if (x2 < x1) {
       const m = (y2 - y1) / (x2 - x1);
@@ -422,23 +428,23 @@ class Map {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
-        if (tile.isOpaque) return { x, y }; 
+        if (tile.isOpaque) return { x, y };
       }
     } else if (y1 < y2) {
       for (let y = y1; y <= y2; ++y) {
         const tile = this.getTile(x1, y);
-        if (tile.isOpaque) return { x: x1, y }; 
+        if (tile.isOpaque) return { x: x1, y };
       }
     } else {
       for (let y = y1; y >= y2; --y) {
         const tile = this.getTile(x1, y);
-        if (tile.isOpaque) return { x: x1, y }; 
+        if (tile.isOpaque) return { x: x1, y };
       }
     }
-    
+
     return { x: x2, y: y2 };
   }
-  
+
   _round(n) {
     return Math.sign(n) * Math.round(Math.abs(n));
   }
@@ -457,7 +463,14 @@ class Map {
         const x = entity.x + dx;
         const y = entity.y + dy;
 
-        if (x < 0 || x > this.w || y < 0 || y > this.h || !this.canEntitySeeTile(entity, x, y)) continue;
+        if (
+          x < 0 ||
+          x > this.w ||
+          y < 0 ||
+          y > this.h ||
+          !this.canEntitySeeTile(entity, x, y)
+        )
+          continue;
 
         entity.setTileInMemory(x, y, this.getTile(x, y).name);
       }

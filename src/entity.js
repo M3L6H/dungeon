@@ -16,7 +16,7 @@ export class Entity {
 
     this.level = 1;
     this.xp = 0;
- 
+
     this.agility = props.agility ?? 1;
     this.constitution = props.constitution ?? 1;
     this.endurance = props.endurance ?? 1;
@@ -58,7 +58,11 @@ export class Entity {
   }
 
   get sprite() {
-    const file = [this.name.toLowerCase().replaceAll(' ', '-', this.variant, this.dir]
+    const file = [
+      this.name.toLowerCase().replaceAll(" ", "-"),
+      this.variant,
+      this.dir,
+    ]
       .filter((part) => part !== undefined)
       .join("-");
     return `url('images/${file}.png')`;
@@ -81,7 +85,7 @@ function clamp(val, min, max) {
  * Creates a slime entity of the given color and variant.
  * @returns {Entity} A slime entity
  */
-export function createSlime(w, h, color = 'Blue', variant = 'small') {
+export function createSlime(w, h, color = "Blue", variant = "small") {
   return new Entity({
     name: `${color} Slime`,
     variant,
@@ -90,6 +94,4 @@ export function createSlime(w, h, color = 'Blue', variant = 'small') {
   });
 }
 
-function wander(entity) {
-  
-}
+function wander(entity) {}
