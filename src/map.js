@@ -411,16 +411,16 @@ class Map {
     if (x1 < x2) {
       const m = (y2 - y1) / (x2 - x1);
       for (let i = 0; i <= x2 - x1; i += 0.25) {
-        const x = Math.round(x1 + i);
-        const y = y1 + Math.round(m * i);
+        const x = this._round(x1 + i);
+        const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
         if (tile.isOpaque) return { x, y }; 
       }
     } else if (x2 < x1) {
       const m = (y2 - y1) / (x2 - x1);
       for (let i = 0; i >= x2 - x1; i -= 0.25) {
-        const x = Math.round(x1 + i);
-        const y = y1 + Math.round(m * i);
+        const x = this._round(x1 + i);
+        const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
         if (tile.isOpaque) return { x, y }; 
       }
@@ -437,6 +437,10 @@ class Map {
     }
     
     return { x: x2, y: y2 };
+  }
+  
+  _round(n) {
+    return Math.sign(n) * Math.round(Math.abs(n));
   }
 
   _setTile(x, y, tile) {
