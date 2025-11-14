@@ -7,6 +7,7 @@ export class Tile {
 
   static wall = new Tile({
     name: "Dungeon Wall",
+    url: "url('images/wall.png')",
     indestructible: true,
     obstructing: true,
     opaque: true,

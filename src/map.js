@@ -320,7 +320,7 @@ class Map {
       (tX - x) * dirMod2 * -(dir - 2) + (tY - y) * invDirMod2 * (dir - 1);
     const dj = (tY - y) * dirMod2 + (tX - x) * invDirMod2;
 
-    return 0 <= di && di <= sightRange && Math.abs(dj) <= di + 1 && this._rayCast(x, y, tX, tY) === { x: tX, y: tY };
+    return 0 <= di && di <= sightRange && Math.abs(dj) <= di + 1 && this._coordsEqual(this._rayCast(x, y, tX, tY), { x: tX, y: tY });
   }
 
   getEntities(x, y) {
@@ -389,6 +389,10 @@ class Map {
    */
   getTile(x, y) {
     return this.tiles[x + y * this.w];
+  }
+
+  _coordsEqual(a, b) {
+    return a.x === b.x && a.y === b.y;
   }
 
   _fillRect(a, b, tile) {
