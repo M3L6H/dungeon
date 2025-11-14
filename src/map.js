@@ -407,14 +407,14 @@ class Map {
     if (x1 < x2) {
       const m = (y2 - y1) / (x2 - x1);
       for (let i = x1; i <= x2; ++i) {
-        const j = Math.round(m * i);
+        const j = y1 + Math.round(m * (i - x1));
         const tile = this.getTile(i, j);
         if (tile.isOpaque) return { x: i, y: j }; 
       }
     } else if (x2 < x1) {
       const m = (y1 - y2) / (x1 - x2);
-      for (let i = x2; i <= x1; ++i) {
-        const j = Math.round(m * i);
+      for (let i = x1; i >= x2; --i) {
+        const j = y1 + Math.round(m * (i - x1));
         const tile = this.getTile(i, j);
         if (tile.isOpaque) return { x: i, y: j }; 
       }
@@ -424,7 +424,7 @@ class Map {
         if (tile.isOpaque) return { x: x1, y: j }; 
       }
     } else {
-      for (let j = y2; j <= y1; ++j) {
+      for (let j = y1; j >= y2; --j) {
         const tile = this.getTile(x1, j);
         if (tile.isOpaque) return { x: x1, y: j }; 
       }
