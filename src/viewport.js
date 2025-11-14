@@ -46,6 +46,10 @@ function renderMemoryTile(tileName, tileElt) {
   const tile = Tile.nameToTile[tileName];
   tileElt.style.backgroundImage = tile.url;
   tileElt.classList.add("memory");
+  
+  for (let i = 0; i < tileElt.children.length; ++i) {
+    tileElt.children[i].style.backgroundImage = "none";
+  }
 }
 
 function renderRange(tX, tY, tileElt) {
