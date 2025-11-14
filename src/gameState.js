@@ -136,12 +136,7 @@ export function releaseControl() {
   gameState.controlling = false;
 }
 
-const DIRS = [
-  "North",
-  "East",
-  "South",
-  "West", 
-];
+const DIRS = ["North", "East", "South", "West"];
 
 function move(entity, target) {
   const { x, y } = target;
@@ -151,8 +146,8 @@ function move(entity, target) {
 
   const dx = x - entity.x;
   const dy = y - entity.y;
-  const dir = dx * (dx + 2) + dy * (dy + 1);
-  entiry.dir = dir;
+  const dir = Math.abs(dx) * (-dx + 2) + Math.abs(dy) * (dy + 1);
+  entity.dir = dir;
   --entity.stamina;
   const time = getTimeToMove(entity);
   schedule(entity, time, () => {

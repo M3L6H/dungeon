@@ -44,17 +44,18 @@ export function renderViewport() {
       const tileElt = viewportElt.children[i + j * W];
       const tX = x - HW + i;
       const tY = y - HH + j;
-      
+
       const entities = map.getEntities(tX, tY);
-      for (let i = 0; i < Math.max(tileElt.children.length, entities.length); ++i) {
+      const entityMaxIdx = Math.max(tileElt.children.length, entities.length);
+      for (let i = 0; i < entityMaxIdx; ++i) {
         if (i >= entities.length) {
           tileElt.children[i].style.backgroundImage = "none";
         } else if (i >= tileElt.children.length) {
           const entityElt = document.createElement("div");
-          entityElt.classlist.add("entity");
+          entityElt.classList.add("entity");
           tileElt.appendChild(entityElt);
         }
-        tileElt.children[i].style.backgroundImage = entity.sprite;
+        tileElt.children[i].style.backgroundImage = entities[i].sprite;
       }
 
       if (tX < 0 || tX >= map.w || tY < 0 || tY >= map.h) {
@@ -81,7 +82,7 @@ export function renderViewport() {
       };
     }
   }
- 
+
   renderBars();
 }
 

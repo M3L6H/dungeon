@@ -154,6 +154,7 @@ section {
   image-rendering: pixelated;
   position: absolute;
   inset: 0;
+  z-index: 1;
 }
 
 .in-range {

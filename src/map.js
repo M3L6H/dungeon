@@ -308,7 +308,7 @@ class Map {
       this._fillRect(m2, b, Tile.floor);
     });
   }
-  
+
   getEntities(x, y) {
     return this.entities[x + y * this.w];
   }
@@ -321,9 +321,9 @@ class Map {
       y: origin.y,
     };
   }
-  
+
   /**
-   * UPDATES the entityToMove with tX, tY
+   * UPDATES the entityToMove with tX, tY and moves them in the map.
    */
   moveEntity(entityToMove, tX, tY) {
     const { name, x, y } = entityToMove;
@@ -339,10 +339,10 @@ class Map {
         }
       }
     }
-    
+
     this.getEntities(tX, tY).push(entityToMove);
     entityToMove.x = tX;
-    entityToMovr.y = tY;
+    entityToMove.y = tY;
     return entityToMove;
   }
 
