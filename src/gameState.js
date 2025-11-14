@@ -38,9 +38,10 @@ class GameState {
 let gameState = {};
 
 export async function newGame() {
+  const map = await generateMap();
   gameState = new GameState({
-    map: await generateMap(),
-    player: createPlayer(),
+    map,
+    player: createPlayer(map.w, map.h),
   });
 }
 

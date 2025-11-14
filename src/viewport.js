@@ -7,6 +7,7 @@ import {
   inRange,
   releaseControl,
 } from "./gameState.js";
+import { Tile } from "./tile.js";
 import { advance } from "./time.js";
 
 const W = 11;
@@ -36,8 +37,55 @@ function renderBars() {
   renderBar(staminaElt, stamina, maxStamina);
 }
 
+function renderTile(tX, tY, tileElt) {
+  const tile = getMap().getTile(tX, tY);
+  tileElt.style.backgroundImage = tile.url;
+  tileElt.classList.remove("memory");
+}
+
+function renderMemoryTile(tileName, tileElt) {
+  const tile = Tile.nameToTile[tileName];
+  tileElt.style.backgroundImage = tile.url;
+  tileElt.classList.add("memory");
+}
+
+function renderRange(tX, tY, tileElt) {
+  const target = { x: tX, y: tY };
+  if (inRange(getPlayer(), getSelectedAction(), target)) {
+    tileElt.classList.add("in-range");
+  } else {
+    tileElt.classList.remove("in-range");
+  }
+
+  tileElt.onclick = () => {
+    if (!inControl()) return;
+    if (act(getPlayer(), getSelectedAction(), target)) {
+      releaseControl();
+      advance();
+    }
+  };
+}
+
+function renderEntities(tX, tY, tileElt) {
+  const entities = getMap().getEntities(tX, tY);
+  const entityMaxIdx = Math.max(tileElt.children.length, entities.length);
+  for (let i = 0; i < entityMaxIdx; ++i) {
+    if (i >= entities.length) {
+      tileElt.children[i].style.backgroundImage = "none";
+    } else if (i >= tileElt.children.length) {
+      const entityElt = document.createElement("div");
+      entityElt.classList.add("entity");
+      tileElt.appendChild(entityElt);
+    }
+    tileElt.children[i].style.backgroundImage = entities[i].sprite;
+  }
+}
+
 export function renderViewport() {
-  const { x, y } = getPlayer();
+  const player = getPlayer();
+  const { dir, sightRange, x, y } = player;
+  const dirMod2 = dir % 2;
+  const invDirMod2 = 1 - dirMod2;
   const map = getMap();
   for (let i = 0; i < W; ++i) {
     for (let j = 0; j < H; ++j) {
@@ -45,41 +93,21 @@ export function renderViewport() {
       const tX = x - HW + i;
       const tY = y - HH + j;
 
-      const entities = map.getEntities(tX, tY);
-      const entityMaxIdx = Math.max(tileElt.children.length, entities.length);
-      for (let i = 0; i < entityMaxIdx; ++i) {
-        if (i >= entities.length) {
-          tileElt.children[i].style.backgroundImage = "none";
-        } else if (i >= tileElt.children.length) {
-          const entityElt = document.createElement("div");
-          entityElt.classList.add("entity");
-          tileElt.appendChild(entityElt);
-        }
-        tileElt.children[i].style.backgroundImage = entities[i].sprite;
-      }
-
       if (tX < 0 || tX >= map.w || tY < 0 || tY >= map.h) {
         tileElt.style.backgroundImage = "none";
         tileElt.onclick = undefined;
         continue;
       }
 
-      const target = { x: tX, y: tY };
-      if (inRange(getPlayer(), getSelectedAction(), target)) {
-        tileElt.classList.add("in-range");
+      if (map.canEntitySeeTile(player, tX, tY)) {
+        renderTile(tX, tY, tileElt);
+        renderEntities(tX, tY, tileElt);
+      } else if (player.getTileInMemory(tX, tY) !== undefined) {
+        renderMemoryTile(player.getTileInMemory(tX, tY), tileElt);
       } else {
-        tileElt.classList.remove("in-range");
+        tileElt.style.backgroundImage = "none";
       }
-
-      const tile = map.getTile(tX, tY);
-      tileElt.style.backgroundImage = tile.url;
-      tileElt.onclick = () => {
-        if (!inControl()) return;
-        if (act(getPlayer(), getSelectedAction(), target)) {
-          releaseControl();
-          advance();
-        }
-      };
+      renderRange(tX, tY, tileElt);
     }
   }
 

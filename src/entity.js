@@ -3,9 +3,9 @@ const STAMINA_PER_ENDURANCE = 2;
 
 export class Entity {
   constructor(props) {
-    this.name = props.name ?? "Unknown";
+    this.displayName = props.displayName ?? "Unknown";
+    this.name = props.name;
     this.gender = props.gender;
-    this.isPlayer = props.isPlayer ?? false;
 
     this.x = props.x ?? 0;
     this.y = props.y ?? 0;
@@ -17,6 +17,21 @@ export class Entity {
 
     this.hitpoints = this.maxHitpoints;
     this._stamina = this.maxStamina;
+
+    this.w = props.w;
+    this.memory = new Array(props.w * props.h);
+  }
+
+  getTileInMemory(x, y) {
+    return this.memory[x + y * this.w];
+  }
+
+  setTileInMemory(x, y, name) {
+    this.memory[x + y * this.w] = name;
+  }
+
+  get isPlayer() {
+    return this.name === "Player";
   }
 
   get maxHitpoints() {
@@ -25,6 +40,10 @@ export class Entity {
 
   get maxStamina() {
     return this.endurance * STAMINA_PER_ENDURANCE;
+  }
+
+  get sightRange() {
+    return 5;
   }
 
   get speed() {
@@ -50,4 +69,3 @@ export class Entity {
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
 }
-

@@ -309,6 +309,20 @@ class Map {
     });
   }
 
+  /**
+   * @returns {boolean} Whether or not the entity can see the tile
+   */
+  canEntitySeeTile(entity, tX, tY) {
+    const { dir, sightRange, x, y } = entity;
+    const dirMod2 = dir % 2;
+    const invDirMod2 = 1 - dirMod2;
+    const di =
+      (tX - x) * dirMod2 * -(dir - 2) + (tY - y) * invDirMod2 * (dir - 1);
+    const dj = (tY - y) * dirMod2 + (tX - x) * invDirMod2;
+
+    return 0 <= di && di <= sightRange && Math.abs(dj) <= di + 1;
+  }
+
   getEntities(x, y) {
     return this.entities[x + y * this.w];
   }
@@ -343,6 +357,7 @@ class Map {
     this.getEntities(tX, tY).push(entityToMove);
     entityToMove.x = tX;
     entityToMove.y = tY;
+    this._updateMemory(entityToMove);
     return entityToMove;
   }
 
@@ -390,6 +405,23 @@ class Map {
 
   _setTile(x, y, tile) {
     this.tiles[x + y * this.w] = tile;
+  }
+
+  _updateMemory(entity) {
+    const dirMod2 = entity.dir % 2;
+    const invDirMod2 = 1 - dirMod2;
+    for (let i = 0; i <= entity.sightRange; ++i) {
+      for (let j = -(i + 1); j <= i + 1; ++j) {
+        const dx = dirMod2 * i * -(entity.dir - 2) + invDirMod2 * j;
+        const dy = invDirMod2 * i * (entity.dir - 1) + dirMod2 * j;
+        const x = entity.x + dx;
+        const y = entity.y + dy;
+
+        if (x < 0 || x > this.w || y < 0 || y > this.h) continue;
+
+        entity.setTileInMemory(x, y, this.getTile(x, y).name);
+      }
+    }
   }
 }
 

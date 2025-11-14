@@ -12,6 +12,11 @@ export class Tile {
     opaque: true,
   });
 
+  static nameToTile = {
+    [this.floor.name]: this.floor,
+    [this.wall.name]: this.wall,
+  };
+
   constructor(props) {
     this.name = props.name ?? "Unknown";
     this.url = props.url ?? "none";
