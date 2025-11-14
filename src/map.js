@@ -410,7 +410,7 @@ class Map {
   _rayCast(x1, y1, x2, y2) {
     if (x1 < x2) {
       const m = (y2 - y1) / (x2 - x1);
-      for (let i = 0; i <= x2 - x1; i += 0.25) {
+      for (let i = 0; i <= x2 - x1; i += 0.2) {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
@@ -418,21 +418,21 @@ class Map {
       }
     } else if (x2 < x1) {
       const m = (y2 - y1) / (x2 - x1);
-      for (let i = 0; i >= x2 - x1; i -= 0.25) {
+      for (let i = 0; i >= x2 - x1; i -= 0.2) {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
         if (tile.isOpaque) return { x, y }; 
       }
     } else if (y1 < y2) {
-      for (let j = y1; j <= y2; ++j) {
-        const tile = this.getTile(x1, j);
-        if (tile.isOpaque) return { x: x1, y: j }; 
+      for (let y = y1; y <= y2; ++y) {
+        const tile = this.getTile(x1, y);
+        if (tile.isOpaque) return { x: x1, y }; 
       }
     } else {
-      for (let j = y1; j >= y2; --j) {
-        const tile = this.getTile(x1, j);
-        if (tile.isOpaque) return { x: x1, y: j }; 
+      for (let y = y1; y >= y2; --y) {
+        const tile = this.getTile(x1, y);
+        if (tile.isOpaque) return { x: x1, y }; 
       }
     }
     
