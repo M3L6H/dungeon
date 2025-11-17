@@ -42,4 +42,3 @@ export function setUpActions() {
   getActions().forEach(() => actionsElt.appendChild(createAction()));
   renderActions();
 }
-

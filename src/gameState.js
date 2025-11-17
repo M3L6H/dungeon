@@ -24,7 +24,6 @@ class GameState {
       NONE,
       SETTINGS,
     ];
-    this.controlling = true;
     this.logs = [];
     this.map = props.map;
     this.player = props.player;
@@ -42,6 +41,7 @@ export async function newGame() {
     map,
     player: createPlayer(map.w, map.h),
   });
+  getEntities().forEach(entity => getInput(entity));
 }
 
 export function getActions() {
@@ -52,8 +52,14 @@ export function getEntities() {
   return gameState.map.entities.flat();
 }
 
-export function getInput() {
-  gameState.controlling = true;
+export function getInput(entity) {
+  if (entity.isPlayer) {
+    entity.controlling = true;
+  } else {
+    for (const behavior of entity.behaviors) {
+      if (behavior(entity)) break;
+    }
+  }
 }
 
 /**
@@ -104,10 +110,6 @@ export function act(entity, action, target) {
   return false;
 }
 
-export function inControl() {
-  return gameState.controlling;
-}
-
 export function inRange(entity, action, target) {
   const { x, y } = target;
   switch (action) {
@@ -126,10 +128,6 @@ export function inRange(entity, action, target) {
 
 export function incrementTime() {
   return ++gameState.time;
-}
-
-export function releaseControl() {
-  gameState.controlling = false;
 }
 
 const DIRS = ["North", "East", "South", "West"];

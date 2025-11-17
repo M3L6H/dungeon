@@ -57,9 +57,9 @@ function renderRange(tX, tY, tileElt) {
   }
 
   tileElt.onclick = () => {
-    if (!inControl()) return;
+    if (!getPlayer().inControl) return;
     if (act(getPlayer(), getSelectedAction(), target)) {
-      releaseControl();
+      getPlayer().releaseControl();
       advance();
     }
   };

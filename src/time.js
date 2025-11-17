@@ -1,15 +1,15 @@
 import {
   getInput,
+  getPlayer,
   getTime,
   getTimeline,
-  inControl,
   incrementTime,
   rest,
 } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
 export function advance() {
-  while (!inControl() && Object.keys(getTimeline()).length > 0) {
+  while (!getPlayer().inControl && Object.keys(getTimeline()).length > 0) {
     tick();
   }
 }
@@ -17,13 +17,9 @@ export function advance() {
 export function getDecision(entity) {
   if (entity.stamina === 0) {
     rest(entity, true);
-  } else if (entity.isPlayer) {
-    getInput(entity);
-  } else {
-    for (const behavior of entity.behaviors) {
-      if (behavior(entity)) break;
-    }
   }
+
+  getInput(entity);
 }
 
 export function schedule(entity, timeOffset, effect) {
@@ -45,4 +41,3 @@ export function tick() {
   renderViewport();
   delete timeline[time];
 }
-

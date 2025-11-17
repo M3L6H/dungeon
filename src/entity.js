@@ -15,7 +15,9 @@ export class Entity {
 
     this.x = props.x ?? 0;
     this.y = props.y ?? 0;
-    this.dir = 2;
+    
+    this.controlling = true;
+    this.dir = 2; 
 
     this.level = 1;
     this.xp = 0;
@@ -49,6 +51,10 @@ export class Entity {
     return this.memory[x + y * this.w];
   }
 
+  releaseControl() {
+    this.controlling = false;
+  }
+
   setEntityInMemory(entity) {
     const { id, x, y } = entity;
     if (this.idToLoc[id]) {
@@ -64,6 +70,10 @@ export class Entity {
 
   setTileInMemory(x, y, name) {
     this.memory[x + y * this.w] = name;
+  }
+  
+  get inControl() {
+    return this.controlling;
   }
 
   get isPlayer() {
