@@ -27,10 +27,35 @@ export class Entity {
     this.w = props.w;
     this.behaviors = props.behaviors ?? [];
     this.memory = new Array(props.w * props.h);
+    this.entityMemory = new Array(props.w * props.h);
+    
+    for (let i = 0; i < this.entityMemory.length; ++i) {
+      this.entityMemory[i] = [];
+    }
+  
+    this.idToLoc = {};
+  }
+ 
+  getEntitiesInMemory(x, y) {
+    return this.entityMemory[x + y * this.w];
   }
 
   getTileInMemory(x, y) {
     return this.memory[x + y * this.w];
+  }
+  
+  setEntityInMemory(entity) {
+    const { id, x, y } = entity;
+    if (idToLoc[id]) {
+      const { x: oldX, y: oldY } = idToLoc[id];
+      const tile = this.entityMemory[oldX + oldY * this.w];
+      const idx = tile.indexOf(id);
+      if (idx > -1) {
+        this.entityMemory[oldX + oldY * this.w] = tile.splice(idx, 1);
+      }
+    }
+    this.idToLoc[id] = { x, y };
+    this.entityMemory[x + y * this.w].push(id);
   }
 
   setTileInMemory(x, y, name) {

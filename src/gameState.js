@@ -25,7 +25,6 @@ class GameState {
       SETTINGS,
     ];
     this.controlling = true;
-    this.entities = [props.player];
     this.logs = [];
     this.map = props.map;
     this.player = props.player;
@@ -50,7 +49,7 @@ export function getActions() {
 }
 
 export function getEntities() {
-  return gameState.entities;
+  return gameState.map.entities.flat();
 }
 
 export function getInput() {

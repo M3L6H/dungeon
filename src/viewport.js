@@ -46,10 +46,6 @@ function renderMemoryTile(tileName, tileElt) {
   const tile = Tile.nameToTile[tileName];
   tileElt.style.backgroundImage = tile.url;
   tileElt.classList.add("memory");
-  
-  for (let i = 0; i < tileElt.children.length; ++i) {
-    tileElt.children[i].style.backgroundImage = "none";
-  }
 }
 
 function renderRange(tX, tY, tileElt) {
@@ -69,8 +65,7 @@ function renderRange(tX, tY, tileElt) {
   };
 }
 
-function renderEntities(tX, tY, tileElt) {
-  const entities = getMap().getEntities(tX, tY);
+function renderEntities(entities, tileElt) {
   const entityMaxIdx = Math.max(tileElt.children.length, entities.length);
   for (let i = 0; i < entityMaxIdx; ++i) {
     if (i >= entities.length) {
@@ -107,9 +102,10 @@ export function renderViewport() {
 
       if (map.canEntitySeeTile(player, tX, tY)) {
         renderTile(tX, tY, tileElt);
-        renderEntities(tX, tY, tileElt);
+        renderEntities(map.getEntities(tX, tY), tileElt);
       } else if (player.getTileInMemory(tX, tY) !== undefined) {
         renderMemoryTile(player.getTileInMemory(tX, tY), tileElt);
+        renderEntities(player.getEntitiesInMemory(tX, tY), tileElt);
       } else {
         tileElt.style.backgroundImage = "none";
       }
