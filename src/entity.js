@@ -44,7 +44,7 @@ export class Entity {
   }
 
   getEntitiesInMemory(x, y) {
-    return this.entityMemory[x + y * this.w].map((id) => getEntityById(id));
+    return this.entityMemory[x + y * this.w].map(({ id, dir }) => ({ ...getEntityById(id), dir }));
   }
 
   getTileInMemory(x, y) {
@@ -57,18 +57,26 @@ export class Entity {
 
   setEntitiesInMemory(x, y, entities) {
     const myEntities = this.entityMemory[x + y * this.w];
-    const toDelete = new Set(myEntities);
+    const toDelete = new Set();
+    myEntities.forEach(({ id }) => {
+      toDelete.add(id);
+    });
+    
     for (const entity of entities) {
       const { id } = entity;
       if (this.idToLoc[id]) {
         const { x: oldX, y: oldY } = this.idToLoc[id];
         if (oldX === x && oldY === y) continue;
         const tile = this.entityMemory[oldX + oldY * this.w];
-        const idx = tile.indexOf(id);
-        if (idx > -1) tile.splice(idx, 1);
+        for (let i = tile.length - 1; i >= 0; --i) {
+          if (tile[i].id === id) {
+            tile.splice(idx, 1);
+            break;
+          } 
+        }
       }
       this.idToLoc[id] = { x, y };
-      myEntities.push(id);
+      myEntities.push({ id, dir });
       toDelete.delete(id);
     }
     
