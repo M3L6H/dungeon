@@ -1,4 +1,5 @@
 import {
+  getEntities,
   getInput,
   getPlayer,
   getTime,
@@ -36,8 +37,11 @@ export function schedule(entity, timeOffset, effect) {
 export function tick() {
   const timeline = getTimeline();
   const time = incrementTime();
+  getEntities().forEach(entity => {
+    entity.mana = Math.min(entity.mana + 1, entity.maxMana);
+  });
   const events = timeline[time] ?? [];
   events.forEach((event) => event());
   renderViewport();
-  delete timeline[time];
+  delete timeline[time]; 
 }

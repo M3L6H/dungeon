@@ -1,15 +1,12 @@
-import { MOVE, act, inRange } from "./gameState.js";
+import { MOVE, act, addEntity, getEntities, inRange } from "./gameState.js";
 
 const HITPOINTS_PER_CONSTITUTION = 3;
+const MANA_PER_INTELLIGENCE = 5;
 const STAMINA_PER_ENDURANCE = 2;
-
-let id = 0;
-const entitiesById = {};
 
 export class Entity {
   constructor(props) {
     this.displayName = props.displayName ?? "Unknown";
-    this.id = ++id;
     this.name = props.name;
     this.variant = props.variant;
 
@@ -25,8 +22,10 @@ export class Entity {
     this.agility = props.agility ?? 1;
     this.constitution = props.constitution ?? 1;
     this.endurance = props.endurance ?? 1;
+    this.intelligence = props.intelligence ?? 1;
 
     this.hitpoints = this.maxHitpoints;
+    this.mana = this.maxMana;
     this._stamina = this.maxStamina;
 
     this.w = props.w;
@@ -40,7 +39,7 @@ export class Entity {
 
     this.idToLoc = {};
 
-    entitiesById[this.id] = this;
+    addEntity(this);
   }
 
   getEntitiesInMemory(x, y) {
@@ -107,6 +106,10 @@ export class Entity {
     return this.constitution * HITPOINTS_PER_CONSTITUTION;
   }
 
+  get maxMana() {
+    return this.intelligence * MANA_PER_INTELLIGENCE;
+  }
+
   get maxStamina() {
     return this.endurance * STAMINA_PER_ENDURANCE;
   }
@@ -158,7 +161,7 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
 }
 
 function getEntityById(id) {
-  return entitiesById[id];
+  return getEntities()[id];
 }
 
 const DIRS = [

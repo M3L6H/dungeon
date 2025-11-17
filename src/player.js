@@ -7,6 +7,7 @@ export function createPlayer(w, h) {
     agility: 4,
     constitution: 4,
     endurance: 3,
+    intelligence: 5,
     w,
     h,
   });

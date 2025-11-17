@@ -16,8 +16,6 @@ const H = 11;
 const HH = Math.floor(H / 2);
 
 const healthElt = document.getElementById("health");
-let maxMana = 10;
-let mana = maxMana;
 const manaElt = document.getElementById("mana");
 const staminaElt = document.getElementById("stamina");
 const viewportElt = document.getElementById("viewport");
@@ -31,7 +29,7 @@ function renderBar(elt, curr, max) {
 }
 
 function renderBars() {
-  const { hitpoints, maxHitpoints, stamina, maxStamina } = getPlayer();
+  const { hitpoints, maxHitpoints, mana, maxMana, stamina, maxStamina } = getPlayer();
   renderBar(healthElt, hitpoints, maxHitpoints);
   renderBar(manaElt, mana, maxMana);
   renderBar(staminaElt, stamina, maxStamina);

@@ -24,6 +24,7 @@ class GameState {
       NONE,
       SETTINGS,
     ];
+    this.entities = [];
     this.logs = [];
     this.map = props.map;
     this.player = props.player;
@@ -43,12 +44,17 @@ export async function newGame() {
   });
 }
 
+export function addEntity(entity) {
+  entity.id = gameState.entities.length;
+  gameState.entities.push(entity);
+}
+
 export function getActions() {
   return gameState.actions;
 }
 
 export function getEntities() {
-  return gameState.map.entities.flat();
+  return gameState.entities;
 }
 
 export function getInput(entity) {
