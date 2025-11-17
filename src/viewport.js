@@ -82,9 +82,8 @@ function renderEntities(entities, tileElt) {
 
 export function renderViewport() {
   const player = getPlayer();
-  const { dir, sightRange, x, y } = player;
+  const { dir, x, y } = player;
   const dirMod2 = dir % 2;
-  const invDirMod2 = 1 - dirMod2;
   const map = getMap();
   for (let i = 0; i < W; ++i) {
     for (let j = 0; j < H; ++j) {

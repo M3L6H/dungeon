@@ -345,7 +345,6 @@ class Map {
    * UPDATES the entityToMove with tX, tY and moves them in the map.
    */
   moveEntity(entityToMove, tX, tY) {
-    console.log("Moving", entityToMove, tX, tY);
     const { name, x, y } = entityToMove;
     const entities = this.getEntities(x, y);
     if (entities.length === 1 && entities[0].name === name) {
@@ -473,8 +472,10 @@ class Map {
           continue;
 
         entity.setTileInMemory(x, y, this.getTile(x, y).name);
-        this.getEntities(x, y).forEach(other => {
-          entity.setEntityInMemory(other);
+        this.getEntities(x, y).forEach((other) => {
+          if (other.id !== entity.id) {
+            entity.setEntityInMemory(other);
+          }
         });
       }
     }

@@ -2,6 +2,7 @@ const HITPOINTS_PER_CONSTITUTION = 3;
 const STAMINA_PER_ENDURANCE = 2;
 
 let id = 0;
+const entitiesById = {};
 
 export class Entity {
   constructor(props) {
@@ -28,26 +29,28 @@ export class Entity {
     this.behaviors = props.behaviors ?? [];
     this.memory = new Array(props.w * props.h);
     this.entityMemory = new Array(props.w * props.h);
-    
+
     for (let i = 0; i < this.entityMemory.length; ++i) {
       this.entityMemory[i] = [];
     }
-  
+
     this.idToLoc = {};
+
+    entitiesById[this.id] = this;
   }
- 
+
   getEntitiesInMemory(x, y) {
-    return this.entityMemory[x + y * this.w];
+    return this.entityMemory[x + y * this.w].map((id) => getEntityById(id));
   }
 
   getTileInMemory(x, y) {
     return this.memory[x + y * this.w];
   }
-  
+
   setEntityInMemory(entity) {
     const { id, x, y } = entity;
-    if (idToLoc[id]) {
-      const { x: oldX, y: oldY } = idToLoc[id];
+    if (this.idToLoc[id]) {
+      const { x: oldX, y: oldY } = this.idToLoc[id];
       const tile = this.entityMemory[oldX + oldY * this.w];
       const idx = tile.indexOf(id);
       if (idx > -1) {
@@ -117,6 +120,10 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     w,
     h,
   });
+}
+
+function getEntityById(id) {
+  return entitiesById[id];
 }
 
 function wander(entity) {}
