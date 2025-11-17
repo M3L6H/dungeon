@@ -148,19 +148,28 @@ function move(entity, target) {
   const time = getTimeToMove(entity);
   schedule(entity, time, () => {
     getMap().moveEntity(entity, x, y);
-    addLog(`${entity.name} moved ${DIRS[dir]}`);
+    if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+      addLog(`${entity.name} moved ${DIRS[dir]}`);
+    } 
   });
-  addLog(`${entity.name} is moving ${DIRS[dir]}`);
+  if (getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)) {
+    addLog(`${entity.name} is moving ${DIRS[dir]}`);
+  } 
   return true;
 }
 
 export function rest(entity, full = false) {
   const time = full ? Math.ceil(entity.maxStamina / entity.constitution) : 1;
+  const { x, y } = entity;
   schedule(entity, time, () => {
     entity.stamina += full ? entity.maxStamina : entity.constitution;
-    addLog(`${entity.name} rested`);
+    if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+      addLog(`${entity.name} rested`);
+    } 
   });
-  addLog(`${entity.name} is resting`);
+  if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+    addLog(`${entity.name} is resting`);
+  } 
   return true;
 }
 
