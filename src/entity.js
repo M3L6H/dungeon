@@ -1,3 +1,5 @@
+import { MOVE, act, inRange } from "./gameState.js";
+
 const HITPOINTS_PER_CONSTITUTION = 3;
 const STAMINA_PER_ENDURANCE = 2;
 
@@ -118,6 +120,9 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     variant,
     w,
     h,
+    behaviors: [
+      wander,
+    ],
   });
 }
 
@@ -125,4 +130,24 @@ function getEntityById(id) {
   return entitiesById[id];
 }
 
-function wander(entity) {}
+const DIRS = [
+  [0, -1],
+  [1, 0],
+  [0, 1],
+  [-1, 0],
+];
+
+function wander(entity) {
+  const { x, y } = entity;
+  let [dx, dy] = DIRS[entity.dir];
+  let target = { x: x + dx, y: y + dy };
+ 
+  if (Math.random() >= 0.75 || !inRange(entity, MOVE, target)) {
+    do {
+      [dx, dy] = DIRS[Math.floor(Math.random() * DIRS.length)];
+      target = { x: x + dx, y: y + dy };
+    } while (!inRange(entity, MOVE, target));
+  }
+  
+  return act(entity, MOVE, target);
+}

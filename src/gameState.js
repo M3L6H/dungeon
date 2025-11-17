@@ -4,10 +4,10 @@ import { createPlayer } from "./player.js";
 import { schedule } from "./time.js";
 
 export const NONE = "none";
-const MOVE = "move";
-const EXAMINE = "examine";
-const INTERACT = "interact";
-const SETTINGS = "settings";
+export const MOVE = "move";
+export const EXAMINE = "examine";
+export const INTERACT = "interact";
+export const SETTINGS = "settings";
 
 class GameState {
   constructor(props) {

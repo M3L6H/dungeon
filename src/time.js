@@ -16,6 +16,10 @@ export function advance() {
 export function getDecision(entity) {
   if (entity.isPlayer) {
     getInput(entity);
+  } else {
+    for (const behavior of entity.behaviors) {
+      if (behavior(entity)) break;
+    }
   }
 }
 
