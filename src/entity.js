@@ -63,7 +63,7 @@ export class Entity {
     });
     
     for (const entity of entities) {
-      const { id } = entity;
+      const { id, dir } = entity;
       if (this.idToLoc[id]) {
         const { x: oldX, y: oldY } = this.idToLoc[id];
         if (oldX === x && oldY === y) continue;
