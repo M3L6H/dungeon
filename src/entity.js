@@ -55,17 +55,28 @@ export class Entity {
     this.controlling = false;
   }
 
-  setEntityInMemory(entity) {
-    const { id, x, y } = entity;
-    if (this.idToLoc[id]) {
-      const { x: oldX, y: oldY } = this.idToLoc[id];
-      if (oldX === x && oldY === y) return;
-      const tile = this.entityMemory[oldX + oldY * this.w];
-      const idx = tile.indexOf(id);
-      if (idx > -1) tile.splice(idx, 1);
+  setEntitiesInMemory(x, y, entities) {
+    const myEntities = this.entityMemory[x + y * this.w];
+    const toDelete = new Set(myEntities);
+    for (const entity of entities) {
+      const { id } = entity;
+      if (this.idToLoc[id]) {
+        const { x: oldX, y: oldY } = this.idToLoc[id];
+        if (oldX === x && oldY === y) continue;
+        const tile = this.entityMemory[oldX + oldY * this.w];
+        const idx = tile.indexOf(id);
+        if (idx > -1) tile.splice(idx, 1);
+      }
+      this.idToLoc[id] = { x, y };
+      this.entityMemory[x + y * this.w].push(id);
+      toDelete.remove(id);
     }
-    this.idToLoc[id] = { x, y };
-    this.entityMemory[x + y * this.w].push(id);
+    
+    for (let i = myEntities.length - 1; i >= 0; --i) {
+      if (toDelete.has(myEntities[i].id)) {
+        myEntities.splice(i, 1);
+      }
+    }
   }
 
   setTileInMemory(x, y, name) {
