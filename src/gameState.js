@@ -53,10 +53,6 @@ export function getEntities() {
 }
 
 export function getInput() {
-  if (getPlayer().stamina === 0) {
-    return rest(getPlayer(), true);
-  }
-
   gameState.controlling = true;
 }
 
@@ -158,7 +154,7 @@ function move(entity, target) {
   return true;
 }
 
-function rest(entity, full = false) {
+export function rest(entity, full = false) {
   const time = full ? Math.ceil(entity.maxStamina / entity.constitution) : 1;
   schedule(entity, time, () => {
     entity.stamina += full ? entity.maxStamina : entity.constitution;

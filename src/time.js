@@ -4,6 +4,7 @@ import {
   getTimeline,
   inControl,
   incrementTime,
+  rest,
 } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
@@ -14,7 +15,9 @@ export function advance() {
 }
 
 export function getDecision(entity) {
-  if (entity.isPlayer) {
+  if (entity.stamina === 0) {
+    rest(entity, true);
+  } else if (entity.isPlayer) {
     getInput(entity);
   } else {
     for (const behavior of entity.behaviors) {
