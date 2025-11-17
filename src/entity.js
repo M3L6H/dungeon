@@ -68,8 +68,8 @@ export class Entity {
         if (idx > -1) tile.splice(idx, 1);
       }
       this.idToLoc[id] = { x, y };
-      this.entityMemory[x + y * this.w].push(id);
-      toDelete.remove(id);
+      myEntities.push(id);
+      toDelete.delete(id);
     }
     
     for (let i = myEntities.length - 1; i >= 0; --i) {
