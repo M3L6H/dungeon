@@ -41,7 +41,6 @@ export async function newGame() {
     map,
     player: createPlayer(map.w, map.h),
   });
-  getEntities().forEach(entity => getInput(entity));
 }
 
 export function getActions() {
@@ -57,7 +56,10 @@ export function getInput(entity) {
     entity.controlling = true;
   } else {
     for (const behavior of entity.behaviors) {
-      if (behavior(entity)) break;
+      if (behavior(entity)) {
+        entity.releaseControl();
+        break;
+      }
     }
   }
 }
