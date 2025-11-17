@@ -17,7 +17,7 @@ export class Entity {
     this.y = props.y ?? 0;
 
     this.controlling = true;
-    this.dir = 2;
+    this.dir = props.dir ?? Math.floor(Math.random() * 4);
 
     this.level = 1;
     this.xp = 0;
