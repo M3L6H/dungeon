@@ -17,9 +17,9 @@ export function advance() {
 export function getDecision(entity) {
   if (entity.stamina === 0) {
     rest(entity, true);
+  } else {
+    getInput(entity);
   }
-
-  getInput(entity);
 }
 
 export function schedule(entity, timeOffset, effect) {

@@ -1,12 +1,11 @@
 import {
   act,
   getEntities,
+  getInput,
   getMap,
   getPlayer,
   getSelectedAction,
-  inControl,
   inRange,
-  releaseControl,
 } from "./gameState.js";
 import { Tile } from "./tile.js";
 import { advance } from "./time.js";
@@ -61,7 +60,7 @@ function renderRange(tX, tY, tileElt) {
     if (!getPlayer().inControl) return;
     if (act(getPlayer(), getSelectedAction(), target)) {
       getPlayer().releaseControl();
-      getEntities().forEach(entity => {
+      getEntities().forEach((entity) => {
         if (entity.inControl) {
           getInput(entity);
         }

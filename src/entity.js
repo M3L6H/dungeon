@@ -15,9 +15,9 @@ export class Entity {
 
     this.x = props.x ?? 0;
     this.y = props.y ?? 0;
-    
+
     this.controlling = true;
-    this.dir = 2; 
+    this.dir = 2;
 
     this.level = 1;
     this.xp = 0;
@@ -71,7 +71,7 @@ export class Entity {
   setTileInMemory(x, y, name) {
     this.memory[x + y * this.w] = name;
   }
-  
+
   get inControl() {
     return this.controlling;
   }
@@ -130,9 +130,7 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     variant,
     w,
     h,
-    behaviors: [
-      wander,
-    ],
+    behaviors: [wander],
   });
 }
 
@@ -151,13 +149,15 @@ function wander(entity) {
   const { x, y } = entity;
   let [dx, dy] = DIRS[entity.dir];
   let target = { x: x + dx, y: y + dy };
- 
+
   if (Math.random() >= 0.75 || !inRange(entity, MOVE, target)) {
+    let attempts = 0;
     do {
       [dx, dy] = DIRS[Math.floor(Math.random() * DIRS.length)];
       target = { x: x + dx, y: y + dy };
-    } while (!inRange(entity, MOVE, target));
+      ++attempts;
+    } while (attempts < 4 && !inRange(entity, MOVE, target));
   }
-  
+
   return act(entity, MOVE, target);
 }
