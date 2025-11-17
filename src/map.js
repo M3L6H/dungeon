@@ -473,9 +473,7 @@ class Map {
 
         entity.setTileInMemory(x, y, this.getTile(x, y).name);
         this.getEntities(x, y).forEach((other) => {
-          if (other.id !== entity.id) {
-            entity.setEntityInMemory(other);
-          }
+          entity.setEntityInMemory(other);
         });
       }
     }

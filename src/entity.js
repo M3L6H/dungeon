@@ -51,11 +51,10 @@ export class Entity {
     const { id, x, y } = entity;
     if (this.idToLoc[id]) {
       const { x: oldX, y: oldY } = this.idToLoc[id];
+      if (oldX === x && oldY === y) return;
       const tile = this.entityMemory[oldX + oldY * this.w];
       const idx = tile.indexOf(id);
-      if (idx > -1) {
-        this.entityMemory[oldX + oldY * this.w] = tile.splice(idx, 1);
-      }
+      if (idx > -1) tile.splice(idx, 1);
     }
     this.idToLoc[id] = { x, y };
     this.entityMemory[x + y * this.w].push(id);
