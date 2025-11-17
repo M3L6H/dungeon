@@ -70,7 +70,7 @@ export class Entity {
         const tile = this.entityMemory[oldX + oldY * this.w];
         for (let i = tile.length - 1; i >= 0; --i) {
           if (tile[i].id === id) {
-            tile.splice(idx, 1);
+            tile.splice(i, 1);
             break;
           } 
         }
