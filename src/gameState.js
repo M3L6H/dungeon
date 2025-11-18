@@ -132,9 +132,10 @@ export function inRange(entity, action, target) {
         (dx + dy === 1 && tile.isTraversable && entity.stamina > 0)
       );
     case "examine":
+      const examineRange = Math.min(3, entity.sightRange);
       return (
-        dx <= entity.sightRange &&
-        dy <= entity.sightRange &&
+        dx <= examineRange &&
+        dy <= examineRange &&
         getMap().entityHasLoS(entity, x, y)
       );
     default:

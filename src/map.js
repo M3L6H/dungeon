@@ -374,6 +374,7 @@ class Map {
     this.getEntities(tX, tY).push(entityToMove);
     entityToMove.x = tX;
     entityToMove.y = tY;
+    this.updateMemory(entityToMove);
     return entityToMove;
   }
 
