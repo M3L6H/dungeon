@@ -87,6 +87,10 @@ section {
   overflow-y: auto;
 }
 
+#logs:nth-last-child(1 of .start.player) {
+  color: #55ccff;
+}
+
 .action {
   background-color: #ababbb;
   border-radius: 8px;

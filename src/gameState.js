@@ -1,4 +1,4 @@
-import { addLog } from "./logs.js";
+import { addEndLog, addLog, addStartLog } from "./logs.js";
 import { generateMap } from "./map.js";
 import { createPlayer } from "./player.js";
 import { schedule } from "./time.js";
@@ -154,11 +154,12 @@ function move(entity, target) {
   schedule(entity, time, () => {
     getMap().moveEntity(entity, x, y);
     if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-      addLog(`${entity.name} moved ${DIRS[dir]}`);
+      addEndLog(`${entity.name} moved ${DIRS[dir]}`);
     }
   });
   if (getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)) {
-    addLog(`${entity.name} is moving ${DIRS[dir]}`);
+    const logElt = addStartLog(`${entity.name} is moving ${DIRS[dir]}`);
+    if (entity.isPlayer) logElt.classList.add("player");
   }
   return true;
 }
@@ -169,11 +170,12 @@ export function rest(entity, full = false) {
   schedule(entity, time, () => {
     entity.stamina += full ? entity.maxStamina : entity.constitution;
     if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-      addLog(`${entity.name} rested`);
+      addEndLog(`${entity.name} rested`);
     }
   });
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    addLog(`${entity.name} is resting`);
+    const logElt = addStartLog(`${entity.name} is resting`);
+    if (entity.isPlayer) logElt.classList.add("player");
   }
   return true;
 }
