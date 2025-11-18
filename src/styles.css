@@ -87,7 +87,7 @@ section {
   overflow-y: auto;
 }
 
-#logs:nth-last-child(1 of .start.player) {
+#logs .start.player {
   color: #55ccff;
 }
 
