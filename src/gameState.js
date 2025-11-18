@@ -174,7 +174,7 @@ function examine(entity, target) {
   const dy = y - entity.y;
   const dyMag = Math.abs(dy);
   if (dxMag > dyMag) {
-    entity.dir = dx / dxMag + 2;
+    entity.dir = 2 - dx / dxMag;
   } else if (dyMag > dxMag) {
     entity.dir = dy / dyMag + 1;
   } else if (dx < 0 && dy < 0 && entity.dir !== 0 && entity.dir !== 3) {
