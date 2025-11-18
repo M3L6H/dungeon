@@ -1,6 +1,7 @@
 body,
 div,
 main,
+p,
 section,
 span {
   margin: 0;
@@ -172,7 +173,7 @@ section {
 }
 
 .log.end.player {
-  color: #43baed;
+  color: #30a8dd;
 }
 
 .log.start.player {
