@@ -4,12 +4,17 @@ const logsElt = document.getElementById("logs");
 
 export function addLog(msg) {
   const logs = getLogs();
-  logs.push(`${getTime()}: ${msg}`);
-  logsElt.innerHTML = logs.slice(-100).map(log => (
-    `<p class='log'>${log}</p>`
-  )).join();
+  const log = `${getTime()}: ${msg}`;
+  logs.push(log);
+  const logElt = document.createElement('p');
+  logElt.classList.add('log');
+  logElt.textContent = log;
+  logsElt.appendChild(logElt);
+  while (logsElt.children.length > 100) {
+    logsElt.removeChild(logsElt.firstElementChild);
+  }
   logsElt.scrollTop = logsElt.scrollHeight;
-  return logsElt.children[logsElt.children.length - 1];
+  return logElt;
 }
 
 export function addStartLog(msg) {
