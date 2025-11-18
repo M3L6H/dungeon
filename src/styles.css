@@ -87,10 +87,6 @@ section {
   overflow-y: auto;
 }
 
-#logs .start.player {
-  color: #55ccff;
-}
-
 .action {
   background-color: #ababbb;
   border-radius: 8px;
@@ -173,6 +169,14 @@ section {
   inset: 0;
   background-color: green;
   opacity: 0.25;
+}
+
+.log.end.player {
+  color: #43baed;
+}
+
+.log.start.player {
+  color: #55ccff;
 }
 
 .memory {
