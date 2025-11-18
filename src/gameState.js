@@ -27,7 +27,6 @@ class GameState {
     this.entities = [];
     this.logs = [];
     this.map = props.map;
-    this.player = props.player;
     this.selected = 0;
     this.time = 0;
     this.timeline = {};
@@ -40,8 +39,8 @@ export async function newGame() {
   const map = await generateMap();
   gameState = new GameState({
     map,
-    player: createPlayer(map.w, map.h),
   });
+  gameState.player = createPlayer(map.w, map.h);
 }
 
 export function addEntity(entity) {
@@ -156,11 +155,11 @@ function move(entity, target) {
     getMap().moveEntity(entity, x, y);
     if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
       addLog(`${entity.name} moved ${DIRS[dir]}`);
-    } 
+    }
   });
   if (getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)) {
     addLog(`${entity.name} is moving ${DIRS[dir]}`);
-  } 
+  }
   return true;
 }
 
@@ -171,11 +170,11 @@ export function rest(entity, full = false) {
     entity.stamina += full ? entity.maxStamina : entity.constitution;
     if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
       addLog(`${entity.name} rested`);
-    } 
+    }
   });
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
     addLog(`${entity.name} is resting`);
-  } 
+  }
   return true;
 }
 
