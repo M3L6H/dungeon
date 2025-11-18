@@ -374,7 +374,6 @@ class Map {
     this.getEntities(tX, tY).push(entityToMove);
     entityToMove.x = tX;
     entityToMove.y = tY;
-    this._updateMemory(entityToMove);
     return entityToMove;
   }
 
@@ -464,7 +463,7 @@ class Map {
     this.tiles[x + y * this.w] = tile;
   }
 
-  _updateMemory(entity) {
+  updateMemory(entity) {
     const dirMod2 = entity.dir % 2;
     const invDirMod2 = 1 - dirMod2;
     for (let i = 0; i <= entity.sightRange; ++i) {

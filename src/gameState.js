@@ -57,6 +57,7 @@ export function getEntities() {
 }
 
 export function getInput(entity) {
+  getMap().updateMemory(entity);
   if (entity.isPlayer) {
     entity.controlling = true;
   } else {
