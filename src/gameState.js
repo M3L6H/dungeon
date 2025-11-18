@@ -153,33 +153,38 @@ function move(entity, target) {
   const time = getTimeToMove(entity);
   schedule(entity, time, () => {
     getMap().moveEntity(entity, x, y);
-    if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-      addEndLog(`${entity.name} moved ${DIRS[dir]}`);
-    }
+    logActionEnd(entity, `moved ${DIRS[dir]}`);
   });
-  if (getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)) {
-    const logElt = addStartLog(`${entity.name} is moving ${DIRS[dir]}`);
-    if (entity.isPlayer) logElt.classList.add("player");
-  }
+  logActionStart(entity, `moving ${DIRS[dir]}`);
   return true;
 }
 
 export function rest(entity, full = false) {
   const time = full ? Math.ceil(entity.maxStamina / entity.constitution) : 1;
-  const { x, y } = entity;
   schedule(entity, time, () => {
     entity.stamina += full ? entity.maxStamina : entity.constitution;
-    if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-      addEndLog(`${entity.name} rested`);
-    }
+    logActionEnd(entity, "rested");
   });
-  if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addStartLog(`${entity.name} is resting`);
-    if (entity.isPlayer) logElt.classList.add("player");
-  }
+  logActionStart(entity, "resting");
   return true;
 }
 
 function getTimeToMove(entity) {
   return Math.max(1, 11 - Math.floor(Math.sqrt(entity.speed)));
+}
+
+function logActionStart(entity, action) {
+  const { isPlayer, name, x, y } = entity;
+  if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+    const logElt = addStartLog(`${name} is ${action}`);
+    if (isPlayer) logElt.classList.add("player");
+  }
+}
+
+function logActionEnd(entity, action) {
+  const { isPlayer, name, x, y } = entity;
+  if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+    const logElt = addEndLog(`${name} ${action}`);
+    if (isPlayer) logElt.classList.add("player");
+  }
 }
