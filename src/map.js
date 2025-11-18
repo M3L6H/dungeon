@@ -324,8 +324,20 @@ class Map {
       0 <= di &&
       di <= sightRange &&
       Math.abs(dj) <= di + 1 &&
-      this._coordsEqual(this._rayCast(x, y, tX, tY), { x: tX, y: tY })
+      this.entityHasLoS(entity, tX, tY);
     );
+  }
+  
+  entityHasLoS(entity, tX, tY) {
+    const { x, y } = entity;
+    return this._coordsEqual(this._rayCast(x, y, tX, tY), { x: tX, y: tY });
+  }
+  
+  examine(examiner, tX, tY) {
+    this.getEntities(tX, tY).forEach(entity => {
+      entity.examine(examiner);
+    });
+    this.getTile(tX, tY).examine(examiner);
   }
 
   getEntities(x, y) {

@@ -1,4 +1,5 @@
 import { MOVE, act, addEntity, getEntities, inRange } from "./gameState.js";
+import { addLog } from "./logs.js";
 
 const HITPOINTS_PER_CONSTITUTION = 3;
 const MANA_PER_INTELLIGENCE = 5;
@@ -6,9 +7,13 @@ const STAMINA_PER_ENDURANCE = 2;
 
 export class Entity {
   constructor(props) {
-    this.displayName = props.displayName ?? "Unknown";
+    this.displayName = props.displayName ?? props.name;
     this.name = props.name;
     this.variant = props.variant;
+    
+    this.description = props.description ?? {
+      0: () => `You see nothing interesting about ${this.displayName}`,
+    };
 
     this.x = props.x ?? 0;
     this.y = props.y ?? 0;
@@ -23,6 +28,7 @@ export class Entity {
     this.constitution = props.constitution ?? 1;
     this.endurance = props.endurance ?? 1;
     this.intelligence = props.intelligence ?? 1;
+    this.wisdom = props.wisdom ?? 1;
 
     this.hitpoints = this.maxHitpoints;
     this.mana = this.maxMana;
@@ -42,6 +48,18 @@ export class Entity {
     addEntity(this);
   }
 
+  examine({ perception }) {
+    for (const threshold in this.description) {
+      if (perception >= threshold) {
+        addLog(this.description[threshold](this));
+      }
+    }
+    
+    if (perception >= 3) }
+      addLog(this.status);
+    }
+  }
+  
   getEntitiesInMemory(x, y) {
     return this.entityMemory[x + y * this.w].map(({ id, dir }) => {
       const entity = getEntityById(id);
@@ -113,6 +131,10 @@ export class Entity {
   get maxStamina() {
     return this.endurance * STAMINA_PER_ENDURANCE;
   }
+  
+  get perception() {
+    return this.wisdom;
+  }
 
   get sightRange() {
     return 5;
@@ -137,6 +159,10 @@ export class Entity {
     return this._stamina;
   }
 
+  get status() {
+    return `Level: ${this.level}. Health: ${this.hitpoints} / ${this.maxHitpoints}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
+  }
+
   set stamina(val) {
     this._stamina = clamp(val, 0, this.maxStamina);
   }
@@ -154,6 +180,17 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
   return new Entity({
     name: `${color} Slime`,
     variant,
+    description: {
+      0: (self) => `The ${self.displayName} is semi-translucent. Its gelatenous body wobbles as it moves around.`,
+      3: (self) => {
+        if (color === "Green") {
+          return `The ${self.displayName} is slightly poisonous.`;
+        } else {
+          return `The ${self.displayName} does physical damage.`;
+        }
+      },
+      5: (self) => `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`
+    },
     w,
     h,
     behaviors: [wander],

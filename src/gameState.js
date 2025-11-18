@@ -110,6 +110,8 @@ export function act(entity, action, target) {
   switch (action) {
     case "move":
       return move(entity, target);
+    case "examine":
+      return examine(entity, target); 
     default:
       addLog(`${entity.name} cannot ${action}`);
   }
@@ -128,6 +130,10 @@ export function inRange(entity, action, target) {
         (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
         (dx + dy === 1 && tile.isTraversable && entity.stamina > 0)
       );
+    case "examine":
+      const dx = Math.abs(x - entity.x);
+      const dy = Math.abs(y - entity.y);
+      return dx <= entity.sightRange && dy <= entity.sightRange && getMap().entityHasLoS(entity, x, y);
     default:
       return false;
   }
@@ -156,6 +162,33 @@ function move(entity, target) {
     logActionEnd(entity, `moved ${DIRS[dir]}`);
   });
   logActionStart(entity, `moving ${DIRS[dir]}`);
+  return true;
+}
+
+function examine(entity, target) {
+  const { x, y } = target;
+  const dx = x - entity.x;
+  const dxMag = Math.abs(dx);
+  const dy = y - entity.y;
+  const dyMag = Math.abs(dy);
+  if (dxMag > dyMag) {
+    entity.dir = dx / dxMag + 2;
+  } else if (dyMag > dxMag) {
+    entity.dir = dy / dyMag + 1;
+  } else if (dx < 0 && dy < 0 && entity.dir !== 0 && entity.dir !== 3) {
+    entity.dir = 0;
+  } else if (dx > 0 && dy < 0 && entity.dir !== 0 && entity.dir !== 1) {
+    entity.dir = 1;
+  } else if (dx > 0 && dy > 0 && entity.dir !== 1 && entity.dir !== 2) {
+    entity.dir = 2;
+  } else if (dx < 0 && dy > 0 && entity.dir !== 2 && entity.dir !== 3) {
+    entity.dir = 3;
+  }
+  schedule(entity, 1, () => {
+    getMap().examine(entity, x, y);
+    logActionEnd(entity, `examined (${x}, ${y})`);
+  });
+  logActionStart(entity, `examining (${x}, ${y})`);
   return true;
 }
 
