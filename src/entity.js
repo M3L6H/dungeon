@@ -10,7 +10,7 @@ export class Entity {
     this.displayName = props.displayName ?? props.name;
     this.name = props.name;
     this.variant = props.variant;
-    
+
     this.description = props.description ?? {
       0: () => `You see nothing interesting about ${this.displayName}`,
     };
@@ -54,12 +54,12 @@ export class Entity {
         addLog(this.description[threshold](this));
       }
     }
-    
-    if (perception >= 3) }
+
+    if (perception >= 3) {
       addLog(this.status);
     }
   }
-  
+
   getEntitiesInMemory(x, y) {
     return this.entityMemory[x + y * this.w].map(({ id, dir }) => {
       const entity = getEntityById(id);
@@ -131,7 +131,7 @@ export class Entity {
   get maxStamina() {
     return this.endurance * STAMINA_PER_ENDURANCE;
   }
-  
+
   get perception() {
     return this.wisdom;
   }
@@ -160,7 +160,7 @@ export class Entity {
   }
 
   get status() {
-    return `Level: ${this.level}. Health: ${this.hitpoints} / ${this.maxHitpoints}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
+    return `${this.displayName}: Level: ${this.level}. Health: ${this.hitpoints} / ${this.maxHitpoints}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
   }
 
   set stamina(val) {
@@ -181,7 +181,8 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     name: `${color} Slime`,
     variant,
     description: {
-      0: (self) => `The ${self.displayName} is semi-translucent. Its gelatenous body wobbles as it moves around.`,
+      0: (self) =>
+        `The ${self.displayName} is semi-translucent. Its gelatenous body wobbles as it moves around.`,
       3: (self) => {
         if (color === "Green") {
           return `The ${self.displayName} is slightly poisonous.`;
@@ -189,7 +190,8 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
           return `The ${self.displayName} does physical damage.`;
         }
       },
-      5: (self) => `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`
+      5: (self) =>
+        `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
     },
     w,
     h,

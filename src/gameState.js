@@ -111,7 +111,7 @@ export function act(entity, action, target) {
     case "move":
       return move(entity, target);
     case "examine":
-      return examine(entity, target); 
+      return examine(entity, target);
     default:
       addLog(`${entity.name} cannot ${action}`);
   }
@@ -121,19 +121,21 @@ export function act(entity, action, target) {
 
 export function inRange(entity, action, target) {
   const { x, y } = target;
+  const dx = Math.abs(x - entity.x);
+  const dy = Math.abs(y - entity.y);
   switch (action) {
     case "move":
-      const dx = Math.abs(x - entity.x);
-      const dy = Math.abs(y - entity.y);
       const tile = getMap().getTile(x, y);
       return (
         (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
         (dx + dy === 1 && tile.isTraversable && entity.stamina > 0)
       );
     case "examine":
-      const dx = Math.abs(x - entity.x);
-      const dy = Math.abs(y - entity.y);
-      return dx <= entity.sightRange && dy <= entity.sightRange && getMap().entityHasLoS(entity, x, y);
+      return (
+        dx <= entity.sightRange &&
+        dy <= entity.sightRange &&
+        getMap().entityHasLoS(entity, x, y)
+      );
     default:
       return false;
   }
