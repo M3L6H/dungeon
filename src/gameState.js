@@ -1,5 +1,5 @@
 import { addEndLog, addLog, addStartLog } from "./logs.js";
-import { generateMap } from "./map.js";
+import { Map, generateMap } from "./map.js";
 import { createPlayer } from "./player.js";
 import { schedule } from "./time.js";
 
@@ -77,6 +77,9 @@ export function getLogs() {
   return gameState.logs;
 }
 
+/**
+ * @returns {Map} The current map
+ */
 export function getMap() {
   return gameState.map;
 }

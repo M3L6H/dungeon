@@ -330,7 +330,7 @@ class Heap {
   }
 }
 
-class Map {
+export class Map {
   constructor(width, height, origins, rooms, edges) {
     this.w = width;
     this.h = height;
@@ -455,13 +455,13 @@ class Map {
     this.updateMemory(entityToMove);
     return entityToMove;
   }
-  
+
   path(entity, tX, tY) {
     const visited = new Array(this.w * this.h);
     const heap = new Heap((a, b) => {
       if (a.hcost < b.hcost) return -1;
       else if (a.hcost > b.hcost) return 1;
-      return 0; 
+      return 0;
     });
     const { x, y } = entity;
     let hcost = cbd(x, y, tX, tY);
@@ -469,27 +469,28 @@ class Map {
 
     while (heap.length > 0) {
       let curr = heap.pop();
-      const idx = curr.x + curr.y * this.w
+      const idx = curr.x + curr.y * this.w;
       if (visited[idx]) continue;
       visited[idx] = true;
-      
-      if (curr.x === tX && cur.y === tY) {
+
+      if (curr.x === tX && curr.y === tY) {
         const path = new Array(curr.fcost + 1);
         for (let i = path.length - 1; i >= 0; --i) {
           path[i] = curr;
           curr = curr.prev;
         }
-        
+
         return path;
       }
-      
+
       for (const [dx, dy] of OFFSETS) {
         const newX = curr.x + dx;
         const newY = curr.y + dy;
         if (visited[newX + newY * this.w]) continue;
-        if (!entity.getTileInMemory(newX, newY)?.isTraversable) continue;
+        const tile = Tile.nameToTile[entity.getTileInMemory(newX, newY)];
+        if (!tile?.isTraversable) continue;
         const fcost = curr.fcost + 1;
-        hcost = fcost + cbd(newX, newY, tX, tY); 
+        hcost = fcost + cbd(newX, newY, tX, tY);
         const neighbor = {
           x: newX,
           y: newY,
@@ -500,7 +501,7 @@ class Map {
         heap.push(neighbor);
       }
     }
-    
+
     return [];
   }
 

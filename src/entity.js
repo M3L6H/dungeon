@@ -1,13 +1,13 @@
 import {
   EXAMINE,
-  MOVE, 
+  MOVE,
   act,
   addEntity,
   getEntities,
   getMap,
   getPlayer,
   inRange,
- } from "./gameState.js";
+} from "./gameState.js";
 import { addLog } from "./logs.js";
 
 const HITPOINTS_PER_CONSTITUTION = 3;
@@ -209,12 +209,7 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     },
     w,
     h,
-    behaviors: [
-      (entity) => findTarget(entity, "player"),
-      hunt,
-      wander,
-      rest,
-    ],
+    behaviors: [(entity) => findTarget(entity, "player"), hunt, wander, rest],
   });
 }
 
@@ -229,15 +224,20 @@ const DIRS = [
   [-1, 0],
 ];
 
+/**
+ * Behavior where entity will search for the first target in its memory that is on the targets list
+ * @param entity {Entity} - The entity this behavior is for
+ */
 function findTarget(entity, ...targets) {
   if (targets.length === 0) return false;
   if (entity.targetId !== null) return false;
   const tSet = new Set();
-  targets.forEach(t => tSet.add(t.toLowerCase()));
+  targets.forEach((t) => tSet.add(t.toLowerCase()));
   for (const entities of entity.entityMemory) {
-    for (const other of entities) {
+    for (const { id } of entities) {
+      const other = getEntityById(id);
       if (tSet.has(other.name.toLowerCase())) {
-        entity.targetId = other.id;
+        entity.targetId = id;
         return false;
       }
     }
@@ -271,7 +271,7 @@ function hunt(entity) {
   }
   const path = getMap().path(entity, tX, tY);
   if (!path || path.length <= 1) return false;
-  
+
   logBehavior(entity, "hunting");
   return act(entity, MOVE, path[1]);
 }
