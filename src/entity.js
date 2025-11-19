@@ -40,7 +40,7 @@ export class Entity {
     this.intelligence = props.intelligence ?? 1;
     this.strength = props.strength ?? 1;
     this.wisdom = props.wisdom ?? 1;
-    
+
     this.attackRange = 1;
     this.attackDelayMod = 0;
     this.accuracyMod = 0;
@@ -61,6 +61,7 @@ export class Entity {
       this.entityMemory[i] = [];
     }
 
+    this.dead = false;
     this.idToLoc = {};
     this.targetId = null;
     this.tSet = props.tSet ?? new Set(["player"]);
@@ -135,7 +136,7 @@ export class Entity {
   setTileInMemory(x, y, name) {
     this.memory[x + y * this.w] = name;
   }
-  
+
   get accuracy() {
     return Math.max(this.strength + this.wisdom + this.accuracyMod, 1);
   }
@@ -143,15 +144,15 @@ export class Entity {
   get damage() {
     return Math.max(this.strength + this.intelligence + this.damageMod, 1);
   }
-  
+
   get defense() {
     return Math.max(this.constitution + this.defenseMod, 1);
   }
-  
+
   get dodge() {
     return Math.max(this.agility + this.dodgeMod, 1);
   }
-  
+
   get health() {
     return this._health;
   }
@@ -204,9 +205,9 @@ export class Entity {
   }
 
   get status() {
-    return `${this.displayName}: Level: ${this.level}. Health: ${this.hitpoints} / ${this.maxHitpoints}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
+    return `${this.displayName}: Level: ${this.level}. Health: ${this.health} / ${this.maxHealth}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
   }
-  
+
   set health(val) {
     this._health = clamp(val, 0, this.maxHealth);
     if (this._health === 0) {
@@ -234,7 +235,7 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     variant,
     description: {
       0: (self) =>
-        `The ${self.displayName} is semi-translucent. Its gelatenous body wobbles as it moves around.`,
+        `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
       3: (self) => {
         if (color === "Green") {
           return `The ${self.displayName} is slightly poisonous.`;
@@ -242,11 +243,13 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
           return `The ${self.displayName} does physical damage.`;
         }
       },
-      5: (self) =>
+      5: () =>
         `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
     },
     w,
     h,
+    strength: 2,
+    constitution: 2,
     behaviors: [simpleAttack, findTarget, hunt, wander, rest],
   });
 }
@@ -313,13 +316,13 @@ function hunt(entity) {
 }
 
 function simpleAttack(entity) {
-  const { targetId, x, y } = entity;
+  const { targetId } = entity;
   if (targetId === null) return false;
   const targetLoc = entity.idToLoc[targetId];
   if (!targetLoc) return false;
   const { x: tX, y: tY } = targetLoc;
   const target = { x: tX, y: tY };
-  if (inRange(entity, ATTACK, target) {
+  if (inRange(entity, ATTACK, target)) {
     return act(entity, ATTACK, target);
   }
   return false;

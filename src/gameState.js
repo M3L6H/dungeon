@@ -58,6 +58,7 @@ export function getEntities() {
 }
 
 export function getInput(entity) {
+  if (entity.dead) return;
   getMap().updateMemory(entity);
   if (entity.isPlayer) {
     entity.controlling = true;
@@ -132,7 +133,7 @@ export function inRange(entity, action, target) {
   const dy = Math.abs(y - entity.y);
   switch (action) {
     case "attack":
-      return dx + dy < entity.attackRange;
+      return dx + dy < entity.attackRange && entity.stamina > 0;
     case "examine":
       const examineRange = Math.min(3, entity.sightRange);
       return (
@@ -165,7 +166,7 @@ function interrupt(entity, interrupter) {
       if (id === entity.id) {
         events.splice(i, 1);
         addLog(`${entity.displayName} has been interrupted`);
-        getDecision(entity);
+        getInput(entity);
         return;
       }
     }
@@ -178,44 +179,58 @@ function attack(entity, target) {
   const { accuracy, damage, displayName } = entity;
   const { x, y } = target;
   turnToFaceTarget(entity, target);
-  
+
   if (getMap().getEntities(x, y).length === 0) return false;
-  
+
   const timeToAttack = 1 + entity.attackDelayMod;
   schedule(entity, timeToAttack, () => {
-    getMap().getEntities(x, y).forEach((other) => {
-      other.tSet.add(entity.name.toLowerCase());
-      const attack = roll(accuracy);
-      const dodge = roll(other.dodge);
-      if (attack <= dodge) {
-        addLog(`${other.displayName} dodged an attack from ${displayName}!`);
-        return;
-      }
-      const defense = roll(other.defense);
-      interrupt(other, entity);
-      if (attack <= defense) {
-        addLog(`${other.displayName} defended an attack from ${displayName}!`);
-        return;
-      }
-      const damage = roundMin(roll(damage) * (attack - defense) / dodge);
-      other.health -= damage;
-      addLog(`${displayName} attacked ${other.displayName} and dealt ${damage} damage!`);
-    });
+    getMap()
+      .getEntities(x, y)
+      .forEach((other) => {
+        if (other.id === entity.id) return; // Don't attack self
+        if (entity.stamina === 0) return; // Can't attack with no stamina
+        --entity.stamina;
+        other.tSet.add(entity.name.toLowerCase());
+        const attack = roll(accuracy);
+        const dodge = roll(other.dodge);
+        if (attack <= dodge) {
+          addLog(
+            `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}!`,
+          );
+          return;
+        }
+        const defense = roll(other.defense);
+        interrupt(other, entity);
+        if (attack <= defense) {
+          addLog(
+            `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}!`,
+          );
+          return;
+        }
+        const damageDealt = roundMin(
+          (roll(damage) * (attack - defense)) / dodge,
+        );
+        other.health -= damageDealt;
+        addLog(
+          `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
+        );
+      });
   });
   return true;
 }
 
 function examine(entity, target) {
+  const { x, y } = target;
   turnToFaceTarget(entity, target);
   schedule(entity, 1, () => {
     const result = getMap().examine(entity, x, y);
     if (entity.isPlayer) {
       addLog(result);
-      logActionEnd(entity, `examined (${x}, ${y})`);
+      logActionEnd(entity, `examined`);
     }
   });
   if (entity.isPlayer) {
-    logActionStart(entity, `examining (${x}, ${y})`);
+    logActionStart(entity, `examining`);
   }
   return true;
 }
@@ -230,10 +245,10 @@ function move(entity, target) {
   const dy = y - entity.y;
   const dir = Math.abs(dx) * (-dx + 2) + Math.abs(dy) * (dy + 1);
   entity.dir = dir;
-  --entity.stamina;
   const time = getTimeToMove(entity);
   schedule(entity, time, () => {
     getMap().moveEntity(entity, x, y);
+    --entity.stamina;
     logActionEnd(entity, `moved ${DIRS[dir]}`);
   });
   logActionStart(entity, `moving ${DIRS[dir]}`);

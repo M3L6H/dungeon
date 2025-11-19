@@ -79,7 +79,9 @@ function renderEntities(entities, tileElt) {
       entityElt.classList.add("entity");
       tileElt.appendChild(entityElt);
     }
-    tileElt.children[i].style.backgroundImage = entities[i].sprite;
+    tileElt.children[i].style.backgroundImage = entities[i].dead
+      ? "none"
+      : entities[i].sprite;
   }
 }
 
