@@ -193,10 +193,14 @@ function examine(entity, target) {
   }
   schedule(entity, 1, () => {
     const result = getMap().examine(entity, x, y);
-    if (entity.isPlayer) addLog(result);
-    logActionEnd(entity, `examined (${x}, ${y})`);
+    if (entity.isPlayer) {
+      addLog(result);
+      logActionEnd(entity, `examined (${x}, ${y})`);
+    }
   });
-  logActionStart(entity, `examining (${x}, ${y})`);
+  if (entity.isPlayer) {
+    logActionStart(entity, `examining (${x}, ${y})`);
+  }
   return true;
 }
 
