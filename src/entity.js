@@ -1,4 +1,14 @@
-import { MOVE, act, addEntity, getEntities, inRange } from "./gameState.js";
+import {
+  EXAMINE,
+  MOVE, 
+  act,
+  addEntity,
+  getEntities,
+  getMap,
+  getPlayer,
+  inRange,
+ } from "./gameState.js";
+import { addLog } from "./logs.js";
 
 const HITPOINTS_PER_CONSTITUTION = 3;
 const MANA_PER_INTELLIGENCE = 5;
@@ -35,7 +45,7 @@ export class Entity {
 
     this.w = props.w;
     this.behaviors = props.behaviors ?? [];
-    this.memory = new Array(props.w * props.h);
+    this.memory = new Array(props.w * props.h).fill();
     this.entityMemory = new Array(props.w * props.h);
 
     for (let i = 0; i < this.entityMemory.length; ++i) {
@@ -43,21 +53,24 @@ export class Entity {
     }
 
     this.idToLoc = {};
+    this.targetId = null;
 
     addEntity(this);
   }
 
   examine({ perception }) {
     const details = [];
+
+    if (perception >= 3) {
+      details.push(this.status);
+    }
+
     for (const threshold in this.description) {
       if (perception >= threshold) {
         details.push(this.description[threshold](this));
       }
     }
 
-    if (perception >= 3) {
-      details.push(this.status);
-    }
     return details.join("\r\n");
   }
 
@@ -196,7 +209,12 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     },
     w,
     h,
-    behaviors: [wander],
+    behaviors: [
+      (entity) => findTarget(entity, "player"),
+      hunt,
+      wander,
+      rest,
+    ],
   });
 }
 
@@ -210,6 +228,53 @@ const DIRS = [
   [0, 1],
   [-1, 0],
 ];
+
+function findTarget(entity, ...targets) {
+  if (targets.length === 0) return false;
+  if (entity.targetId !== null) return false;
+  const tSet = new Set();
+  targets.forEach(t => tSet.add(t.toLowerCase()));
+  for (const entities of entity.entityMemory) {
+    for (const other of entities) {
+      if (tSet.has(other.name.toLowerCase())) {
+        entity.targetId = other.id;
+        return false;
+      }
+    }
+  }
+  return false;
+}
+
+function hunt(entity) {
+  const { searching, targetId, x, y } = entity;
+  if (targetId === null) return false;
+
+  const targetLoc = entity.idToLoc[targetId];
+  if (!targetLoc) return false;
+  const { x: tX, y: tY } = targetLoc;
+  if (x === tX && y === tY) {
+    if (!searching) {
+      entity.searching = true;
+      logBehavior(entity, "searching");
+      return act(entity, EXAMINE, { x, y: y - 1 });
+    } else if (entity.dir < 3) {
+      logBehavior(entity, "searching");
+      return act(entity, EXAMINE, {
+        x: x + DIRS[entity.dir + 1][0],
+        y: y + DIRS[entity.dir + 1][1],
+      });
+    } else {
+      entity.targetId = null;
+      entity.searching = false;
+      return false;
+    }
+  }
+  const path = getMap().path(entity, tX, tY);
+  if (!path || path.length <= 1) return false;
+  
+  logBehavior(entity, "hunting");
+  return act(entity, MOVE, path[1]);
+}
 
 function wander(entity) {
   const { x, y } = entity;
@@ -225,5 +290,18 @@ function wander(entity) {
     } while (attempts < 4 && !inRange(entity, MOVE, target));
   }
 
+  logBehavior(entity, "wandering");
   return act(entity, MOVE, target);
+}
+
+function rest(entity) {
+  const { x, y } = entity;
+  return act(entity, MOVE, { x, y });
+}
+
+function logBehavior(entity, behavior) {
+  const { displayName, x, y } = entity;
+  if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+    addLog(`${displayName} is ${behavior}`);
+  }
 }

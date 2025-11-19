@@ -1,9 +1,15 @@
 import { Tile } from "./tile.js";
 
-const ROWS = 1000;
-const COLS = 1000;
+const ROWS = 512;
+const COLS = 512;
 const ROOMS = Math.floor((ROWS * COLS) / 500);
 const MIN_RADIUS = 3;
+const OFFSETS = [
+  [0, -1],
+  [1, 0],
+  [0, 1],
+  [-1, 0],
+];
 
 function randInRange(min, max) {
   min = Math.ceil(min);
@@ -262,6 +268,68 @@ function isL(a, b) {
   return Math.abs(a.dir - b.dir) % 2 === 1;
 }
 
+function cbd(x1, y1, x2, y2) {
+  return Math.abs(x2 - x1) + Math.abs(y2 - y1);
+}
+
+class Heap {
+  constructor(comparator) {
+    this.comparator = comparator;
+    this.values = [];
+  }
+
+  get length() {
+    return this.values.length;
+  }
+
+  push(node) {
+    this.values.push(node);
+    this._bubbleUp(this.length - 1);
+  }
+
+  pop() {
+    if (this.length === 0) return undefined;
+    if (this.length === 1) return this.values.pop();
+    const value = this.values[0];
+    this.values[0] = this.values.pop();
+    this._bubbleDown(0);
+    return value;
+  }
+
+  _bubbleUp(idx) {
+    if (idx === 0) return;
+    const pIdx = Math.floor((idx - 1) / 2);
+    const curr = this.values[idx];
+    if (this._lt(this.values[pIdx], curr)) {
+      return;
+    }
+    this.values[idx] = this.values[pIdx];
+    this.values[pIdx] = curr;
+    this._bubbleUp(pIdx);
+  }
+
+  _bubbleDown(idx) {
+    const lIdx = idx * 2 + 1;
+    const rIdx = idx * 2 + 2;
+    let mIdx = lIdx;
+    if (lIdx >= this.length) return;
+    if (rIdx < this.length && this._lt(this.values[rIdx], this.values[lIdx])) {
+      mIdx = rIdx;
+    }
+    const curr = this.values[idx];
+    if (this._lt(curr, this.values[mIdx])) {
+      return;
+    }
+    this.values[idx] = this.values[mIdx];
+    this.values[mIdx] = curr;
+    this._bubbleDown(mIdx);
+  }
+
+  _lt(a, b) {
+    return this.comparator(a, b) < 0;
+  }
+}
+
 class Map {
   constructor(width, height, origins, rooms, edges) {
     this.w = width;
@@ -339,6 +407,7 @@ class Map {
       details.push(entity.examine(examiner));
     });
     details.push(this.getTile(tX, tY).examine(examiner));
+    this.updateMemory(examiner);
     return details.join("\r\n");
   }
 
@@ -353,6 +422,13 @@ class Map {
       x: origin.x,
       y: origin.y,
     };
+  }
+
+  /**
+   * @returns {Tile} The tile at x, y
+   */
+  getTile(x, y) {
+    return this.tiles[x + y * this.w];
   }
 
   /**
@@ -379,6 +455,54 @@ class Map {
     this.updateMemory(entityToMove);
     return entityToMove;
   }
+  
+  path(entity, tX, tY) {
+    const visited = new Array(this.w * this.h);
+    const heap = new Heap((a, b) => {
+      if (a.hcost < b.hcost) return -1;
+      else if (a.hcost > b.hcost) return 1;
+      return 0; 
+    });
+    const { x, y } = entity;
+    let hcost = cbd(x, y, tX, tY);
+    heap.push({ x, y, fcost: 0, hcost, prev: null });
+
+    while (heap.length > 0) {
+      let curr = heap.pop();
+      const idx = curr.x + curr.y * this.w
+      if (visited[idx]) continue;
+      visited[idx] = true;
+      
+      if (curr.x === tX && cur.y === tY) {
+        const path = new Array(curr.fcost + 1);
+        for (let i = path.length - 1; i >= 0; --i) {
+          path[i] = curr;
+          curr = curr.prev;
+        }
+        
+        return path;
+      }
+      
+      for (const [dx, dy] of OFFSETS) {
+        const newX = curr.x + dx;
+        const newY = curr.y + dy;
+        if (visited[newX + newY * this.w]) continue;
+        if (!entity.getTileInMemory(newX, newY)?.isTraversable) continue;
+        const fcost = curr.fcost + 1;
+        hcost = fcost + cbd(newX, newY, tX, tY); 
+        const neighbor = {
+          x: newX,
+          y: newY,
+          fcost,
+          hcost,
+          prev: curr,
+        };
+        heap.push(neighbor);
+      }
+    }
+    
+    return [];
+  }
 
   writeToImage(imageData) {
     for (let x = 0; x < this.w; ++x) {
@@ -401,13 +525,6 @@ class Map {
         }
       }
     }
-  }
-
-  /**
-   * @returns {Tile} The tile at x, y
-   */
-  getTile(x, y) {
-    return this.tiles[x + y * this.w];
   }
 
   _coordsEqual(a, b) {
