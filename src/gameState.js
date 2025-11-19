@@ -4,6 +4,7 @@ import { createPlayer } from "./player.js";
 import { schedule } from "./time.js";
 
 export const NONE = "none";
+export const ATTACK = "attack";
 export const MOVE = "move";
 export const EXAMINE = "examine";
 export const INTERACT = "interact";
@@ -112,10 +113,12 @@ export function act(entity, action, target) {
   if (!inRange(entity, action, target)) return false;
 
   switch (action) {
-    case "move":
-      return move(entity, target);
+    case "attack":
+      return attack(entity, target);
     case "examine":
       return examine(entity, target);
+    case "move":
+      return move(entity, target);
     default:
       addLog(`${entity.name} cannot ${action}`);
   }
@@ -128,18 +131,20 @@ export function inRange(entity, action, target) {
   const dx = Math.abs(x - entity.x);
   const dy = Math.abs(y - entity.y);
   switch (action) {
-    case "move":
-      const tile = getMap().getTile(x, y);
-      return (
-        (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
-        (dx + dy === 1 && tile.isTraversable && entity.stamina > 0)
-      );
+    case "attack":
+      return dx + dy < entity.attackRange;
     case "examine":
       const examineRange = Math.min(3, entity.sightRange);
       return (
         dx <= examineRange &&
         dy <= examineRange &&
         getMap().entityHasLoS(entity, x, y)
+      );
+    case "move":
+      const tile = getMap().getTile(x, y);
+      return (
+        (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
+        (dx + dy === 1 && tile.isTraversable && entity.stamina > 0)
       );
     default:
       return false;
@@ -150,7 +155,70 @@ export function incrementTime() {
   return ++gameState.time;
 }
 
+function interrupt(entity, interrupter) {
+  turnToFaceTarget(entity, interrupter);
+  if (entity.inControl) return;
+  for (const k in getTimeline()) {
+    const events = getTimeline()[k];
+    for (let i = events.length - 1; i >= 0; --i) {
+      const [id] = events[i];
+      if (id === entity.id) {
+        events.splice(i, 1);
+        addLog(`${entity.displayName} has been interrupted`);
+        getDecision(entity);
+        return;
+      }
+    }
+  }
+}
+
 const DIRS = ["North", "East", "South", "West"];
+
+function attack(entity, target) {
+  const { accuracy, damage, displayName } = entity;
+  const { x, y } = target;
+  turnToFaceTarget(entity, target);
+  
+  if (getMap().getEntities(x, y).length === 0) return false;
+  
+  const timeToAttack = 1 + entity.attackDelayMod;
+  schedule(entity, timeToAttack, () => {
+    getMap().getEntities(x, y).forEach((other) => {
+      other.tSet.add(entity.name.toLowerCase());
+      const attack = roll(accuracy);
+      const dodge = roll(other.dodge);
+      if (attack <= dodge) {
+        addLog(`${other.displayName} dodged an attack from ${displayName}!`);
+        return;
+      }
+      const defense = roll(other.defense);
+      interrupt(other, entity);
+      if (attack <= defense) {
+        addLog(`${other.displayName} defended an attack from ${displayName}!`);
+        return;
+      }
+      const damage = roundMin(roll(damage) * (attack - defense) / dodge);
+      other.health -= damage;
+      addLog(`${displayName} attacked ${other.displayName} and dealt ${damage} damage!`);
+    });
+  });
+  return true;
+}
+
+function examine(entity, target) {
+  turnToFaceTarget(entity, target);
+  schedule(entity, 1, () => {
+    const result = getMap().examine(entity, x, y);
+    if (entity.isPlayer) {
+      addLog(result);
+      logActionEnd(entity, `examined (${x}, ${y})`);
+    }
+  });
+  if (entity.isPlayer) {
+    logActionStart(entity, `examining (${x}, ${y})`);
+  }
+  return true;
+}
 
 function move(entity, target) {
   const { x, y } = target;
@@ -169,38 +237,6 @@ function move(entity, target) {
     logActionEnd(entity, `moved ${DIRS[dir]}`);
   });
   logActionStart(entity, `moving ${DIRS[dir]}`);
-  return true;
-}
-
-function examine(entity, target) {
-  const { x, y } = target;
-  const dx = x - entity.x;
-  const dxMag = Math.abs(dx);
-  const dy = y - entity.y;
-  const dyMag = Math.abs(dy);
-  if (dxMag > dyMag) {
-    entity.dir = 2 - dx / dxMag;
-  } else if (dyMag > dxMag) {
-    entity.dir = dy / dyMag + 1;
-  } else if (dx < 0 && dy < 0 && entity.dir !== 0 && entity.dir !== 3) {
-    entity.dir = 0;
-  } else if (dx > 0 && dy < 0 && entity.dir !== 0 && entity.dir !== 1) {
-    entity.dir = 1;
-  } else if (dx > 0 && dy > 0 && entity.dir !== 1 && entity.dir !== 2) {
-    entity.dir = 2;
-  } else if (dx < 0 && dy > 0 && entity.dir !== 2 && entity.dir !== 3) {
-    entity.dir = 3;
-  }
-  schedule(entity, 1, () => {
-    const result = getMap().examine(entity, x, y);
-    if (entity.isPlayer) {
-      addLog(result);
-      logActionEnd(entity, `examined (${x}, ${y})`);
-    }
-  });
-  if (entity.isPlayer) {
-    logActionStart(entity, `examining (${x}, ${y})`);
-  }
   return true;
 }
 
@@ -231,5 +267,34 @@ function logActionEnd(entity, action) {
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
     const logElt = addEndLog(`${name} ${action}`);
     if (isPlayer) logElt.classList.add("player");
+  }
+}
+
+function roll(n) {
+  return roundMin(n * Math.random());
+}
+
+function roundMin(n, min = 1) {
+  return Math.max(Math.floor(n), min);
+}
+
+function turnToFaceTarget(entity, target) {
+  const { x, y } = target;
+  const dx = x - entity.x;
+  const dxMag = Math.abs(dx);
+  const dy = y - entity.y;
+  const dyMag = Math.abs(dy);
+  if (dxMag > dyMag) {
+    entity.dir = 2 - dx / dxMag;
+  } else if (dyMag > dxMag) {
+    entity.dir = dy / dyMag + 1;
+  } else if (dx < 0 && dy < 0 && entity.dir !== 0 && entity.dir !== 3) {
+    entity.dir = 0;
+  } else if (dx > 0 && dy < 0 && entity.dir !== 0 && entity.dir !== 1) {
+    entity.dir = 1;
+  } else if (dx > 0 && dy > 0 && entity.dir !== 1 && entity.dir !== 2) {
+    entity.dir = 2;
+  } else if (dx < 0 && dy > 0 && entity.dir !== 2 && entity.dir !== 3) {
+    entity.dir = 3;
   }
 }

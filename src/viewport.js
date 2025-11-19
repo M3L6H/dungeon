@@ -29,8 +29,8 @@ function renderBar(elt, curr, max) {
 }
 
 function renderBars() {
-  const { hitpoints, maxHitpoints, mana, maxMana, stamina, maxStamina } = getPlayer();
-  renderBar(healthElt, hitpoints, maxHitpoints);
+  const { health, maxHealth, mana, maxMana, stamina, maxStamina } = getPlayer();
+  renderBar(healthElt, health, maxHealth);
   renderBar(manaElt, mana, maxMana);
   renderBar(staminaElt, stamina, maxStamina);
 }

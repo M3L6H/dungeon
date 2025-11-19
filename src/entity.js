@@ -1,4 +1,5 @@
 import {
+  ATTACK,
   EXAMINE,
   MOVE,
   act,
@@ -37,9 +38,17 @@ export class Entity {
     this.constitution = props.constitution ?? 1;
     this.endurance = props.endurance ?? 1;
     this.intelligence = props.intelligence ?? 1;
+    this.strength = props.strength ?? 1;
     this.wisdom = props.wisdom ?? 1;
+    
+    this.attackRange = 1;
+    this.attackDelayMod = 0;
+    this.accuracyMod = 0;
+    this.damageMod = 0;
+    this.defenseMod = 0;
+    this.dodgeMod = 0;
 
-    this.hitpoints = this.maxHitpoints;
+    this._health = this.maxHealth;
     this.mana = this.maxMana;
     this._stamina = this.maxStamina;
 
@@ -54,6 +63,7 @@ export class Entity {
 
     this.idToLoc = {};
     this.targetId = null;
+    this.tSet = props.tSet ?? new Set(["player"]);
 
     addEntity(this);
   }
@@ -125,6 +135,26 @@ export class Entity {
   setTileInMemory(x, y, name) {
     this.memory[x + y * this.w] = name;
   }
+  
+  get accuracy() {
+    return Math.max(this.strength + this.wisdom + this.accuracyMod, 1);
+  }
+
+  get damage() {
+    return Math.max(this.strength + this.intelligence + this.damageMod, 1);
+  }
+  
+  get defense() {
+    return Math.max(this.constitution + this.defenseMod, 1);
+  }
+  
+  get dodge() {
+    return Math.max(this.agility + this.dodgeMod, 1);
+  }
+  
+  get health() {
+    return this._health;
+  }
 
   get inControl() {
     return this.controlling;
@@ -134,7 +164,7 @@ export class Entity {
     return this.name === "Player";
   }
 
-  get maxHitpoints() {
+  get maxHealth() {
     return this.constitution * HITPOINTS_PER_CONSTITUTION;
   }
 
@@ -176,6 +206,14 @@ export class Entity {
   get status() {
     return `${this.displayName}: Level: ${this.level}. Health: ${this.hitpoints} / ${this.maxHitpoints}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
   }
+  
+  set health(val) {
+    this._health = clamp(val, 0, this.maxHealth);
+    if (this._health === 0) {
+      this.dead = true;
+      addLog(`${this.displayName} died`);
+    }
+  }
 
   set stamina(val) {
     this._stamina = clamp(val, 0, this.maxStamina);
@@ -209,7 +247,7 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     },
     w,
     h,
-    behaviors: [(entity) => findTarget(entity, "player"), hunt, wander, rest],
+    behaviors: [simpleAttack, findTarget, hunt, wander, rest],
   });
 }
 
@@ -228,12 +266,11 @@ const DIRS = [
  * Behavior where entity will search for the first target in its memory that is on the targets list
  * @param entity {Entity} - The entity this behavior is for
  */
-function findTarget(entity, ...targets) {
-  if (targets.length === 0) return false;
+function findTarget(entity) {
+  const { entityMemory, tSet } = entity;
+  if (tSet.size === 0) return false;
   if (entity.targetId !== null) return false;
-  const tSet = new Set();
-  targets.forEach((t) => tSet.add(t.toLowerCase()));
-  for (const entities of entity.entityMemory) {
+  for (const entities of entityMemory) {
     for (const { id } of entities) {
       const other = getEntityById(id);
       if (tSet.has(other.name.toLowerCase())) {
@@ -258,7 +295,6 @@ function hunt(entity) {
       logBehavior(entity, "searching");
       return act(entity, EXAMINE, { x, y: y - 1 });
     } else if (entity.dir < 3) {
-      logBehavior(entity, "searching");
       return act(entity, EXAMINE, {
         x: x + DIRS[entity.dir + 1][0],
         y: y + DIRS[entity.dir + 1][1],
@@ -274,6 +310,19 @@ function hunt(entity) {
 
   logBehavior(entity, "hunting");
   return act(entity, MOVE, path[1]);
+}
+
+function simpleAttack(entity) {
+  const { targetId, x, y } = entity;
+  if (targetId === null) return false;
+  const targetLoc = entity.idToLoc[targetId];
+  if (!targetLoc) return false;
+  const { x: tX, y: tY } = targetLoc;
+  const target = { x: tX, y: tY };
+  if (inRange(entity, ATTACK, target) {
+    return act(entity, ATTACK, target);
+  }
+  return false;
 }
 
 function wander(entity) {

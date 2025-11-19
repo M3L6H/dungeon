@@ -27,10 +27,10 @@ export function schedule(entity, timeOffset, effect) {
   const timeline = getTimeline();
   const time = getTime();
   const events = timeline[time + timeOffset] ?? [];
-  events.push(() => {
+  events.push([entity.id, () => {
     effect();
     getDecision(entity);
-  });
+  }]);
   timeline[time + timeOffset] = events;
 }
 
@@ -41,7 +41,7 @@ export function tick() {
     entity.mana = Math.min(entity.mana + 1, entity.maxMana);
   });
   const events = timeline[time] ?? [];
-  events.forEach((event) => event());
+  events.forEach(([_, event]) => event());
   renderViewport();
   delete timeline[time]; 
 }
