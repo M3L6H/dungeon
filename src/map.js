@@ -334,10 +334,12 @@ class Map {
   }
 
   examine(examiner, tX, tY) {
+    const details = [];
     this.getEntities(tX, tY).forEach((entity) => {
-      entity.examine(examiner);
+      details.push(entity.examine(examiner));
     });
-    this.getTile(tX, tY).examine(examiner);
+    details.push(this.getTile(tX, tY).examine(examiner));
+    return details.join("\r\n");
   }
 
   getEntities(x, y) {

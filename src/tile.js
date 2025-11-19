@@ -1,5 +1,3 @@
-import { addLog } from "./logs.js";
-
 export class Tile {
   static floor = new Tile({
     name: "Dungeon Floor",
@@ -40,11 +38,13 @@ export class Tile {
   }
   
   examine({ perception }) {
+    const details = [];
     for (const threshold in this.description) {
       if (perception >= threshold) {
-        addLog(this.description[threshold](this));
+        details.push(this.description[threshold](this));
       }
     }
+    return details.join("\r\n");
   }
   
   get isOpaque() {

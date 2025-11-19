@@ -1,5 +1,4 @@
 import { MOVE, act, addEntity, getEntities, inRange } from "./gameState.js";
-import { addLog } from "./logs.js";
 
 const HITPOINTS_PER_CONSTITUTION = 3;
 const MANA_PER_INTELLIGENCE = 5;
@@ -49,15 +48,17 @@ export class Entity {
   }
 
   examine({ perception }) {
+    const details = [];
     for (const threshold in this.description) {
       if (perception >= threshold) {
-        addLog(this.description[threshold](this));
+        details.push(this.description[threshold](this));
       }
     }
 
     if (perception >= 3) {
-      addLog(this.status);
+      details.push(this.status);
     }
+    return details.join("\r\n");
   }
 
   getEntitiesInMemory(x, y) {

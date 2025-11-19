@@ -189,7 +189,7 @@ function examine(entity, target) {
     entity.dir = 3;
   }
   schedule(entity, 1, () => {
-    getMap().examine(entity, x, y);
+    addLog(getMap().examine(entity, x, y));
     logActionEnd(entity, `examined (${x}, ${y})`);
   });
   logActionStart(entity, `examining (${x}, ${y})`);
