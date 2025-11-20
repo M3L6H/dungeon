@@ -388,6 +388,7 @@ export class Map {
       this.start = this.getRandomRoom();
     }
     this.start.start = true;
+    this._assignDifficulty(edges);
   }
 
   /**
@@ -520,6 +521,8 @@ export class Map {
       for (let y = 0; y < this.h; ++y) {
         const idx = x + y * this.w;
         const tile = this.getTile(x, y);
+        const id = this.tileToId[idx];
+        const { difficulty, radius } = this.origins[id];
         for (let i = 0; i < 2; ++i) {
           const r = (x + 2 * y * this.w) * 8 + i * 4;
           const g = r + 1;
@@ -532,7 +535,7 @@ export class Map {
           const a1 = r1 + 3;
           imageData.data[a1] = 255;
 
-          if (this.tileToId[idx] === this.start.id) {
+          if (id === this.start.id) {
             imageData.data[r] = 0;
             imageData.data[g] = 255;
             imageData.data[b] = 0;
@@ -541,11 +544,11 @@ export class Map {
             imageData.data[b1] = 0;
           } else if (tile.isTraversable) {
             imageData.data[r] = 255;
-            imageData.data[g] = 255;
-            imageData.data[b] = 255;
+            imageData.data[g] = Math.max(0, 255 - difficulty * radius);
+            imageData.data[b] = Math.max(0, 255 - difficulty * radius);
             imageData.data[r1] = 255;
-            imageData.data[g1] = 255;
-            imageData.data[b1] = 255;
+            imageData.data[g1] = Math.max(0, 255 - difficulty * radius);
+            imageData.data[b1] = Math.max(0, 255 - difficulty * radius);
           } else {
             imageData.data[r] = 0;
             imageData.data[g] = 0;
@@ -556,6 +559,23 @@ export class Map {
           }
         }
       }
+    }
+  }
+  
+  _assignDifficulty(edges) {
+    const adj = new Array(this.origins.length).map(() => []);;
+    edges.forEach(({ aId, bId }) => {
+      adj[aId].push(bId);
+    });
+    this.start.difficulty = 0;
+    const q = [this.start];
+    for (let i = 0; i < q.length; ++i) {
+      this.adj[q[i].id].forEach(id => {
+        const origin = this.origins[id];
+        if (origin.difficulty !== undefined) return;
+        origin.difficulty = q[i].difficulty + 1;
+        q.push(origin);
+      });
     }
   }
 
