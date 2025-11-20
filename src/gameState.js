@@ -62,7 +62,6 @@ export function getActions() {
 }
 
 export function getEntities() {
-  gameState.entities = gameState.entities.filter(({ dead }) => !dead);
   return gameState.entities;
 }
 
@@ -149,7 +148,14 @@ export function inRange(entity, action, target) {
   const dy = Math.abs(y - entity.y);
   switch (action) {
     case "attack":
-      return dx + dy <= entity.attackRange && entity.stamina > 0;
+      const entities = getMap()
+        .getEntities(x, y)
+        .filter((other) => other.id !== entity.id);
+      return (
+        dx + dy <= entity.attackRange &&
+        entity.stamina > 0 &&
+        entities.length > 0
+      );
     case "examine":
       const examineRange = Math.min(3, entity.sightRange);
       return (
@@ -200,54 +206,55 @@ function attack(entity, target) {
   const { x, y } = target;
   turnToFaceTarget(entity, target);
 
-  if (getMap().getEntities(x, y).length === 0) return false;
-
   const timeToAttack = 1 + entity.attackDelayMod;
   schedule(entity, timeToAttack, () => {
-    getMap()
+    const entities = getMap()
       .getEntities(x, y)
-      .forEach((other) => {
-        if (other.id === entity.id) return; // Don't attack self
-        if (entity.stamina === 0) return; // Can't attack with no stamina
-        --entity.stamina;
-        other.tSet.add(entity.name.toLowerCase());
-        const attack = roll(accuracy);
-        const dodge = roll(other.dodge);
-        if (attack <= dodge) {
-          logCombatWarn(
-            entity,
-            other,
-            `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}.`,
-          );
-          return;
-        }
-        const defense = roll(other.defense);
-        interrupt(other, entity);
-        if (attack <= defense) {
-          logCombatWarn(
-            entity,
-            other,
-            `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}.`,
-          );
-          return;
-        }
-        const damageDealt = roll(damage);
-        other.health -= damageDealt;
+      .filter((other) => other.id !== entity.id); // Don't attack self
+    entities.forEach((other) => {
+      if (entity.stamina === 0) return; // Can't attack with no stamina
+      --entity.stamina;
+      other.tSet.add(entity.name.toLowerCase());
+      const attack = roll(accuracy);
+      const dodge = roll(other.dodge);
+      if (attack <= dodge) {
+        logCombatWarn(
+          entity,
+          other,
+          `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}.`,
+        );
+        return;
+      }
+      const defense = roll(other.defense);
+      interrupt(other, entity);
+      if (attack <= defense) {
+        logCombatWarn(
+          entity,
+          other,
+          `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}.`,
+        );
+        return;
+      }
+      const damageDealt = roll(damage);
+      other.health -= damageDealt;
+      logCombatDanger(
+        entity,
+        other,
+        `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
+      );
+
+      if (other.dead) {
         logCombatDanger(
           entity,
           other,
-          `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
-        );
-        
-        if (other.dead) {
-          logCombatDanger(
-            entity,
-            other,
-            `${other.displayName} died.`,
-          )?.classList.add("bold");
-        }
-      });
+          `${other.displayName} died.`,
+        )?.classList.add("bold");
+      }
+    });
+    const suffix = entities.length === 0 ? " and hit nothing" : "";
+    logActionEnd(entity, `attacked${suffix}`);
   });
+  logActionStart(entity, "attacking");
   return true;
 }
 
@@ -298,7 +305,7 @@ export function rest(entity, full = false) {
 }
 
 function getTimeToMove(entity) {
-  return Math.max(1, 11 - Math.floor(Math.sqrt(entity.speed)));
+  return Math.max(1, 6 - Math.floor(Math.sqrt(entity.speed)));
 }
 
 function logActionStart(entity, action) {
@@ -318,13 +325,23 @@ function logActionEnd(entity, action) {
 }
 
 function logCombatDanger(a, b, msg) {
-  if (a.isPlayer || b.isPlayer || getMap().canEntitySeeTile(getPlayer(), a.x, a.y)|| getMap().canEntitySeeTile(getPlayer(), b.x, b.y)) {
+  if (
+    a.isPlayer ||
+    b.isPlayer ||
+    getMap().canEntitySeeTile(getPlayer(), a.x, a.y) ||
+    getMap().canEntitySeeTile(getPlayer(), b.x, b.y)
+  ) {
     return addDangerLog(msg);
   }
 }
 
 function logCombatWarn(a, b, msg) {
-  if (a.isPlayer || b.isPlayer || getMap().canEntitySeeTile(getPlayer(), a.x, a.y)|| getMap().canEntitySeeTile(getPlayer(), b.x, b.y)) {
+  if (
+    a.isPlayer ||
+    b.isPlayer ||
+    getMap().canEntitySeeTile(getPlayer(), a.x, a.y) ||
+    getMap().canEntitySeeTile(getPlayer(), b.x, b.y)
+  ) {
     return addWarnLog(msg);
   }
 }

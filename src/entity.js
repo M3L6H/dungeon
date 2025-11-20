@@ -87,10 +87,15 @@ export class Entity {
   }
 
   getEntitiesInMemory(x, y) {
-    return this.entityMemory[x + y * this.w].map(({ id, dir }) => {
-      const entity = getEntityById(id);
-      entity.dir = dir;
-      return entity;
+    return this.entityMemory[x + y * this.w].map(({ dir, id, sprite }) => {
+      const { displayName, name } = getEntityById(id);
+      return {
+        id,
+        dir,
+        displayName,
+        name,
+        sprite,
+      };
     });
   }
 
@@ -110,7 +115,7 @@ export class Entity {
     });
 
     for (const entity of entities) {
-      const { id, dir } = entity;
+      const { dir, id, sprite } = entity;
       toDelete.delete(id);
       if (this.idToLoc[id]) {
         const { x: oldX, y: oldY } = this.idToLoc[id];
@@ -124,7 +129,7 @@ export class Entity {
         }
       }
       this.idToLoc[id] = { x, y };
-      myEntities.push({ id, dir });
+      myEntities.push({ dir, id, sprite });
     }
 
     for (let i = myEntities.length - 1; i >= 0; --i) {
@@ -230,28 +235,32 @@ function clamp(val, min, max) {
  * @returns {Entity} A slime entity
  */
 export function createSlime(w, h, x, y, color = "Blue", variant = "small") {
-  return startEntity(new Entity({
-    name: `${color} Slime`,
-    variant,
-    description: {
-      0: (self) =>
-        `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
-      3: (self) => {
-        if (color === "Green") {
-          return `The ${self.displayName} is slightly poisonous.`;
-        } else {
-          return `The ${self.displayName} does physical damage.`;
-        }
+  return startEntity(
+    new Entity({
+      name: `${color} Slime`,
+      variant,
+      description: {
+        0: (self) =>
+          `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
+        3: (self) => {
+          if (color === "Green") {
+            return `The ${self.displayName} is slightly poisonous.`;
+          } else {
+            return `The ${self.displayName} does physical damage.`;
+          }
+        },
+        5: () =>
+          `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
       },
-      5: () =>
-        `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
-    },
-    w,
-    h,
-    strength: 2,
-    constitution: 2,
-    behaviors: [simpleAttack, findTarget, hunt, wander, rest],
-  }), x, y);
+      w,
+      h,
+      strength: 2,
+      constitution: 2,
+      behaviors: [simpleAttack, findTarget, hunt, wander, rest],
+    }),
+    x,
+    y,
+  );
 }
 
 function startEntity(entity, x, y) {
@@ -282,7 +291,7 @@ function findTarget(entity) {
   for (const entities of entityMemory) {
     for (const { id } of entities) {
       const other = getEntityById(id);
-      if (tSet.has(other.name.toLowerCase())) {
+      if (!other.dead && tSet.has(other.name.toLowerCase())) {
         entity.targetId = id;
         return false;
       }
