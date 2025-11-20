@@ -58,11 +58,6 @@ function renderRange(tX, tY, tileElt) {
     if (!getPlayer().inControl) return;
     if (act(getPlayer(), getSelectedAction(), target)) {
       getPlayer().releaseControl();
-      getEntities().forEach((entity) => {
-        if (entity.inControl) {
-          getInput(entity);
-        }
-      });
       advance();
     }
   };

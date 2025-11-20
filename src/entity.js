@@ -5,6 +5,7 @@ import {
   act,
   addEntity,
   getEntities,
+  getInput,
   getMap,
   getPlayer,
   inRange,
@@ -229,8 +230,8 @@ function clamp(val, min, max) {
  * Creates a slime entity of the given color and variant.
  * @returns {Entity} A slime entity
  */
-export function createSlime(w, h, color = "Blue", variant = "small") {
-  return new Entity({
+export function createSlime(w, h, x, y, color = "Blue", variant = "small") {
+  return startEntity(new Entity({
     name: `${color} Slime`,
     variant,
     description: {
@@ -251,7 +252,13 @@ export function createSlime(w, h, color = "Blue", variant = "small") {
     strength: 2,
     constitution: 2,
     behaviors: [simpleAttack, findTarget, hunt, wander, rest],
-  });
+  }), x, y);
+}
+
+function startEntity(entity, x, y) {
+  getMap().moveEntity(entity, x, y);
+  getInput(entity);
+  return entity;
 }
 
 function getEntityById(id) {

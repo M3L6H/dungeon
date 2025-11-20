@@ -17,10 +17,8 @@ async function init() {
   const { x, y } = map.getRandomRoom();
   const player = getPlayer();
   map.moveEntity(player, x, y);
-  const slime1 = createSlime(map.w, map.h);
-  map.moveEntity(slime1, x + 1, y + 1);
-  const slime2 = createSlime(map.w, map.h, "Green");
-  map.moveEntity(slime2, x - 1, y + 1);
+  createSlime(map.w, map.h, x + 1, y + 1);
+  createSlime(map.w, map.h, x - 1, y + 1, "Green");
 
   setUpViewport();
   setUpActions();
