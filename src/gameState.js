@@ -171,11 +171,11 @@ function interrupt(entity, interrupter) {
       const [id] = events[i];
       if (id === entity.id) {
         events.splice(i, 1);
-        logCombatDanger(
+        logCombatWarn(
           entity,
           interrupter,
           `${entity.displayName} has been interrupted`,
-        );
+        )?.classList.add("bold");
         getInput(entity);
         return;
       }
@@ -230,6 +230,14 @@ function attack(entity, target) {
           other,
           `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
         );
+        
+        if (other.dead) {
+          logCombatDanger(
+            entity,
+            other,
+            `${other.displayName} died.`,
+          )?.classList.add("bold");
+        }
       });
   });
   return true;
@@ -303,13 +311,13 @@ function logActionEnd(entity, action) {
 
 function logCombatDanger(a, b, msg) {
   if (a.isPlayer || b.isPlayer || getMap().canEntitySeeTile(getPlayer(), a.x, a.y)|| getMap().canEntitySeeTile(getPlayer(), b.x, b.y)) {
-    addDangerLog(msg);
+    return addDangerLog(msg);
   }
 }
 
 function logCombatWarn(a, b, msg) {
   if (a.isPlayer || b.isPlayer || getMap().canEntitySeeTile(getPlayer(), a.x, a.y)|| getMap().canEntitySeeTile(getPlayer(), b.x, b.y)) {
-    addWarnLog(msg);
+    return addWarnLog(msg);
   }
 }
 

@@ -213,7 +213,6 @@ export class Entity {
     this._health = clamp(val, 0, this.maxHealth);
     if (this._health === 0) {
       this.dead = true;
-      addLog(`${this.displayName} died`);
     }
   }
 

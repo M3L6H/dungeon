@@ -150,6 +150,10 @@ section {
   z-index: 10;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .entity {
   background-size: cover;
   background-repeat: no-repeat;
