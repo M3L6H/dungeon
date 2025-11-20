@@ -376,7 +376,7 @@ export class Map {
       this._fillRect(m1, m2, Tile.floor);
       this._fillRect(m2, b, Tile.floor);
     });
-    
+
     this.start = this.getRandomRoom();
     while (
       this.start.radius > 10 ||
@@ -522,7 +522,7 @@ export class Map {
         const idx = x + y * this.w;
         const tile = this.getTile(x, y);
         const id = this.tileToId[idx];
-        const { difficulty, radius } = this.origins[id];
+        const { difficulty } = this.origins[id] ?? { difficulty: 0 };
         for (let i = 0; i < 2; ++i) {
           const r = (x + 2 * y * this.w) * 8 + i * 4;
           const g = r + 1;
@@ -544,11 +544,11 @@ export class Map {
             imageData.data[b1] = 0;
           } else if (tile.isTraversable) {
             imageData.data[r] = 255;
-            imageData.data[g] = Math.max(0, 255 - difficulty * radius);
-            imageData.data[b] = Math.max(0, 255 - difficulty * radius);
+            imageData.data[g] = Math.max(0, 255 - difficulty * 8);
+            imageData.data[b] = Math.max(0, 255 - difficulty * 8);
             imageData.data[r1] = 255;
-            imageData.data[g1] = Math.max(0, 255 - difficulty * radius);
-            imageData.data[b1] = Math.max(0, 255 - difficulty * radius);
+            imageData.data[g1] = Math.max(0, 255 - difficulty * 8);
+            imageData.data[b1] = Math.max(0, 255 - difficulty * 8);
           } else {
             imageData.data[r] = 0;
             imageData.data[g] = 0;
@@ -561,17 +561,17 @@ export class Map {
       }
     }
   }
-  
+
   _assignDifficulty(edges) {
-    const adj = Array.from({ length: this.origins.length }, () => ([]));
-    edges.forEach(({ aId, bId }) => {
-      adj[aId].push(bId);
-      adj[bId].push(aId);
+    const adj = Array.from({ length: this.origins.length }, () => []);
+    edges.forEach(({ a, b }) => {
+      adj[a.id].push(b.id);
+      adj[b.id].push(a.id);
     });
     this.start.difficulty = 0;
     const q = [this.start];
     for (let i = 0; i < q.length; ++i) {
-      this.adj[q[i].id].forEach(id => {
+      adj[q[i].id].forEach((id) => {
         const origin = this.origins[id];
         if (origin.difficulty !== undefined) return;
         origin.difficulty = q[i].difficulty + 1;
@@ -677,7 +677,7 @@ async function init() {
   const canvas = document.getElementById("canvas");
 
   if (!canvas) return;
-  
+
   canvas.width = COLS * 2;
   canvas.height = ROWS * 2;
 
