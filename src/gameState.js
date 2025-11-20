@@ -60,6 +60,7 @@ export function getActions() {
 }
 
 export function getEntities() {
+  gameState.entities = gameState.entities.filter(({ dead }) => !dead);
   return gameState.entities;
 }
 

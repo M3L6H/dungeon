@@ -20,7 +20,9 @@ export function advance() {
 }
 
 export function getDecision(entity) {
-  if (!entity.dead && entity.stamina === 0) {
+  if (entity.dead) return;
+ 
+  if (entity.stamina === 0) {
     rest(entity, true);
   } else {
     getInput(entity);

@@ -412,7 +412,9 @@ export class Map {
   }
 
   getEntities(x, y) {
-    return this.entities[x + y * this.w];
+    const idx = x + y * this.w;
+    this.entities[idx] = this.entities[idx].filter(({ dead } => !dead);
+    return this.entities[idx];
   }
 
   getRandomRoom() {
