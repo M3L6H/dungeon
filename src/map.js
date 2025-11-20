@@ -337,6 +337,7 @@ export class Map {
     this.origins = origins;
     this.entities = new Array(width * height);
     this.tiles = new Array(width * height);
+    this.tileToId = new Array(width * height).fill();
 
     for (let i = 0; i < this.tiles.length; ++i) {
       this.entities[i] = [];
@@ -344,8 +345,8 @@ export class Map {
     }
 
     rooms.forEach((points) => {
-      this._fillRect(points[0], points[6], Tile.floor);
-      this._fillRect(points[10], points[4], Tile.floor);
+      this._fillRect(points[0], points[6], Tile.floor, points[0].id);
+      this._fillRect(points[10], points[4], Tile.floor, points[0].id);
     });
 
     edges.forEach(({ a, b }) => {
@@ -375,6 +376,18 @@ export class Map {
       this._fillRect(m1, m2, Tile.floor);
       this._fillRect(m2, b, Tile.floor);
     });
+    
+    this.start = this.getRandomRoom();
+    while (
+      this.start.radius > 10 ||
+      this.start.x < 30 ||
+      this.start.y < 30 ||
+      this.start.x > this.w - 30 ||
+      this.start.y > this.h - 30
+    ) {
+      this.start = this.getRandomRoom();
+    }
+    this.start.start = true;
   }
 
   /**
@@ -418,12 +431,7 @@ export class Map {
   }
 
   getRandomRoom() {
-    const origin =
-      this.origins[Math.floor(Math.random() * this.origins.length)];
-    return {
-      x: origin.x,
-      y: origin.y,
-    };
+    return this.origins[Math.floor(Math.random() * this.origins.length)];
   }
 
   /**
@@ -510,6 +518,7 @@ export class Map {
   writeToImage(imageData) {
     for (let x = 0; x < this.w; ++x) {
       for (let y = 0; y < this.h; ++y) {
+        const idx = x + y * this.w;
         const tile = this.getTile(x, y);
         for (let i = 0; i < 2; ++i) {
           const r = (x + 2 * y * this.w) * 8 + i * 4;
@@ -523,7 +532,14 @@ export class Map {
           const a1 = r1 + 3;
           imageData.data[a1] = 255;
 
-          if (tile.isTraversable) {
+          if (this.tileToId[idx] === this.start.id) {
+            imageData.data[r] = 0;
+            imageData.data[g] = 255;
+            imageData.data[b] = 0;
+            imageData.data[r1] = 0;
+            imageData.data[g1] = 255;
+            imageData.data[b1] = 0;
+          } else if (tile.isTraversable) {
             imageData.data[r] = 255;
             imageData.data[g] = 255;
             imageData.data[b] = 255;
@@ -547,7 +563,7 @@ export class Map {
     return a.x === b.x && a.y === b.y;
   }
 
-  _fillRect(a, b, tile) {
+  _fillRect(a, b, tile, id) {
     const x0 = Math.min(a.x, b.x);
     const x1 = Math.max(a.x, b.x);
     const y0 = Math.min(a.y, b.y);
@@ -555,6 +571,9 @@ export class Map {
     for (let x = x0; x <= x1; ++x) {
       for (let y = y0; y <= y1; ++y) {
         this._setTile(x, y, tile);
+        if (id !== undefined) {
+          this.tileToId[x + y * this.w] = id;
+        }
       }
     }
   }
