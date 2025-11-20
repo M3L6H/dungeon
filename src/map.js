@@ -563,9 +563,10 @@ export class Map {
   }
   
   _assignDifficulty(edges) {
-    const adj = new Array(this.origins.length).map(() => []);;
+    const adj = Array.from({ length: this.origins.length }, () => ([]));
     edges.forEach(({ aId, bId }) => {
       adj[aId].push(bId);
+      adj[bId].push(aId);
     });
     this.start.difficulty = 0;
     const q = [this.start];
