@@ -511,20 +511,22 @@ export class Map {
     for (let x = 0; x < this.w; ++x) {
       for (let y = 0; y < this.h; ++y) {
         const tile = this.getTile(x, y);
-        const r = (x + y * this.w) * 4;
-        const g = r + 1;
-        const b = r + 2;
-        const a = r + 3;
-        imageData.data[a] = 255;
+        for (let i = 0; i < 4; ++i) {
+          const r = (x + y * this.w) * 16 + i * 4;
+          const g = r + 1 + i * 4;
+          const b = r + 2 + i * 4;
+          const a = r + 3 + i * 4;
+          imageData.data[a] = 255;
 
-        if (tile.isTraversable) {
-          imageData.data[r] = 255;
-          imageData.data[g] = 255;
-          imageData.data[b] = 255;
-        } else {
-          imageData.data[r] = 0;
-          imageData.data[g] = 0;
-          imageData.data[b] = 0;
+          if (tile.isTraversable) {
+            imageData.data[r] = 255;
+            imageData.data[g] = 255;
+            imageData.data[b] = 255;
+          } else {
+            imageData.data[r] = 0;
+            imageData.data[g] = 0;
+            imageData.data[b] = 0;
+          }
         }
       }
     }
@@ -624,6 +626,9 @@ async function init() {
   const canvas = document.getElementById("canvas");
 
   if (!canvas) return;
+  
+  canvas.width = COLS * 4;
+  canvas.height = ROWS * 4;
 
   const ctx = canvas.getContext("2d");
   const map = await generateMap();
