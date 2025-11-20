@@ -1,4 +1,10 @@
-import { addEndLog, addLog, addStartLog } from "./logs.js";
+import {
+  addDangerLog,
+  addEndLog,
+  addLog,
+  addStartLog,
+  addWarnLog,
+} from "./logs.js";
 import { Map, generateMap } from "./map.js";
 import { createPlayer } from "./player.js";
 import { schedule } from "./time.js";
@@ -133,7 +139,7 @@ export function inRange(entity, action, target) {
   const dy = Math.abs(y - entity.y);
   switch (action) {
     case "attack":
-      return dx + dy < entity.attackRange && entity.stamina > 0;
+      return dx + dy <= entity.attackRange && entity.stamina > 0;
     case "examine":
       const examineRange = Math.min(3, entity.sightRange);
       return (
@@ -194,7 +200,7 @@ function attack(entity, target) {
         const attack = roll(accuracy);
         const dodge = roll(other.dodge);
         if (attack <= dodge) {
-          addLog(
+          addWarnLog(
             `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}!`,
           );
           return;
@@ -202,7 +208,7 @@ function attack(entity, target) {
         const defense = roll(other.defense);
         interrupt(other, entity);
         if (attack <= defense) {
-          addLog(
+          addWarnLog(
             `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}!`,
           );
           return;
@@ -211,7 +217,7 @@ function attack(entity, target) {
           (roll(damage) * (attack - defense)) / dodge,
         );
         other.health -= damageDealt;
-        addLog(
+        addDangerLog(
           `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
         );
       });

@@ -17,6 +17,12 @@ export function addLog(msg) {
   return logElt;
 }
 
+export function addDangerLog(msg) {
+  const logElt = addLog(msg);
+  logElt.classList.add('danger');
+  return logElt;
+}
+
 export function addStartLog(msg) {
   const logElt = addLog(msg);
   logElt.classList.add('start');
@@ -26,5 +32,11 @@ export function addStartLog(msg) {
 export function addEndLog(msg) {
   const logElt = addLog(msg);
   logElt.classList.add('end');
+  return logElt;
+}
+
+export function addWarnLog(msg) {
+  const logElt = addLog(msg);
+  logElt.classList.add('warn');
   return logElt;
 }

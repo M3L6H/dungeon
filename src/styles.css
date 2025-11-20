@@ -172,12 +172,20 @@ section {
   opacity: 0.25;
 }
 
+.log.danger {
+  color: #ff5555;
+}
+
 .log.end.player {
   color: #30a8dd;
 }
 
 .log.start.player {
   color: #55ccff;
+}
+
+.log.warn {
+  color: #ffeb33;
 }
 
 .memory {
