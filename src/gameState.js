@@ -100,7 +100,14 @@ export function getPlayer() {
 }
 
 export function getSelectedAction() {
-  return gameState.actions[gameState.selected];
+  const action = gameState.actions[gameState.selected];
+  switch (action) {
+    case "left":
+    case "right":
+      return ATTACK;
+    default:
+      return action;
+  }
 }
 
 export function getSelectedIndex() {
