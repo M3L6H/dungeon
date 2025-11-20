@@ -231,9 +231,7 @@ function attack(entity, target) {
           );
           return;
         }
-        const damageDealt = roundMin(
-          (roll(damage) * (attack - defense)) / dodge,
-        );
+        const damageDealt = roll(damage);
         other.health -= damageDealt;
         logCombatDanger(
           entity,
