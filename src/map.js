@@ -413,7 +413,7 @@ export class Map {
 
   getEntities(x, y) {
     const idx = x + y * this.w;
-    this.entities[idx] = this.entities[idx].filter(({ dead } => !dead);
+    this.entities[idx] = this.entities[idx].filter(({ dead }) => !dead);
     return this.entities[idx];
   }
 
