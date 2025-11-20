@@ -513,9 +513,9 @@ export class Map {
         const tile = this.getTile(x, y);
         for (let i = 0; i < 2; ++i) {
           const r = (x + 2 * y * this.w) * 8 + i * 4;
-          const g = r + 1 + i * 4;
-          const b = r + 2 + i * 4;
-          const a = r + 3 + i * 4;
+          const g = r + 1;
+          const b = r + 2;
+          const a = r + 3;
           imageData.data[a] = 255;
           const r1 = r + this.w * 8;
           const g1 = r1 + 1;
