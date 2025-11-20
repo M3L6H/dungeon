@@ -120,7 +120,7 @@ section {
 
 .action[data-action="left"]::after {
   content: "front_hand";
-  transform: scaleX(-1);
+  transform: scaleX(-1) translate(-50%, -50%);
 }
 
 .action[data-action="move"]::after {
