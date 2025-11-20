@@ -11,9 +11,11 @@ import { schedule } from "./time.js";
 
 export const NONE = "none";
 export const ATTACK = "attack";
+export const LEFT = "left";
 export const MOVE = "move";
 export const EXAMINE = "examine";
 export const INTERACT = "interact";
+export const RIGHT = "right";
 export const SETTINGS = "settings";
 
 class GameState {
@@ -22,8 +24,8 @@ class GameState {
       MOVE,
       EXAMINE,
       INTERACT,
-      NONE,
-      NONE,
+      LEFT,
+      RIGHT,
       NONE,
       NONE,
       NONE,
@@ -128,7 +130,7 @@ export function act(entity, action, target) {
     case "move":
       return move(entity, target);
     default:
-      addLog(`${entity.name} cannot ${action}`);
+      addLog(`${entity.name} cannot ${action}.`);
   }
 
   return false;
@@ -175,7 +177,7 @@ function interrupt(entity, interrupter) {
         logCombatWarn(
           entity,
           interrupter,
-          `${entity.displayName} has been interrupted`,
+          `${entity.displayName} has been interrupted.`,
         )?.classList.add("bold");
         getInput(entity);
         return;
@@ -208,7 +210,7 @@ function attack(entity, target) {
           logCombatWarn(
             entity,
             other,
-            `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}!`,
+            `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}.`,
           );
           return;
         }
@@ -218,7 +220,7 @@ function attack(entity, target) {
           logCombatWarn(
             entity,
             other,
-            `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}!`,
+            `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}.`,
           );
           return;
         }
@@ -297,7 +299,7 @@ function getTimeToMove(entity) {
 function logActionStart(entity, action) {
   const { isPlayer, name, x, y } = entity;
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addStartLog(`${name} is ${action}`);
+    const logElt = addStartLog(`${name} is ${action}.`);
     if (isPlayer) logElt.classList.add("player");
   }
 }
@@ -305,7 +307,7 @@ function logActionStart(entity, action) {
 function logActionEnd(entity, action) {
   const { isPlayer, name, x, y } = entity;
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addEndLog(`${name} ${action}`);
+    const logElt = addEndLog(`${name} ${action}.`);
     if (isPlayer) logElt.classList.add("player");
   }
 }

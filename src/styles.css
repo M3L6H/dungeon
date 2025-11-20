@@ -110,16 +110,25 @@ section {
   background-color: #454555;
 }
 
-.action[data-action="move"]::after {
-  content: "open_with";
-}
-
 .action[data-action="examine"]::after {
   content: "visibility";
 }
 
 .action[data-action="interact"]::after {
   content: "touch_app";
+}
+
+.action[data-action="left"]::after {
+  content: "front_hand";
+  transform: scaleX(-1);
+}
+
+.action[data-action="move"]::after {
+  content: "open_with";
+}
+
+.action[data-action="right"]::after {
+  content: "front_hand";
 }
 
 .action[data-action="settings"]::after {
