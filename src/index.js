@@ -14,7 +14,7 @@ async function init() {
 
   await newGame();
   const map = getMap();
-  const { x, y } = map.getRandomRoom();
+  const { x, y } = map.start;
   const player = getPlayer();
   map.moveEntity(player, x, y);
   createSlime(map.w, map.h, x + 1, y + 1);
