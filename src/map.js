@@ -68,14 +68,14 @@ function generateOrigins() {
     }
 
     failures = 0;
-    origins.push({ x, y, radius });
+    origins.push({ x, y, radius, id: origins.length });
   }
 
   return origins;
 }
 
 function generateRooms(origins) {
-  return origins.map(({ x, y, radius }, id) => {
+  return origins.map(({ x, y, radius, id }) => {
     const radiusSq = radius * radius;
     const min = Math.ceil(radius * 0.35);
     const max = Math.floor(radius * 0.95);
