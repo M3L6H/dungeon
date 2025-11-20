@@ -171,7 +171,11 @@ function interrupt(entity, interrupter) {
       const [id] = events[i];
       if (id === entity.id) {
         events.splice(i, 1);
-        addLog(`${entity.displayName} has been interrupted`);
+        logCombatDanger(
+          entity,
+          interrupter,
+          `${entity.displayName} has been interrupted`,
+        );
         getInput(entity);
         return;
       }
@@ -200,7 +204,9 @@ function attack(entity, target) {
         const attack = roll(accuracy);
         const dodge = roll(other.dodge);
         if (attack <= dodge) {
-          addWarnLog(
+          logCombatWarn(
+            entity,
+            other,
             `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}!`,
           );
           return;
@@ -208,7 +214,9 @@ function attack(entity, target) {
         const defense = roll(other.defense);
         interrupt(other, entity);
         if (attack <= defense) {
-          addWarnLog(
+          logCombatWarn(
+            entity,
+            other,
             `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}!`,
           );
           return;
@@ -217,7 +225,9 @@ function attack(entity, target) {
           (roll(damage) * (attack - defense)) / dodge,
         );
         other.health -= damageDealt;
-        addDangerLog(
+        logCombatDanger(
+          entity,
+          other,
           `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
         );
       });
@@ -288,6 +298,18 @@ function logActionEnd(entity, action) {
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
     const logElt = addEndLog(`${name} ${action}`);
     if (isPlayer) logElt.classList.add("player");
+  }
+}
+
+function logCombatDanger(a, b, msg) {
+  if (a.isPlayer || b.isPlayer || getMap().canEntitySeeTile(getPlayer(), a.x, a.y)|| getMap().canEntitySeeTile(getPlayer(), b.x, b.y)) {
+    addDangerLog(msg);
+  }
+}
+
+function logCombatWarn(a, b, msg) {
+  if (a.isPlayer || b.isPlayer || getMap().canEntitySeeTile(getPlayer(), a.x, a.y)|| getMap().canEntitySeeTile(getPlayer(), b.x, b.y)) {
+    addWarnLog(msg);
   }
 }
 
