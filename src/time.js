@@ -66,7 +66,7 @@ export function tick() {
   });
   const events = timeline[time] ?? [];
   events.forEach(([entityId, event]) => {
-    if (getEntities()[id].dead) return;
+    if (getEntities()[entityId].dead) return;
     event();
   });
   renderViewport();
