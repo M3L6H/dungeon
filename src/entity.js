@@ -388,7 +388,7 @@ function poisonTouch(entity, baseChance = 0.5) {
   const { x: tX, y: tY } = targetLoc;
   const dx = Math.abs(tX - entity.x);
   const dy = Math.abs(tY - entity.y);
-  const fiter = (other) => other.id !== entity.id && other.name !== entity.name;
+  const filter = (other) => other.id !== entity.id && other.name !== entity.name;
   const manaCost = Math.max(1, 5 - Math.floor(Math.sqrt(entity.wisdom)));
   const staminaCost = 1;
   const data = {
