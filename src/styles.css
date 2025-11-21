@@ -175,6 +175,8 @@ section {
   background-size: cover;
   background-repeat: no-repeat;
   image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
   position: absolute;
   inset: 0;
   z-index: 1;

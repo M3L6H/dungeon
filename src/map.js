@@ -388,7 +388,7 @@ export class Map {
       this.start = this.getRandomRoom();
     }
     this.start.start = true;
-    this._assignDifficulty(edges);
+    this._assignDifficultyAndSecretTreasure(edges);
   }
 
   /**
@@ -542,6 +542,20 @@ export class Map {
             imageData.data[r1] = 0;
             imageData.data[g1] = 255;
             imageData.data[b1] = 0;
+          } else if (this.origins[id]?.secret) {
+            imageData.data[r] = 0;
+            imageData.data[g] = 0;
+            imageData.data[b] = 255;
+            imageData.data[r1] = 0;
+            imageData.data[g1] = 0;
+            imageData.data[b1] = 255;
+          } else if (this.origins[id]?.treasure) {
+            imageData.data[r] = 255;
+            imageData.data[g] = 255;
+            imageData.data[b] = 0;
+            imageData.data[r1] = 255;
+            imageData.data[g1] = 255;
+            imageData.data[b1] = 0;
           } else if (tile.isTraversable) {
             imageData.data[r] = 255;
             imageData.data[g] = Math.max(0, 255 - difficulty * 8);
@@ -562,7 +576,10 @@ export class Map {
     }
   }
 
-  _assignDifficulty(edges) {
+  /**
+   * Assign room difficulty and annotate secret/treasure rooms
+   */
+  _assignDifficultyAndSecretTreasure(edges) {
     const adj = Array.from({ length: this.origins.length }, () => []);
     edges.forEach(({ a, b }) => {
       adj[a.id].push(b.id);
@@ -577,6 +594,27 @@ export class Map {
         origin.difficulty = q[i].difficulty + 1;
         q.push(origin);
       });
+
+      // Terminating room
+      const room = this.origins[q[i].id];
+      if (
+        adj[q[i].id].length === 1 &&
+        room.radius < 10 &&
+        room.secret === undefined &&
+        room.treasure === undefined
+      ) {
+        const r = Math.random();
+        room.secret = false;
+        room.treasure = false;
+
+        if (r < 0.1) {
+          // 10% chance of secret room
+          room.secret = true;
+        } else if (r < 1.3) {
+          // 20% chance of treasure room
+          room.treasure = true;
+        }
+      }
     }
   }
 

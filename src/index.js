@@ -8,7 +8,10 @@ import { renderViewport, setUpViewport } from "./viewport.js";
 
 function setSize() {
   const main = document.getElementById("main");
-  const width = Math.min(window.innerWidth, (window.innerHeight / 16) * 9);
+  const width = Math.min(
+    window.innerWidth,
+    Math.floor((window.innerHeight / 16) * 9),
+  );
   main.style.width = `${width}px`;
 }
 
