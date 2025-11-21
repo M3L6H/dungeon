@@ -69,6 +69,24 @@ function renderRange(tX, tY, tileElt) {
   };
 }
 
+function createEntityElt(parent) {
+  const entityElt = document.createElement("div");
+  entityElt.classList.add("entity");
+  const nw = document.createElement("span");
+  nw.classList.add("nw");
+  entityElt.appendChild(nw);
+  const ne = document.createElement("span");
+  ne.classList.add("ne");
+  entityElt.appendChild(ne);
+  const sw = document.createElement("span");
+  sw.classList.add("sw");
+  entityElt.appendChild(sw);
+  const se = document.createElement("span");
+  se.classList.add("se");
+  entityElt.appendChild(se);
+  parent.appendChild(entityElt);
+}
+
 function renderEntities(entities, tileElt) {
   const entityMaxIdx = Math.max(tileElt.children.length, entities.length);
   const offset = 1 / entities.length;
@@ -78,11 +96,10 @@ function renderEntities(entities, tileElt) {
       tileElt.children[i].dataset.label = undefined;
       tileElt.children[i].style.backgroundImage = "none";
       continue;
-    } else if (i >= tileElt.children.length) {
-      const entityElt = document.createElement("div");
-      entityElt.classList.add("entity");
-      tileElt.appendChild(entityElt);
     }
+ 
+    if (i >= tileElt.children.length) createEntityElt(tileElt);
+
     tileElt.children[i].dataset.id = entities[i].id;
     tileElt.children[i].style.backgroundImage = entities[i].sprite;
     tileElt.children[i].dataset.label = entities[i].label === undefined ? undefined : entities[i].label % 26;
