@@ -17,6 +17,7 @@ export const EXAMINE = "examine";
 export const INTERACT = "interact";
 export const RIGHT = "right";
 export const SETTINGS = "settings";
+export const SKILL = "skill";
 
 class GameState {
   constructor(props) {
@@ -125,16 +126,18 @@ export function setSelectedIndex(i) {
   gameState.selected = i;
 }
 
-export function act(entity, action, target) {
-  if (!inRange(entity, action, target)) return false;
+export function act(entity, action, data) {
+  if (!inRange(entity, action, data)) return false;
 
   switch (action) {
     case "attack":
-      return attack(entity, target);
+      return attack(entity, data);
     case "examine":
-      return examine(entity, target);
+      return examine(entity, data);
     case "move":
-      return move(entity, target);
+      return move(entity, data);
+    case "skill":
+      return skill(entity, data); 
     default:
       addLog(`${entity.name} cannot ${action}.`);
   }
@@ -142,8 +145,8 @@ export function act(entity, action, target) {
   return false;
 }
 
-export function inRange(entity, action, target) {
-  const { x, y } = target;
+export function inRange(entity, action, data) {
+  const { x, y } = data;
   const dx = Math.abs(x - entity.x);
   const dy = Math.abs(y - entity.y);
   switch (action) {
@@ -154,7 +157,8 @@ export function inRange(entity, action, target) {
       return (
         dx + dy <= entity.attackRange &&
         entity.stamina > 0 &&
-        entities.length > 0
+        entities.length > 0 &&
+        getMap().entityHasLoS(entity, x, y)
       );
     case "examine":
       const examineRange = Math.min(3, entity.sightRange);
@@ -169,6 +173,8 @@ export function inRange(entity, action, target) {
         (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
         (dx + dy === 1 && tile.isTraversable && entity.stamina > 0)
       );
+    case "skill":
+      return data.inRange();
     default:
       return false;
   }
@@ -178,7 +184,7 @@ export function incrementTime() {
   return ++gameState.time;
 }
 
-function interrupt(entity, interrupter) {
+export function interrupt(entity, interrupter) {
   turnToFaceTarget(entity, interrupter);
   if (entity.inControl) return;
   for (const k in getTimeline()) {
@@ -304,6 +310,33 @@ export function rest(entity, full = false) {
   return true;
 }
 
+function skill(entity, data) {
+  const { displayName } = entity;
+  const {
+    x,
+    y,
+    filter,
+    skill,
+    timeTaken,
+  } = data;
+  turnToFaceTarget(entity, data);
+
+  schedule(entity, timeTaken, () => {
+    const entities = getMap()
+      .getEntities(x, y)
+      .filter(filter);
+    entities.forEach((other) => {
+      if (entity.stamina <= staminaCost || entity.mana <= manaCost) return;
+      entity.mana -= manaCost; 
+      entity.stamina -= staminaCost;
+      other.tSet.add(entity.name.toLowerCase());
+      skill(other);
+    });
+  });
+
+  logActionStart(entity, `using ${data.name}`);
+}
+
 function getTimeToMove(entity) {
   return Math.max(1, 6 - Math.floor(Math.sqrt(entity.speed)));
 }
@@ -324,7 +357,7 @@ function logActionEnd(entity, action) {
   }
 }
 
-function logCombatDanger(a, b, msg) {
+export function logCombatDanger(a, b, msg) {
   if (
     a.isPlayer ||
     b.isPlayer ||
@@ -335,7 +368,7 @@ function logCombatDanger(a, b, msg) {
   }
 }
 
-function logCombatWarn(a, b, msg) {
+export function logCombatWarn(a, b, msg) {
   if (
     a.isPlayer ||
     b.isPlayer ||
@@ -346,11 +379,29 @@ function logCombatWarn(a, b, msg) {
   }
 }
 
-function roll(n) {
+export function logDanger(entity, msg) {
+  if (
+    entity.isPlayer ||
+    getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)
+  ) {
+    return addDangerLog(msg);
+  }
+}
+
+export function logWarn(entity, msg) {
+  if (
+    entity.isPlayer ||
+    getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)
+  ) {
+    return addWarnLog(msg);
+  }
+}
+
+export function roll(n) {
   return roundMin(n * Math.random());
 }
 
-function roundMin(n, min = 1) {
+export function roundMin(n, min = 1) {
   return Math.max(Math.floor(n), min);
 }
 

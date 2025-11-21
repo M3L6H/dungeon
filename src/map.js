@@ -379,7 +379,7 @@ export class Map {
 
     this.start = this.getRandomRoom();
     while (
-      this.start.radius > 10 ||
+      this.start.radius > 5 ||
       this.start.x < 30 ||
       this.start.y < 30 ||
       this.start.x > this.w - 30 ||

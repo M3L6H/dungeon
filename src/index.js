@@ -1,5 +1,5 @@
 import { setUpActions } from "./actions.js";
-import { createSlime } from "./entity.js";
+import { createBlueSlimeSmall, createGreenSlimeSmall } from "./entity.js";
 import { getMap, getPlayer, newGame } from "./gameState.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
@@ -17,8 +17,10 @@ async function init() {
   const { x, y } = map.start;
   const player = getPlayer();
   map.moveEntity(player, x, y);
-  createSlime(map.w, map.h, x + 1, y + 1);
-  createSlime(map.w, map.h, x - 1, y + 1, "Green");
+  createBlueSlimeSmall(map.w, map.h, x + 1, y + 1);
+  createGreenSlimeSmall(map.w, map.h, x - 1, y + 1);
+  createGreenSlimeSmall(map.w, map.h, x - 1, y - 1);
+  createGreenSlimeSmall(map.w, map.h, x + 1, y - 1);
 
   setUpViewport();
   setUpActions();

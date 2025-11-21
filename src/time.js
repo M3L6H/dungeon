@@ -48,6 +48,15 @@ export function tick() {
   const time = incrementTime();
   getEntities().forEach((entity) => {
     entity.mana = Math.min(entity.mana + 1, entity.maxMana);
+    for (let i = entity.statuses.length - 1; i >= 0; --i) {
+      const { count, effect, freq } = entity.statuses[i];
+      if (time % freq !== 0) continue;
+      if (count <= 0) {
+        entity.statuses.splice(i, 1);
+      }
+      effect(entity);
+      --entity.statuses[i].count;
+    }
   });
   const events = timeline[time] ?? [];
   events.forEach(([_, event]) => event());

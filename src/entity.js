@@ -9,6 +9,11 @@ import {
   getMap,
   getPlayer,
   inRange,
+  logCombatDanger,
+  logCombatWarn,
+  logDanger,
+  logWarn,
+  roll,
 } from "./gameState.js";
 import { addLog } from "./logs.js";
 
@@ -64,10 +69,26 @@ export class Entity {
 
     this.dead = false;
     this.idToLoc = {};
+    this.immunities = props.immunities ?? new Set();
+    this.statuses = [];
     this.targetId = null;
     this.tSet = props.tSet ?? new Set(["player"]);
 
     addEntity(this);
+  }
+  
+  addStatus(status) {
+    if (this.immunities.has(status.type)) {
+      logWarn(
+        this,
+        `${this.displayName} is immune to ${status.type}.`
+      );
+      return false;
+    }
+    
+    this.statuses.push(status);
+    
+    return true;
   }
 
   examine({ perception }) {
@@ -75,6 +96,10 @@ export class Entity {
 
     if (perception >= 3) {
       details.push(this.status);
+    }
+    
+    if (perception >= 6) {
+      details.push(`${this.displayName} immunities: ${Array.from(this.immunities).join(', ')}`);
     }
 
     for (const threshold in this.description) {
@@ -231,24 +256,19 @@ function clamp(val, min, max) {
 }
 
 /**
- * Creates a slime entity of the given color and variant.
- * @returns {Entity} A slime entity
+ * Creates a small blue slime.
+ * @returns {Entity} A small blue slime entity
  */
-export function createSlime(w, h, x, y, color = "Blue", variant = "small") {
+export function createBlueSlimeSmall(w, h, x, y) {
   return startEntity(
     new Entity({
-      name: `${color} Slime`,
-      variant,
+      name: "Blue Slime",
+      variant: "small",
       description: {
         0: (self) =>
           `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
-        3: (self) => {
-          if (color === "Green") {
-            return `The ${self.displayName} is slightly poisonous.`;
-          } else {
-            return `The ${self.displayName} does physical damage.`;
-          }
-        },
+        3: (self) =>
+          `The ${self.displayName} does physical damage.`,
         5: () =>
           `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
       },
@@ -257,6 +277,41 @@ export function createSlime(w, h, x, y, color = "Blue", variant = "small") {
       strength: 2,
       constitution: 2,
       behaviors: [simpleAttack, findTarget, hunt, wander, rest],
+      immunities: new Set([
+        "poison"
+      ]),
+    }),
+    x,
+    y,
+  );
+}
+
+/**
+ * Creates a small green slime.
+ * @returns {Entity} A small green slime entity
+ */
+export function createGreenSlimeSmall(w, h, x, y) {
+  return startEntity(
+    new Entity({
+      displayName: "Poison Slime",
+      name: "Green Slime",
+      variant: "small",
+      description: {
+        0: (self) =>
+          `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
+        3: (self) =>
+          `The ${self.displayName} is slightly poisonous.`,
+        5: () =>
+          `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
+      },
+      w,
+      h,
+      wisdom: 2,
+      constitution: 2,
+      behaviors: [poisonTouch, simpleAttack, findTarget, hunt, wander, rest],
+      immunities: new Set([
+        "poison"
+      ]),
     }),
     x,
     y,
@@ -328,6 +383,72 @@ function hunt(entity) {
 
   logBehavior(entity, "hunting");
   return act(entity, MOVE, path[1]);
+}
+
+function poisonTouch(entity, baseChance = 0.5) {
+  if (Math.random() >= baseChance) return false;
+  const { targetId } = entity;
+  if (targetId === null) return false;
+  const targetLoc = entity.idToLoc[targetId];
+  if (!targetLoc) return false;
+  const { x: tX, y: tY } = targetLoc;
+  const manaCost = Math.max(1, 5 - Math.floor(Math.sqrt(entity.wisdom)));
+  const staminaCost = 1;
+  const data = {
+    x: tX,
+    y: tY,
+    name: "Poison Touch",
+    manaCost,
+    staminaCost,
+    timeTaken: 2,
+    filter: (other) => other.id !== entity.id && other.name !== entity.name,
+    inRange: () => {
+      const entities = getMap()
+        .getEntities(tX, tY)
+        .filter((other) => other.id !== entity.id);
+      return (
+        dx + dy <= 1 &&
+        entity.stamina >= staminaCost &&
+        entities.length > 0 &&
+        entity.mana >= manaCost
+    },
+    skill: (other) => {
+      const attack = roll(entity.accuracy);
+      const dodge = roll(other.dodge);
+      if (attack <= dodge) {
+        logCombatWarn(
+          entity,
+          other,
+          `${other.displayName} dodged (${dodge}) a skill (${attack}) from ${entity.displayName}.`,
+        );
+        return;
+      }
+      interrupt(other, entity);
+      const success = other.addStatus({
+        type: "poison",
+        freq: 4,
+        count: 3,
+        effect: (entity) => {
+          entity.health -= 2;
+          logDanger(
+            entity,
+            `${entity.displayName} takes 2 damage from poison.`,
+          ); 
+        };
+      });
+      if (success) {
+        logCombatDanger(
+          entity,
+          other,
+          `${entity.displayName} has poisoned ${other.displayName}.`,
+        );
+      }
+    },
+  };
+  if (inRange(entity, SKILL, data)) {
+    return act(entity, SKILL, data);
+  }
+  return false;
 }
 
 function simpleAttack(entity) {
