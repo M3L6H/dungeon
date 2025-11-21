@@ -171,6 +171,7 @@ section {
 
 .entity {
   display: none;
+  animation-fill-mode: backwards;
   background-size: cover;
   background-repeat: no-repeat;
   image-rendering: pixelated;
@@ -180,6 +181,7 @@ section {
 }
 
 .entity::after {
+  color: white;
   font-family: sans-serif;
   position: absolute;
   bottom: -0.7em;

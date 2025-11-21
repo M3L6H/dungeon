@@ -85,9 +85,7 @@ function renderEntities(entities, tileElt) {
     }
     tileElt.children[i].dataset.id = entities[i].id;
     tileElt.children[i].style.backgroundImage = entities[i].sprite;
-    if (entities[i].label !== undefined) {
-      tileElt.children[i].dataset.label = entities[i].label % 26;
-    }
+    tileElt.children[i].dataset.label = entities[i].label === undefined ? undefined : entities[i].label % 26;
     tileElt.children[i].animate([
       { display: "block" },
       { display: "none", offset },
