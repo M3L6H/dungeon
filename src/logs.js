@@ -6,11 +6,11 @@ export function addLog(msg) {
   const logs = getLogs();
   const log = `${getTime()}: ${msg}`;
   logs.push(log);
-  const logElt = document.createElement('p');
-  logElt.classList.add('log');
+  const logElt = document.createElement("p");
+  logElt.classList.add("log");
   logElt.textContent = log;
   logsElt.appendChild(logElt);
-  while (logsElt.children.length > 100) {
+  while (logsElt.children.length > 500) {
     logsElt.removeChild(logsElt.firstElementChild);
   }
   logsElt.scrollTop = logsElt.scrollHeight;
@@ -19,30 +19,30 @@ export function addLog(msg) {
 
 export function addDangerLog(msg) {
   const logElt = addLog(msg);
-  logElt.classList.add('danger');
+  logElt.classList.add("danger");
   return logElt;
 }
 
 export function addSafeLog(msg) {
   const logElt = addLog(msg);
-  logElt.classList.add('safe');
+  logElt.classList.add("safe");
   return logElt;
 }
 
 export function addStartLog(msg) {
   const logElt = addLog(msg);
-  logElt.classList.add('start');
+  logElt.classList.add("start");
   return logElt;
 }
 
 export function addEndLog(msg) {
   const logElt = addLog(msg);
-  logElt.classList.add('end');
+  logElt.classList.add("end");
   return logElt;
 }
 
 export function addWarnLog(msg) {
   const logElt = addLog(msg);
-  logElt.classList.add('warn');
+  logElt.classList.add("warn");
   return logElt;
 }

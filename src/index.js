@@ -1,5 +1,8 @@
 import { setUpActions } from "./actions.js";
-import { createBlueSlimeSmall, createGreenSlimeSmall } from "./entity.js";
+import {
+  createBlueSlimeSmall,
+  createGreenSlimeSmall,
+} from "./entities/index.js";
 import { getMap, getPlayer, newGame } from "./gameState.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 

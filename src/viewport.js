@@ -1,7 +1,5 @@
 import {
   act,
-  getEntities,
-  getInput,
   getMap,
   getPlayer,
   getSelectedAction,

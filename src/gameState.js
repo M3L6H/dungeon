@@ -7,7 +7,7 @@ import {
   addWarnLog,
 } from "./logs.js";
 import { Map, generateMap } from "./map.js";
-import { createPlayer } from "./player.js";
+import { createPlayer } from "./entities/index.js";
 import { schedule } from "./time.js";
 
 export const NONE = "none";
@@ -72,7 +72,7 @@ export function getInput(entity) {
   getMap().updateMemory(entity);
   if (entity.stamina === 0) {
     rest(entity, true);
-    return
+    return;
   }
   if (entity.isPlayer) {
     entity.controlling = true;
@@ -321,7 +321,7 @@ function skill(entity, data) {
       skill(other);
     });
     const suffix = entities.length === 0 ? " and hit nothing" : "";
-    logActionEnd(entity, `used ${data.name}${suffix}.`);
+    logActionEnd(entity, `used ${data.name}${suffix}`);
   });
 
   logActionStart(entity, `using ${data.name}`);

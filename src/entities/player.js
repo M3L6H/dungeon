@@ -5,7 +5,8 @@ export function createPlayer(w, h) {
     name: "Player",
     variant: "female",
     description: {
-      0: (self) => `You are a ${self.variant} elf. Your oddly colored hair is the only remarkable feature about you.`,
+      0: (self) =>
+        `You are a ${self.variant} elf. Your oddly colored hair is the only remarkable feature about you.`,
     },
     agility: 4,
     constitution: 4,
