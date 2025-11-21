@@ -183,6 +183,7 @@ section {
 .entity span {
   color: white;
   font-family: sans-serif;
+  font-size: 10px;
   position: absolute;
 }
 
@@ -204,110 +205,6 @@ section {
 .entity .sw {
   bottom: -0.7em;
   left: 0;
-}
-
-.entity[data-label="0"] .se {
-  content: "A";
-}
-
-.entity[data-label="1"] .se {
-  content: "B";
-}
-
-.entity[data-label="2"] .se {
-  content: "C";
-}
-
-.entity[data-label="3"] .se {
-  content: "D";
-}
-
-.entity[data-label="4"] .se {
-  content: "E";
-}
-
-.entity[data-label="5"] .se {
-  content: "F";
-}
-
-.entity[data-label="6"] .se {
-  content: "G";
-}
-
-.entity[data-label="7"] .se {
-  content: "H";
-}
-
-.entity[data-label="8"] .se {
-  content: "I";
-}
-
-.entity[data-label="9"] .se {
-  content: "J";
-}
-
-.entity[data-label="10"] .se {
-  content: "K";
-}
-
-.entity[data-label="11"] .se {
-  content: "L";
-}
-
-.entity[data-label="12"] .se {
-  content: "M";
-}
-
-.entity[data-label="13"] .se {
-  content: "N";
-}
-
-.entity[data-label="14"] .se {
-  content: "O";
-}
-
-.entity[data-label="15"] .se {
-  content: "P";
-}
-
-.entity[data-label="16"] .se {
-  content: "Q";
-}
-
-.entity[data-label="17"] .se {
-  content: "R";
-}
-
-.entity[data-label="18"] .se {
-  content: "S";
-}
-
-.entity[data-label="19"] .se {
-  content: "T";
-}
-
-.entity[data-label="20"] .se {
-  content: "U";
-}
-
-.entity[data-label="21"] .se {
-  content: "V";
-}
-
-.entity[data-label="22"] .se {
-  content: "W";
-}
-
-.entity[data-label="23"] .se {
-  content: "X";
-}
-
-.entity[data-label="24"] .se {
-  content: "Y";
-}
-
-.entity[data-label="25"] .se {
-  content: "Z";
 }
 
 .highlight::before {
@@ -363,6 +260,14 @@ section {
 
 .memory {
   opacity: 0.5;
+}
+
+.no-highlight {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .tile {

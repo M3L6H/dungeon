@@ -73,16 +73,16 @@ function createEntityElt(parent) {
   const entityElt = document.createElement("div");
   entityElt.classList.add("entity");
   const nw = document.createElement("span");
-  nw.classList.add("nw");
+  nw.classList.add("nw", "no-highlight");
   entityElt.appendChild(nw);
   const ne = document.createElement("span");
-  ne.classList.add("ne");
+  ne.classList.add("ne", "no-highlight");
   entityElt.appendChild(ne);
   const sw = document.createElement("span");
-  sw.classList.add("sw");
+  sw.classList.add("sw", "no-highlight");
   entityElt.appendChild(sw);
   const se = document.createElement("span");
-  se.classList.add("se");
+  se.classList.add("se", "no-highlight");
   entityElt.appendChild(se);
   parent.appendChild(entityElt);
 }
@@ -92,9 +92,12 @@ function renderEntities(entities, tileElt) {
   const offset = 1 / entities.length;
   for (let i = 0; i < entityMaxIdx; ++i) {
     if (i >= entities.length) {
-      tileElt.children[i].dataset.id = undefined;
-      tileElt.children[i].dataset.label = undefined;
-      tileElt.children[i].style.backgroundImage = "none";
+      const entityElt = tileElt.children[i];
+      entityElt.dataset.id = undefined;
+      entityElt.dataset.label = undefined;
+      entityElt.style.backgroundImage = "none";
+      entityElt.getAnimations().forEach( a => a.cancel());
+      
       continue;
     }
  
@@ -102,7 +105,7 @@ function renderEntities(entities, tileElt) {
 
     tileElt.children[i].dataset.id = entities[i].id;
     tileElt.children[i].style.backgroundImage = entities[i].sprite;
-    tileElt.children[i].dataset.label = entities[i].label === undefined ? undefined : entities[i].label % 26;
+    tileElt.children[i].querySelector(".se").textContent = entities[i].label ?? "";
     tileElt.children[i].animate([
       { display: "block" },
       { display: "none", offset },

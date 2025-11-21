@@ -171,10 +171,7 @@ export class Entity {
   }
 
   get displayName() {
-    const suffix =
-      this.label === undefined
-        ? ""
-        : ` ${String.fromCharCode("A".charCodeAt(0) + (this.label % 26))}`;
+    const suffix = this.label === undefined ? "" : ` ${this.label}`;
     return `<a data-id="${this.id}">${this._displayName}${suffix}</a>`;
   }
 
@@ -192,6 +189,10 @@ export class Entity {
 
   get isPlayer() {
     return this.name === "Player";
+  }
+  
+  get label() {
+    return this._label === undefined ? undefined : String.fromCharCode("A".charCodeAt(0) + (this._label % 26));
   }
 
   get maxHealth() {
@@ -243,6 +244,10 @@ export class Entity {
       this.dead = true;
       logDanger(this, `${this.displayName} died.`)?.classList.add("bold");
     }
+  }
+  
+  set label(val) {
+    this._label = val;
   }
 
   set stamina(val) {
