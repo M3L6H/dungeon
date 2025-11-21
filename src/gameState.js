@@ -326,6 +326,7 @@ function skill(entity, data) {
   });
 
   logActionStart(entity, `using ${data.name}`);
+  return true;
 }
 
 function getTimeToMove(entity) {
