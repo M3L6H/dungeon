@@ -23,6 +23,12 @@ export function addDangerLog(msg) {
   return logElt;
 }
 
+export function addSafeLog(msg) {
+  const logElt = addLog(msg);
+  logElt.classList.add('safe');
+  return logElt;
+}
+
 export function addStartLog(msg) {
   const logElt = addLog(msg);
   logElt.classList.add('start');

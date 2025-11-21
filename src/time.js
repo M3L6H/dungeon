@@ -5,6 +5,7 @@ import {
   getTime,
   getTimeline,
   incrementTime,
+  logSafe,
   rest,
 } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
@@ -47,20 +48,27 @@ export function tick() {
   const timeline = getTimeline();
   const time = incrementTime();
   getEntities().forEach((entity) => {
+    if (entity.dead) continue;
     entity.mana = Math.min(entity.mana + 1, entity.maxMana);
     for (let i = entity.statuses.length - 1; i >= 0; --i) {
-      const { count, effect, freq } = entity.statuses[i];
+      const { count, effect, freq, type } = entity.statuses[i];
       if (time % freq !== 0) continue;
-      if (count <= 0) {
-        entity.statuses.splice(i, 1);
-        continue;
-      }
       effect(entity);
       --entity.statuses[i].count;
+      if (count <= 0) {
+        logSafe(
+          entity,
+          `${entity.displayName}'s ${type} status has expired.`,
+        ); 
+        entity.statuses.splice(i, 1);
+      }
     }
   });
   const events = timeline[time] ?? [];
-  events.forEach(([_, event]) => event());
+  events.forEach(([entityId, event]) => {
+    if (getEntities()[id].dead) return;
+    event();
+  });
   renderViewport();
   delete timeline[time];
 }

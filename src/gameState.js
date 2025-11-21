@@ -2,6 +2,7 @@ import {
   addDangerLog,
   addEndLog,
   addLog,
+  addSafeLog,
   addStartLog,
   addWarnLog,
 } from "./logs.js";
@@ -378,6 +379,15 @@ export function logDanger(entity, msg) {
     getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)
   ) {
     return addDangerLog(msg);
+  }
+}
+
+export function logSafe(entity, msg) {
+  if (
+    entity.isPlayer ||
+    getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)
+  ) {
+    return addSafeLog(msg);
   }
 }
 

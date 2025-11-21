@@ -193,6 +193,10 @@ section {
   color: #30a8dd;
 }
 
+.log.safe {
+  color: #55ff55;
+}
+
 .log.start.player {
   color: #55ccff;
 }

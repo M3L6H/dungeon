@@ -421,7 +421,6 @@ function poisonTouch(entity, baseChance = 0.5) {
         );
         return;
       }
-      interrupt(other, entity);
       const success = other.addStatus({
         type: "poison",
         freq: 4,
