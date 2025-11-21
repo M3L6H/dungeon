@@ -10,7 +10,6 @@ import {
   getMap,
   getPlayer,
   inRange,
-  interrupt,
   logCombatDanger,
   logCombatWarn,
   logDanger,
@@ -244,6 +243,7 @@ export class Entity {
     this._health = clamp(val, 0, this.maxHealth);
     if (this._health === 0) {
       this.dead = true;
+      logDanger(this, `${this.displayName} died.`)?.classList.add("bold");
     }
   }
 

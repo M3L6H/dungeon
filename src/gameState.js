@@ -70,6 +70,7 @@ export function getEntities() {
 export function getInput(entity) {
   if (entity.dead) return;
   getMap().updateMemory(entity);
+  if (entity.stamina === 0) return rest(entity, true);
   if (entity.isPlayer) {
     entity.controlling = true;
   } else {
@@ -243,20 +244,12 @@ function attack(entity, target) {
         return;
       }
       const damageDealt = roll(damage);
-      other.health -= damageDealt;
       logCombatDanger(
         entity,
         other,
         `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
       );
-
-      if (other.dead) {
-        logCombatDanger(
-          entity,
-          other,
-          `${other.displayName} died.`,
-        )?.classList.add("bold");
-      }
+      other.health -= damageDealt;
     });
     const suffix = entities.length === 0 ? " and hit nothing" : "";
     logActionEnd(entity, `attacked${suffix}`);
