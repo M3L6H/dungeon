@@ -216,7 +216,7 @@ function attack(entity, target) {
   schedule(entity, timeToAttack, () => {
     const entities = getMap()
       .getEntities(x, y)
-      .filter((other) => other.id !== entity.id); // Don't attack self
+      .filter((other) => other.id !== entity.id && other.name !== entity.name); // Don't attack self or same type
     entities.forEach((other) => {
       if (entity.stamina === 0) return; // Can't attack with no stamina
       --entity.stamina;
