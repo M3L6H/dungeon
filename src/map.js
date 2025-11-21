@@ -412,7 +412,10 @@ export class Map {
 
   entityHasLoS(entity, tX, tY) {
     const { x, y } = entity;
-    return this._coordsEqual(this._rayCast(entity, x, y, tX, tY), { x: tX, y: tY });
+    return this._coordsEqual(this._rayCast(entity, x, y, tX, tY), {
+      x: tX,
+      y: tY,
+    });
   }
 
   examine(examiner, tX, tY) {
@@ -662,7 +665,7 @@ export class Map {
     } else {
       for (let y = y1; y >= y2; --y) {
         const tile = this.getTile(x1, y);
-        if (tile.isOpaque(entity) return { x: x1, y };
+        if (tile.isOpaque(entity)) return { x: x1, y };
       }
     }
 
