@@ -36,6 +36,7 @@ class GameState {
       SETTINGS,
     ];
     this.entities = [];
+    this.entityLabels = {};
     this.logs = [];
     this.map = props.map;
     this.selected = 0;
@@ -65,6 +66,10 @@ export function getActions() {
 
 export function getEntities() {
   return gameState.entities;
+}
+
+export function getEntityLabels() {
+  return gameState.entityLabels;
 }
 
 export function getInput(entity) {

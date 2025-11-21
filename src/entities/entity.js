@@ -1,6 +1,7 @@
 import {
   addEntity,
   getEntities,
+  getEntityLabels,
   getInput,
   getMap,
   logDanger,
@@ -13,7 +14,7 @@ const STAMINA_PER_ENDURANCE = 2;
 
 export class Entity {
   constructor(props) {
-    this.displayName = props.displayName ?? props.name;
+    this._displayName = props.displayName ?? props.name;
     this.name = props.name;
     this.variant = props.variant;
 
@@ -169,6 +170,14 @@ export class Entity {
     return Math.max(this.constitution + this.defenseMod, 1);
   }
 
+  get displayName() {
+    const suffix =
+      this.label === undefined
+        ? ""
+        : ` ${String.fromCharCode("A".charCodeAt(0) + (this.label % 26))}`;
+    return `<a data-id="${this.id}">${this._displayName}${suffix}</a>`;
+  }
+
   get dodge() {
     return Math.max(this.agility + this.dodgeMod, 1);
   }
@@ -246,6 +255,14 @@ function clamp(val, min, max) {
 }
 
 export function startEntity(entity, x, y) {
+  const labels = getEntityLabels();
+
+  if (labels[entity.name] === undefined) {
+    labels[entity.name] = 0;
+  } else {
+    entity.label = labels[entity.name]++;
+  }
+
   getMap().moveEntity(entity, x, y);
   getInput(entity);
   return entity;

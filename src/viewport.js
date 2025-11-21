@@ -18,6 +18,14 @@ const manaElt = document.getElementById("mana");
 const staminaElt = document.getElementById("stamina");
 const viewportElt = document.getElementById("viewport");
 
+export function highlight(id) {
+  const elt = viewportElt.querySelector(`div[data-id="${id}"]`);
+  elt.classList.add("highlight");
+  setTimeout(() => {
+    elt.classList.remove("highlight");
+  }, 1000);
+}
+
 function renderBar(elt, curr, max) {
   const fillElt = elt.querySelector(".fill");
   const textElt = elt.querySelector(".bar-text");
@@ -65,6 +73,8 @@ function renderEntities(entities, tileElt) {
   const entityMaxIdx = Math.max(tileElt.children.length, entities.length);
   for (let i = 0; i < entityMaxIdx; ++i) {
     if (i >= entities.length) {
+      tileElt.children[i].dataset.id = undefined;
+      tileElt.children[i].dataset.label = undefined;
       tileElt.children[i].style.backgroundImage = "none";
       continue;
     } else if (i >= tileElt.children.length) {
@@ -72,7 +82,11 @@ function renderEntities(entities, tileElt) {
       entityElt.classList.add("entity");
       tileElt.appendChild(entityElt);
     }
+    tileElt.children[i].dataset.id = entities[i].id;
     tileElt.children[i].style.backgroundImage = entities[i].sprite;
+    if (entities[i].label !== undefined) {
+      tileElt.children[i].dataset.label = entities[i].label % 26;
+    }
   }
 }
 

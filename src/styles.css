@@ -9,6 +9,12 @@ span {
   box-sizing: border-box;
 }
 
+a,
+a:visited {
+  color: #f2caa3;
+  text-decoration: underline;
+}
+
 body {
   margin: auto;
   width: 100vw;
@@ -170,6 +176,135 @@ section {
   position: absolute;
   inset: 0;
   z-index: 1;
+}
+
+.entity::after {
+  font-family: sans-serif;
+  position: absolute;
+  bottom: -0.7em;
+  right: 0;
+}
+
+.entity[data-label="0"]::after {
+  content: "A";
+}
+
+.entity[data-label="1"]::after {
+  content: "B";
+}
+
+.entity[data-label="2"]::after {
+  content: "C";
+}
+
+.entity[data-label="3"]::after {
+  content: "D";
+}
+
+.entity[data-label="4"]::after {
+  content: "E";
+}
+
+.entity[data-label="5"]::after {
+  content: "F";
+}
+
+.entity[data-label="6"]::after {
+  content: "G";
+}
+
+.entity[data-label="7"]::after {
+  content: "H";
+}
+
+.entity[data-label="8"]::after {
+  content: "I";
+}
+
+.entity[data-label="9"]::after {
+  content: "J";
+}
+
+.entity[data-label="10"]::after {
+  content: "K";
+}
+
+.entity[data-label="11"]::after {
+  content: "L";
+}
+
+.entity[data-label="12"]::after {
+  content: "M";
+}
+
+.entity[data-label="13"]::after {
+  content: "N";
+}
+
+.entity[data-label="14"]::after {
+  content: "O";
+}
+
+.entity[data-label="15"]::after {
+  content: "P";
+}
+
+.entity[data-label="16"]::after {
+  content: "Q";
+}
+
+.entity[data-label="17"]::after {
+  content: "R";
+}
+
+.entity[data-label="18"]::after {
+  content: "S";
+}
+
+.entity[data-label="19"]::after {
+  content: "T";
+}
+
+.entity[data-label="20"]::after {
+  content: "U";
+}
+
+.entity[data-label="21"]::after {
+  content: "V";
+}
+
+.entity[data-label="22"]::after {
+  content: "W";
+}
+
+.entity[data-label="23"]::after {
+  content: "X";
+}
+
+.entity[data-label="24"]::after {
+  content: "Y";
+}
+
+.entity[data-label="25"]::after {
+  content: "Z";
+}
+
+.highlight::before {
+  content: " ";
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-color: red;
+  animation: fade 1s linear backwards;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .in-range {

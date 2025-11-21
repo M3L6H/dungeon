@@ -1,4 +1,5 @@
 import { getLogs, getTime } from "./gameState.js";
+import { highlight } from "./viewport.js";
 
 const logsElt = document.getElementById("logs");
 
@@ -8,7 +9,7 @@ export function addLog(msg) {
   logs.push(log);
   const logElt = document.createElement("p");
   logElt.classList.add("log");
-  logElt.textContent = log;
+  logElt.innerHTML = log;
   logsElt.appendChild(logElt);
   while (logsElt.children.length > 500) {
     logsElt.removeChild(logsElt.firstElementChild);
@@ -46,3 +47,15 @@ export function addWarnLog(msg) {
   logElt.classList.add("warn");
   return logElt;
 }
+
+function init() {
+  logsElt.addEventListener("click", (e) => {
+    const elt = e.target;
+
+    if (!(elt instanceof HTMLAnchorElement)) return;
+    if (elt.dataset.id === undefined) return;
+    highlight(elt.dataset.id);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
