@@ -97,16 +97,16 @@ function renderEntities(entities, tileElt) {
       entityElt.dataset.label = undefined;
       entityElt.style.backgroundImage = "none";
       entityElt.getAnimations().forEach( a => a.cancel());
-      
       continue;
     }
  
     if (i >= tileElt.children.length) createEntityElt(tileElt);
-
-    tileElt.children[i].dataset.id = entities[i].id;
-    tileElt.children[i].style.backgroundImage = entities[i].sprite;
-    tileElt.children[i].querySelector(".se").textContent = entities[i].label ?? "";
-    tileElt.children[i].animate([
+    const entityElt = tileElt.children[i];
+    entityElt.dataset.id = entities[i].id;
+    entityElt.style.backgroundImage = entities[i].sprite;
+    entityElt.querySelector(".se").textContent = entities[i].label ?? "";
+    entityElt.getAnimations().forEach( a => a.cancel());
+    entityElt.animate([
       { display: "block" },
       { display: "none", offset },
     ], {
