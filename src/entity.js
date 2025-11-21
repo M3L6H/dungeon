@@ -2,6 +2,7 @@ import {
   ATTACK,
   EXAMINE,
   MOVE,
+  SKILL,
   act,
   addEntity,
   getEntities,
@@ -76,18 +77,15 @@ export class Entity {
 
     addEntity(this);
   }
-  
+
   addStatus(status) {
     if (this.immunities.has(status.type)) {
-      logWarn(
-        this,
-        `${this.displayName} is immune to ${status.type}.`
-      );
+      logWarn(this, `${this.displayName} is immune to ${status.type}.`);
       return false;
     }
-    
+
     this.statuses.push(status);
-    
+
     return true;
   }
 
@@ -97,9 +95,11 @@ export class Entity {
     if (perception >= 3) {
       details.push(this.status);
     }
-    
+
     if (perception >= 6) {
-      details.push(`${this.displayName} immunities: ${Array.from(this.immunities).join(', ')}`);
+      details.push(
+        `${this.displayName} immunities: ${Array.from(this.immunities).join(", ")}`,
+      );
     }
 
     for (const threshold in this.description) {
@@ -267,8 +267,7 @@ export function createBlueSlimeSmall(w, h, x, y) {
       description: {
         0: (self) =>
           `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
-        3: (self) =>
-          `The ${self.displayName} does physical damage.`,
+        3: (self) => `The ${self.displayName} does physical damage.`,
         5: () =>
           `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
       },
@@ -277,9 +276,7 @@ export function createBlueSlimeSmall(w, h, x, y) {
       strength: 2,
       constitution: 2,
       behaviors: [simpleAttack, findTarget, hunt, wander, rest],
-      immunities: new Set([
-        "poison"
-      ]),
+      immunities: new Set(["poison"]),
     }),
     x,
     y,
@@ -299,8 +296,7 @@ export function createGreenSlimeSmall(w, h, x, y) {
       description: {
         0: (self) =>
           `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
-        3: (self) =>
-          `The ${self.displayName} is slightly poisonous.`,
+        3: (self) => `The ${self.displayName} is slightly poisonous.`,
         5: () =>
           `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
       },
@@ -309,9 +305,7 @@ export function createGreenSlimeSmall(w, h, x, y) {
       wisdom: 2,
       constitution: 2,
       behaviors: [poisonTouch, simpleAttack, findTarget, hunt, wander, rest],
-      immunities: new Set([
-        "poison"
-      ]),
+      immunities: new Set(["poison"]),
     }),
     x,
     y,
@@ -392,6 +386,8 @@ function poisonTouch(entity, baseChance = 0.5) {
   const targetLoc = entity.idToLoc[targetId];
   if (!targetLoc) return false;
   const { x: tX, y: tY } = targetLoc;
+  const dx = Math.abs(tX - entity.x);
+  const dy = Math.abs(tY - entity.y);
   const manaCost = Math.max(1, 5 - Math.floor(Math.sqrt(entity.wisdom)));
   const staminaCost = 1;
   const data = {
@@ -411,6 +407,7 @@ function poisonTouch(entity, baseChance = 0.5) {
         entity.stamina >= staminaCost &&
         entities.length > 0 &&
         entity.mana >= manaCost
+      );
     },
     skill: (other) => {
       const attack = roll(entity.accuracy);
@@ -433,8 +430,8 @@ function poisonTouch(entity, baseChance = 0.5) {
           logDanger(
             entity,
             `${entity.displayName} takes 2 damage from poison.`,
-          ); 
-        };
+          );
+        },
       });
       if (success) {
         logCombatDanger(

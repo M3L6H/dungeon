@@ -137,7 +137,7 @@ export function act(entity, action, data) {
     case "move":
       return move(entity, data);
     case "skill":
-      return skill(entity, data); 
+      return skill(entity, data);
     default:
       addLog(`${entity.name} cannot ${action}.`);
   }
@@ -311,23 +311,14 @@ export function rest(entity, full = false) {
 }
 
 function skill(entity, data) {
-  const { displayName } = entity;
-  const {
-    x,
-    y,
-    filter,
-    skill,
-    timeTaken,
-  } = data;
+  const { x, y, filter, manaCost, skill, staminaCost, timeTaken } = data;
   turnToFaceTarget(entity, data);
 
   schedule(entity, timeTaken, () => {
-    const entities = getMap()
-      .getEntities(x, y)
-      .filter(filter);
+    const entities = getMap().getEntities(x, y).filter(filter);
     entities.forEach((other) => {
       if (entity.stamina <= staminaCost || entity.mana <= manaCost) return;
-      entity.mana -= manaCost; 
+      entity.mana -= manaCost;
       entity.stamina -= staminaCost;
       other.tSet.add(entity.name.toLowerCase());
       skill(other);
@@ -342,17 +333,17 @@ function getTimeToMove(entity) {
 }
 
 function logActionStart(entity, action) {
-  const { isPlayer, name, x, y } = entity;
+  const { displayName, isPlayer, x, y } = entity;
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addStartLog(`${name} is ${action}.`);
+    const logElt = addStartLog(`${displayName} is ${action}.`);
     if (isPlayer) logElt.classList.add("player");
   }
 }
 
 function logActionEnd(entity, action) {
-  const { isPlayer, name, x, y } = entity;
+  const { displayName, isPlayer, x, y } = entity;
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addEndLog(`${name} ${action}.`);
+    const logElt = addEndLog(`${displayName} ${action}.`);
     if (isPlayer) logElt.classList.add("player");
   }
 }
