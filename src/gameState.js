@@ -70,7 +70,10 @@ export function getEntities() {
 export function getInput(entity) {
   if (entity.dead) return;
   getMap().updateMemory(entity);
-  if (entity.stamina === 0) return rest(entity, true);
+  if (entity.stamina === 0) {
+    rest(entity, true);
+    return
+  }
   if (entity.isPlayer) {
     entity.controlling = true;
   } else {
@@ -317,7 +320,8 @@ function skill(entity, data) {
       other.tSet.add(entity.name.toLowerCase());
       skill(other);
     });
-    logActionEnd(entity, `used ${data.name}`);
+    const suffix = entities.length === 0 ? " and hit nothing" : "";
+    logActionEnd(entity, `used ${data.name}${suffix}.`);
   });
 
   logActionStart(entity, `using ${data.name}`);
