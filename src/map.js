@@ -556,7 +556,7 @@ export class Map {
             imageData.data[r1] = 255;
             imageData.data[g1] = 255;
             imageData.data[b1] = 0;
-          } else if (tile.isTraversable) {
+          } else if (tile.isTraversable()) {
             imageData.data[r] = 255;
             imageData.data[g] = Math.max(0, 255 - difficulty * 8);
             imageData.data[b] = Math.max(0, 255 - difficulty * 8);
@@ -652,17 +652,17 @@ export class Map {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
-        if (tile.isOpaque) return { x, y };
+        if (tile.isOpaque(entity)) return { x, y };
       }
     } else if (y1 < y2) {
       for (let y = y1; y <= y2; ++y) {
         const tile = this.getTile(x1, y);
-        if (tile.isOpaque) return { x: x1, y };
+        if (tile.isOpaque(entity)) return { x: x1, y };
       }
     } else {
       for (let y = y1; y >= y2; --y) {
         const tile = this.getTile(x1, y);
-        if (tile.isOpaque) return { x: x1, y };
+        if (tile.isOpaque(entity) return { x: x1, y };
       }
     }
 
