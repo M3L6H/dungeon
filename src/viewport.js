@@ -71,6 +71,7 @@ function renderRange(tX, tY, tileElt) {
 
 function renderEntities(entities, tileElt) {
   const entityMaxIdx = Math.max(tileElt.children.length, entities.length);
+  const offset = 1 / entities.length;
   for (let i = 0; i < entityMaxIdx; ++i) {
     if (i >= entities.length) {
       tileElt.children[i].dataset.id = undefined;
@@ -87,6 +88,14 @@ function renderEntities(entities, tileElt) {
     if (entities[i].label !== undefined) {
       tileElt.children[i].dataset.label = entities[i].label % 26;
     }
+    tileElt.children[i].animate([
+      { display: "block" },
+      { display: "none", offset },
+    ], {
+      delay: 1000 * i,
+      duration: 1000 * entities.length,
+      iterations: Infinity,
+    });
   }
 }
 
