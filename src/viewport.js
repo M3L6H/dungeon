@@ -19,10 +19,10 @@ const staminaElt = document.getElementById("stamina");
 const viewportElt = document.getElementById("viewport");
 
 export function highlight(id) {
-  const elt = viewportElt.querySelector(`div[data-id="${id}"]`);
-  elt.classList.add("highlight");
+  const elt = viewportElt.querySelector(`div[data-id="${id}"]`)?.parentElement;
+  elt?.classList.add("highlight");
   setTimeout(() => {
-    elt.classList.remove("highlight");
+    elt?.classList.remove("highlight");
   }, 1000);
 }
 
@@ -93,23 +93,19 @@ function renderEntities(entities, tileElt) {
   for (let i = 0; i < entityMaxIdx; ++i) {
     if (i >= entities.length) {
       const entityElt = tileElt.children[i];
-      entityElt.dataset.id = undefined;
-      entityElt.dataset.label = undefined;
+      delete entityElt.dataset.id;
       entityElt.style.backgroundImage = "none";
-      entityElt.getAnimations().forEach( a => a.cancel());
+      entityElt.getAnimations().forEach((a) => a.cancel());
       continue;
     }
- 
+
     if (i >= tileElt.children.length) createEntityElt(tileElt);
     const entityElt = tileElt.children[i];
     entityElt.dataset.id = entities[i].id;
     entityElt.style.backgroundImage = entities[i].sprite;
     entityElt.querySelector(".se").textContent = entities[i].label ?? "";
-    entityElt.getAnimations().forEach( a => a.cancel());
-    entityElt.animate([
-      { display: "block" },
-      { display: "none", offset },
-    ], {
+    entityElt.getAnimations().forEach((a) => a.cancel());
+    entityElt.animate([{ display: "block" }, { display: "none", offset }], {
       delay: 1000 * i,
       duration: 1000 * entities.length,
       iterations: Infinity,
@@ -143,6 +139,7 @@ export function renderViewport() {
         renderEntities(player.getEntitiesInMemory(tX, tY), tileElt);
       } else {
         tileElt.style.backgroundImage = "none";
+        renderEntities([], tileElt);
       }
       renderRange(tX, tY, tileElt);
     }
