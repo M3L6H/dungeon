@@ -317,12 +317,13 @@ function skill(entity, data) {
   schedule(entity, timeTaken, () => {
     const entities = getMap().getEntities(x, y).filter(filter);
     entities.forEach((other) => {
-      if (entity.stamina <= staminaCost || entity.mana <= manaCost) return;
+      if (entity.stamina < staminaCost || entity.mana < manaCost) return;
       entity.mana -= manaCost;
       entity.stamina -= staminaCost;
       other.tSet.add(entity.name.toLowerCase());
       skill(other);
     });
+    logActionEnd(entity, `used ${data.name}`);
   });
 
   logActionStart(entity, `using ${data.name}`);

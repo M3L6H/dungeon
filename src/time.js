@@ -21,7 +21,7 @@ export function advance() {
 
 export function getDecision(entity) {
   if (entity.dead) return;
- 
+
   if (entity.stamina === 0) {
     rest(entity, true);
   } else {
@@ -53,6 +53,7 @@ export function tick() {
       if (time % freq !== 0) continue;
       if (count <= 0) {
         entity.statuses.splice(i, 1);
+        continue;
       }
       effect(entity);
       --entity.statuses[i].count;

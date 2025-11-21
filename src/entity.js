@@ -10,6 +10,7 @@ import {
   getMap,
   getPlayer,
   inRange,
+  interrupt,
   logCombatDanger,
   logCombatWarn,
   logDanger,
@@ -302,7 +303,7 @@ export function createGreenSlimeSmall(w, h, x, y) {
       },
       w,
       h,
-      wisdom: 2,
+      wisdom: 3,
       constitution: 2,
       behaviors: [poisonTouch, simpleAttack, findTarget, hunt, wander, rest],
       immunities: new Set(["poison"]),
@@ -388,7 +389,8 @@ function poisonTouch(entity, baseChance = 0.5) {
   const { x: tX, y: tY } = targetLoc;
   const dx = Math.abs(tX - entity.x);
   const dy = Math.abs(tY - entity.y);
-  const filter = (other) => other.id !== entity.id && other.name !== entity.name;
+  const filter = (other) =>
+    other.id !== entity.id && other.name !== entity.name;
   const manaCost = Math.max(1, 5 - Math.floor(Math.sqrt(entity.wisdom)));
   const staminaCost = 1;
   const data = {
