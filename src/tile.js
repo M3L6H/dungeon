@@ -15,8 +15,8 @@ export class Tile {
       0: () => (Math.random() < 0.5 ? "The dungeon wall is made of solid dark stone." : "The dungeon wall is slightly damp. Moss grows in the cracks between bricks."),
     },
     indestructible: true,
-    obstructing: true,
-    opaque: true,
+    isTraversable: () => false,
+    isOpaque: () => true,
   });
 
   static nameToTile = {
@@ -33,8 +33,8 @@ export class Tile {
     };
 
     this.indestructible = props.indestructible ?? false;
-    this.obstructing = props.obstructing ?? false;
-    this.opaque = props.opaque ?? false;
+    this.isTraversable = props.isTraversable ?? () => true;
+    this.isOpaque = props.isOpaque ?? () => false;
   }
   
   examine({ perception }) {
@@ -45,13 +45,5 @@ export class Tile {
       }
     }
     return details.join("\r\n");
-  }
-  
-  get isOpaque() {
-    return this.opaque;
-  }
-
-  get isTraversable() {
-    return !this.obstructing;
   }
 }

@@ -412,7 +412,7 @@ export class Map {
 
   entityHasLoS(entity, tX, tY) {
     const { x, y } = entity;
-    return this._coordsEqual(this._rayCast(x, y, tX, tY), { x: tX, y: tY });
+    return this._coordsEqual(this._rayCast(entity, x, y, tX, tY), { x: tX, y: tY });
   }
 
   examine(examiner, tX, tY) {
@@ -499,7 +499,7 @@ export class Map {
         const newY = curr.y + dy;
         if (visited[newX + newY * this.w]) continue;
         const tile = Tile.nameToTile[entity.getTileInMemory(newX, newY)];
-        if (!tile?.isTraversable) continue;
+        if (!tile?.isTraversable(entity)) continue;
         const fcost = curr.fcost + 1;
         hcost = fcost + cbd(newX, newY, tX, tY);
         const neighbor = {
@@ -637,14 +637,14 @@ export class Map {
     }
   }
 
-  _rayCast(x1, y1, x2, y2) {
+  _rayCast(entity, x1, y1, x2, y2) {
     if (x1 < x2) {
       const m = (y2 - y1) / (x2 - x1);
       for (let i = 0; i <= x2 - x1; i += 0.2) {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
-        if (tile.isOpaque) return { x, y };
+        if (tile.isOpaque(entity)) return { x, y };
       }
     } else if (x2 < x1) {
       const m = (y2 - y1) / (x2 - x1);
