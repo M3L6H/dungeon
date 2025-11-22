@@ -425,6 +425,8 @@ export class Map {
     this.getEntities(tX, tY).forEach((entity) => {
       details.push(entity.examine(examiner));
     });
+    const tileEntity = this.getTileEntity(tX, tY);
+    if (tileEntity) details.push(tileEntity.examine(examiner));
     details.push(this.getTile(tX, tY).examine(examiner));
     this.updateMemory(examiner);
     return details.join("\r\n");
@@ -527,6 +529,32 @@ export class Map {
     }
 
     return [];
+  }
+
+  updateMemory(entity) {
+    const dirMod2 = entity.dir % 2;
+    const invDirMod2 = 1 - dirMod2;
+    for (let i = 0; i <= entity.sightRange; ++i) {
+      for (let j = -(i + 1); j <= i + 1; ++j) {
+        const dx = dirMod2 * i * -(entity.dir - 2) + invDirMod2 * j;
+        const dy = invDirMod2 * i * (entity.dir - 1) + dirMod2 * j;
+        const x = entity.x + dx;
+        const y = entity.y + dy;
+
+        if (
+          x < 0 ||
+          x > this.w ||
+          y < 0 ||
+          y > this.h ||
+          !this.canEntitySeeTile(entity, x, y)
+        )
+          continue;
+
+        const tileEntity = this.getTileEntity(x, y);
+        entity.setTileInMemory(x, y, [this.getTile(x, y).name, { id: tileEntity?.id, sprite: tileEntity?.sprite }]);
+        entity.setEntitiesInMemory(x, y, this.getEntities(x, y));
+      }
+    }
   }
 
   writeToImage(imageData) {
@@ -718,32 +746,6 @@ export class Map {
 
   _setTileEntity(x, y, tileEntity) {
     this.tiles[x + y * this.w][1] = tileEntity;
-  }
-
-  updateMemory(entity) {
-    const dirMod2 = entity.dir % 2;
-    const invDirMod2 = 1 - dirMod2;
-    for (let i = 0; i <= entity.sightRange; ++i) {
-      for (let j = -(i + 1); j <= i + 1; ++j) {
-        const dx = dirMod2 * i * -(entity.dir - 2) + invDirMod2 * j;
-        const dy = invDirMod2 * i * (entity.dir - 1) + dirMod2 * j;
-        const x = entity.x + dx;
-        const y = entity.y + dy;
-
-        if (
-          x < 0 ||
-          x > this.w ||
-          y < 0 ||
-          y > this.h ||
-          !this.canEntitySeeTile(entity, x, y)
-        )
-          continue;
-
-        const tileEntity = this.getTileEntity(x, y);
-        entity.setTileInMemory(x, y, [this.getTile(x, y).name, { id: tileEntity?.id, sprite: tileEntity?.sprite }]);
-        entity.setEntitiesInMemory(x, y, this.getEntities(x, y));
-      }
-    }
   }
 }
 
