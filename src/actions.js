@@ -6,7 +6,7 @@ import {
   NONE,
   setSelectedIndex,
 } from "./gameState.js";
-import { inventoryElt } from "./inventory.js";
+import { showInventory } from "./inventory.js";
 import { addLog } from "./logs.js";
 import { renderViewport } from "./viewport.js";
 
@@ -33,7 +33,8 @@ function createAction() {
     const action = actionElt.dataset.action;
     if (action === NONE) return;
     if (action === INTERACT) {
-      inventoryElt.classList.remove("hidden");
+      showInventory((selectedItem) => {
+      }, true);
     }
     if (getSelectedAction() === action) return;
     setSelectedIndex(getActions().indexOf(action));

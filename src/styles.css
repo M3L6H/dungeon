@@ -313,6 +313,10 @@ section {
   -webkit-touch-callout: none;
 }
 
+.pointing-finger {
+  background-image: url("images/pointing-finger.png");
+}
+
 .tile {
   aspect-ratio: 1 / 1;
   background-color: black;
