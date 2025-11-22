@@ -67,7 +67,7 @@ export class Entity {
     this.tSet = props.tSet ?? new Set(["player"]);
     this._unique = props.unique ?? false;
     
-    for (const k in (props.additionalProps ?? {}) {
+    for (const k in (props.additionalProps ?? {})) {
       this[k] = props.additionalProps[k];
     }
 
