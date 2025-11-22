@@ -1,4 +1,6 @@
 import { Tile } from "./tile.js";
+import { simpleDoor } from "./tileEntities/index.js";
+import { DIRS } from "./utils.js";
 
 const ROWS = 512;
 const COLS = 512;
@@ -341,7 +343,7 @@ export class Map {
 
     for (let i = 0; i < this.tiles.length; ++i) {
       this.entities[i] = [];
-      this.tiles[i] = Tile.wall;
+      this.tiles[i] = [Tile.wall, undefined];
     }
 
     rooms.forEach((points) => {
@@ -442,7 +444,14 @@ export class Map {
    * @returns {Tile} The tile at x, y
    */
   getTile(x, y) {
-    return this.tiles[x + y * this.w];
+    return this.tiles[x + y * this.w][0];
+  }
+
+  /**
+   * @returns {TileEntity} The tile entity at x, y
+   */
+  getTileEntity(x, y) {
+    return this.tiles[x + y * this.w][1];
   }
 
   /**
@@ -467,6 +476,7 @@ export class Map {
     entityToMove.x = tX;
     entityToMove.y = tY;
     this.updateMemory(entityToMove);
+    this.getTileEntity(tX, tY)?.enter(entityToMove);
     return entityToMove;
   }
 
@@ -524,6 +534,7 @@ export class Map {
       for (let y = 0; y < this.h; ++y) {
         const idx = x + y * this.w;
         const tile = this.getTile(x, y);
+        const tileEntity = this.getTileEntity(x, y);
         const id = this.tileToId[idx];
         const { difficulty } = this.origins[id] ?? { difficulty: 0 };
         for (let i = 0; i < 2; ++i) {
@@ -538,7 +549,14 @@ export class Map {
           const a1 = r1 + 3;
           imageData.data[a1] = 255;
 
-          if (id === this.start.id) {
+          if (tileEntity?.name === "Door") {
+            imageData.data[r] = 150;
+            imageData.data[g] = 75;
+            imageData.data[b] = 0;
+            imageData.data[r1] = 150;
+            imageData.data[g1] = 75;
+            imageData.data[b1] = 0;
+          } else if (id === this.start.id) {
             imageData.data[r] = 0;
             imageData.data[g] = 255;
             imageData.data[b] = 0;
@@ -584,9 +602,16 @@ export class Map {
    */
   _assignDifficultyAndSecretTreasure(edges) {
     const adj = Array.from({ length: this.origins.length }, () => []);
+    const roomIdToEdge = {};
     edges.forEach(({ a, b }) => {
       adj[a.id].push(b.id);
       adj[b.id].push(a.id);
+      const edgesA = roomIdToEdge[a.id] ?? [];
+      edgesA.push(a);
+      roomIdToEdge[a.id] = edgesA;
+      const edgesB = roomIdToEdge[b.id] ?? [];
+      edgesB.push(b);
+      roomIdToEdge[b.id] = edgesB;
     });
     this.start.difficulty = 0;
     const q = [this.start];
@@ -616,6 +641,9 @@ export class Map {
         } else if (r < 1.3) {
           // 20% chance of treasure room
           room.treasure = true;
+          const { dir, x, y } = roomIdToEdge[q[i].id][0];
+          const [dx, dy] = DIRS[dir];
+          this._setTileEntity(x + dx, y + dy, simpleDoor());
         }
       }
     }
@@ -647,7 +675,9 @@ export class Map {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
-        if (tile.isOpaque(entity)) return { x, y };
+        const tileEntity = this.getTileEntity(x, y);
+        if (tile.isOpaque(entity) || tileEntity?.isOpaque(entity))
+          return { x, y };
       }
     } else if (x2 < x1) {
       const m = (y2 - y1) / (x2 - x1);
@@ -655,17 +685,23 @@ export class Map {
         const x = this._round(x1 + i);
         const y = this._round(y1 + m * i);
         const tile = this.getTile(x, y);
-        if (tile.isOpaque(entity)) return { x, y };
+        const tileEntity = this.getTileEntity(x, y);
+        if (tile.isOpaque(entity) || tileEntity?.isOpaque(entity))
+          return { x, y };
       }
     } else if (y1 < y2) {
       for (let y = y1; y <= y2; ++y) {
         const tile = this.getTile(x1, y);
-        if (tile.isOpaque(entity)) return { x: x1, y };
+        const tileEntity = this.getTileEntity(x1, y);
+        if (tile.isOpaque(entity) || tileEntity?.isOpaque(entity))
+          return { x: x1, y };
       }
     } else {
       for (let y = y1; y >= y2; --y) {
         const tile = this.getTile(x1, y);
-        if (tile.isOpaque(entity)) return { x: x1, y };
+        const tileEntity = this.getTileEntity(x1, y);
+        if (tile.isOpaque(entity) || tileEntity?.isOpaque(entity))
+          return { x: x1, y };
       }
     }
 
@@ -677,7 +713,11 @@ export class Map {
   }
 
   _setTile(x, y, tile) {
-    this.tiles[x + y * this.w] = tile;
+    this.tiles[x + y * this.w][0] = tile;
+  }
+
+  _setTileEntity(x, y, tileEntity) {
+    this.tiles[x + y * this.w][1] = tileEntity;
   }
 
   updateMemory(entity) {

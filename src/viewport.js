@@ -42,8 +42,13 @@ function renderBars() {
 }
 
 function renderTile(tX, tY, tileElt) {
-  const tile = getMap().getTile(tX, tY);
-  tileElt.style.backgroundImage = tile.url;
+  const tileEntity = getMap().getTileEntity(tX, tY);
+  if (tileEntity) {
+    tileElt.style.backgroundImage = tileEntity.sprite;
+  } else {
+    const tile = getMap().getTile(tX, tY);
+    tileElt.style.backgroundImage = tile.url;
+  }
 }
 
 function renderMemoryTile(tileName, tileElt) {

@@ -46,7 +46,9 @@ class GameState {
   }
 }
 
-let gameState = {};
+let gameState = {
+  tileEntities: [],
+};
 
 export async function newGame() {
   const map = await generateMap();
@@ -62,8 +64,8 @@ export function addEntity(entity) {
 }
 
 export function addTileEntity(tileEntity) {
-  tileEntity = gameState.tileEntity.length;
-  gameState.tileEntity.push(tileEntity);
+  tileEntity.id = gameState.tileEntities.length;
+  gameState.tileEntities.push(tileEntity);
 }
 
 export function getActions() {

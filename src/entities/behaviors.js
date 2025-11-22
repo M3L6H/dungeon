@@ -10,14 +10,8 @@ import {
 } from "../gameState.js";
 import { addLog } from "../logs.js";
 import { poisonTouch } from "../skills.js";
+import { DIRS } from "../utils.js";
 import { Entity, getEntityById } from "./entity.js";
-
-const DIRS = [
-  [0, -1],
-  [1, 0],
-  [0, 1],
-  [-1, 0],
-];
 
 /**
  * Behavior where entity will use the Poison Touch skill on an adjacent target
