@@ -27,6 +27,12 @@ body {
   overflow: hidden;
 }
 
+h1,
+h2,
+h3 {
+  color: white;
+}
+
 section {
   width: 100%;
   margin-bottom: 16px !important;
@@ -116,6 +122,7 @@ section {
 }
 
 .action::after {
+  color: black;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -279,6 +286,8 @@ section {
   border-radius: 4px;
   cursor: pointer;
   padding: 4px;
+  aspect-ratio: 1/1;
+  width: 10%;
 }
 
 .log.danger {
