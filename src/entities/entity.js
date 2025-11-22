@@ -64,6 +64,7 @@ export class Entity {
     this.statuses = [];
     this.targetId = null;
     this.tSet = props.tSet ?? new Set(["player"]);
+    this._unique = props.unique ?? false;
 
     addEntity(this);
   }
@@ -237,6 +238,10 @@ export class Entity {
   get status() {
     return `${this.displayName}: Level: ${this.level}. Health: ${this.health} / ${this.maxHealth}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
   }
+  
+  get unique() {
+    return this._unique;
+  }
 
   set health(val) {
     this._health = clamp(val, 0, this.maxHealth);
@@ -264,8 +269,13 @@ export function startEntity(entity, x, y) {
 
   if (labels[entity.name] === undefined) {
     labels[entity.name] = 0;
+    
+    if (!entity.unique) entity.label = 0;
+  } else if (entity.unique) {
+    console.error("Failed to create duplicate of unique entity", entity);
+    return null;
   } else {
-    entity.label = labels[entity.name]++;
+    entity.label = ++labels[entity.name];
   }
 
   getMap().moveEntity(entity, x, y);
