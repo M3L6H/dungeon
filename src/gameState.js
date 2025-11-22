@@ -36,6 +36,7 @@ class GameState {
       SETTINGS,
     ];
     this.entities = [];
+    this.tileEntities = [];
     this.entityLabels = {};
     this.logs = [];
     this.map = props.map;
@@ -58,6 +59,11 @@ export async function newGame() {
 export function addEntity(entity) {
   entity.id = gameState.entities.length;
   gameState.entities.push(entity);
+}
+
+export function addTileEntity(tileEntity) {
+  tileEntity = gameState.tileEntity.length;
+  gameState.tileEntity.push(tileEntity);
 }
 
 export function getActions() {
