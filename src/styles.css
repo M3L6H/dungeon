@@ -282,12 +282,15 @@ section {
 
 .inventory-button {
   background-color: #454555;
+  background-size: cover;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
   border: 1px solid #232333;
   border-radius: 4px;
   cursor: pointer;
   padding: 4px;
   aspect-ratio: 1/1;
-  width: 10%;
+  width: calc((100% - 18px) / 10);
 }
 
 .log.danger {
