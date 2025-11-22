@@ -16,7 +16,7 @@ export class TileEntity {
     this.onEnter = props.onEnter;
     this.onInteract = props.onInteract;
     this.state = props.initialState ?? {};
-    
+
     addTileEntity(this);
   }
 
@@ -29,29 +29,29 @@ export class TileEntity {
     }
     return details.join("\r\n");
   }
-  
+
   enter(entity) {
     if (this.onEnter !== undefined) {
       return this.onEnter(this.state, entity);
     }
     return false;
   }
-  
+
   interact(entity, item) {
     if (this.onInteract !== undefined) {
       return this.onInteract(this.state, entity, item);
     }
     return false;
   }
-  
+
   isOpaque(entity) {
     return this._isOpaque(this.state, entity);
   }
-  
+
   isTraversable(entity) {
     return this._isTraversable(this.state, entity);
   }
-  
+
   get displayName() {
     const suffix = this.label === undefined ? "" : ` ${this.label}`;
     return `<a data-id="${this.id}">${this._displayName}${suffix}</a>`;
@@ -64,3 +64,4 @@ export class TileEntity {
     return this._sprite;
   }
 }
+

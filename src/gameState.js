@@ -132,6 +132,10 @@ export function getSelectedIndex() {
   return gameState.selected;
 }
 
+export function getTileEntities() {
+  return gameState.tileEntities;
+}
+
 export function getTime() {
   return gameState.time;
 }
@@ -188,7 +192,9 @@ export function inRange(entity, action, data) {
     case "move":
       return (
         (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
-        (dx + dy === 1 && getMap().isTraversable(entity, x, y) && entity.stamina > 0)
+        (dx + dy === 1 &&
+          getMap().isTraversable(entity, x, y) &&
+          entity.stamina > 0)
       );
     case "skill":
       return data.inRange();

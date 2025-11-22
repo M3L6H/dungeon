@@ -1,3 +1,4 @@
+import { getTileEntities } from "./gameState.js";
 import { Tile } from "./tile.js";
 import { simpleDoor } from "./tileEntities/index.js";
 import { DIRS } from "./utils.js";
@@ -455,7 +456,7 @@ export class Map {
   getTileEntity(x, y) {
     return this.tiles[x + y * this.w][1];
   }
-  
+
   isTraversable(entity, x, y) {
     return this._isTraversable(entity, x, y, this.tiles);
   }
@@ -553,8 +554,17 @@ export class Map {
         )
           continue;
 
-        const tileEntity = this.getTileEntity(x, y) ?? {};
-        entity.setTileInMemory(x, y, [this.getTile(x, y), { ...tileEntity }]);
+        const tileEntity = this.getTileEntity(x, y);
+        entity.setTileInMemory(x, y, [
+          this.getTile(x, y),
+          tileEntity === undefined
+            ? undefined
+            : {
+                id: tileEntity.id,
+                sprite: tileEntity.sprite,
+                state: tileEntity.state,
+              },
+        ]);
         entity.setEntitiesInMemory(x, y, this.getEntities(x, y));
       }
     }
@@ -699,10 +709,14 @@ export class Map {
       }
     }
   }
-  
+
   _isTraversable(entity, x, y, tiles) {
-    const [tile, tileEntity] = tiles[x + y * this.w];
-    return tile.isTraversable(entity) && (tileEntity?.isTraversable(entity) ?? true);
+    const [tile, tileEntityData] = tiles[x + y * this.w];
+    const tileEntity = getTileEntities()[tileEntityData?.id];
+    return (
+      (tile?.isTraversable(entity) ?? false) &&
+      (tileEntity?._isTraversable(tileEntityData?.state, entity) ?? true)
+    );
   }
 
   _rayCast(entity, x1, y1, x2, y2) {
