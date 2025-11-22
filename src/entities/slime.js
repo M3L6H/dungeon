@@ -32,6 +32,9 @@ export function createBlueSlimeSmall(w, h, x, y) {
       constitution: 2,
       behaviors: [simpleAttack, findTarget, hunt, wander, rest],
       immunities: new Set([STATUS.poison]),
+      additionalProps: {
+        hands: false,
+      },
     }),
     x,
     y,
@@ -68,6 +71,9 @@ export function createGreenSlimeSmall(w, h, x, y) {
         rest,
       ],
       immunities: new Set([STATUS.poison]),
+      additionalProps: {
+        hands: false,
+      },
     }),
     x,
     y,

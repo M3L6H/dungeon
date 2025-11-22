@@ -51,11 +51,10 @@ function renderTile(tX, tY, tileElt) {
   }
 }
 
-function renderMemoryTile(tileName, tileEntitySprite, tileElt) {
+function renderMemoryTile(tile, tileEntitySprite, tileElt) {
   if (tileEntitySprite) {
     tileElt.style.backgroundImage = tileEntitySprite;
   } else {
-    const tile = Tile.nameToTile[tileName];
     tileElt.style.backgroundImage = tile.url;
   }
   tileElt.classList.add("memory");

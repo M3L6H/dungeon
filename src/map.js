@@ -455,6 +455,10 @@ export class Map {
   getTileEntity(x, y) {
     return this.tiles[x + y * this.w][1];
   }
+  
+  isTraversable(entity, x, y) {
+    return this._isTraversable(entity, x, y, this.tiles);
+  }
 
   /**
    * UPDATES the entityToMove with tX, tY and moves them in the map.
@@ -513,8 +517,7 @@ export class Map {
         const newX = curr.x + dx;
         const newY = curr.y + dy;
         if (visited[newX + newY * this.w]) continue;
-        const tile = Tile.nameToTile[entity.getTileInMemory(newX, newY)];
-        if (!tile?.isTraversable(entity)) continue;
+        if (!this._isTraversable(entity, newX, newY, entity.memory)) continue;
         const fcost = curr.fcost + 1;
         hcost = fcost + cbd(newX, newY, tX, tY);
         const neighbor = {
@@ -551,7 +554,7 @@ export class Map {
           continue;
 
         const tileEntity = this.getTileEntity(x, y);
-        entity.setTileInMemory(x, y, [this.getTile(x, y).name, { id: tileEntity?.id, sprite: tileEntity?.sprite }]);
+        entity.setTileInMemory(x, y, [this.getTile(x, y), { id: tileEntity?.id, sprite: tileEntity?.sprite }]);
         entity.setEntitiesInMemory(x, y, this.getEntities(x, y));
       }
     }
@@ -657,7 +660,8 @@ export class Map {
         adj[q[i].id].length === 1 &&
         room.radius < 10 &&
         room.secret === undefined &&
-        room.treasure === undefined
+        room.treasure === undefined &&
+        !room.start
       ) {
         const r = Math.random();
         room.secret = false;
@@ -694,6 +698,11 @@ export class Map {
         }
       }
     }
+  }
+  
+  _isTraversable(entity, x, y, tiles) {
+    const [tile, tileEntity] = tiles[x + y * this.w];
+    return tile.isTraversable(entity) && (tileEntity?.isTraversable(entity) ?? true);
   }
 
   _rayCast(entity, x1, y1, x2, y2) {

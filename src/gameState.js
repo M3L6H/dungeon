@@ -186,10 +186,9 @@ export function inRange(entity, action, data) {
         getMap().entityHasLoS(entity, x, y)
       );
     case "move":
-      const tile = getMap().getTile(x, y);
       return (
         (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
-        (dx + dy === 1 && tile.isTraversable(entity) && entity.stamina > 0)
+        (dx + dy === 1 && getMap().isTraversable(entity, x, y) && entity.stamina > 0)
       );
     case "skill":
       return data.inRange();
