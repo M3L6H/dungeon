@@ -739,7 +739,8 @@ export class Map {
         )
           continue;
 
-        entity.setTileInMemory(x, y, this.getTile(x, y).name);
+        const tileEntity = this.getTileEntity(x, y);
+        entity.setTileInMemory(x, y, [this.getTile(x, y).name, { id: tileEntity?.id, sprite: tileEntity?.sprite }]);
         entity.setEntitiesInMemory(x, y, this.getEntities(x, y));
       }
     }

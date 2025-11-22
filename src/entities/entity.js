@@ -51,11 +51,12 @@ export class Entity {
 
     this.w = props.w;
     this.behaviors = props.behaviors ?? [];
-    this.memory = new Array(props.w * props.h).fill();
+    this.memory = new Array(props.w * props.h);
     this.entityMemory = new Array(props.w * props.h);
 
     for (let i = 0; i < this.entityMemory.length; ++i) {
       this.entityMemory[i] = [];
+      this.memory[i] = [];
     }
 
     this.dead = false;
@@ -115,8 +116,12 @@ export class Entity {
     });
   }
 
+  getTileEntityInMemory(x, y) {
+    return this.memory[x + y * this.w][1];
+  }
+
   getTileInMemory(x, y) {
-    return this.memory[x + y * this.w];
+    return this.memory[x + y * this.w][0];
   }
 
   releaseControl() {
@@ -155,8 +160,8 @@ export class Entity {
     }
   }
 
-  setTileInMemory(x, y, name) {
-    this.memory[x + y * this.w] = name;
+  setTileInMemory(x, y, tuple) {
+    this.memory[x + y * this.w] = tuple;
   }
 
   get accuracy() {

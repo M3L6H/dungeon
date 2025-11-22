@@ -51,9 +51,13 @@ function renderTile(tX, tY, tileElt) {
   }
 }
 
-function renderMemoryTile(tileName, tileElt) {
-  const tile = Tile.nameToTile[tileName];
-  tileElt.style.backgroundImage = tile.url;
+function renderMemoryTile(tileName, tileEntitySprite, tileElt) {
+  if (tileEntitySprite) {
+    tileElt.style.backgroundImage = tileEntitySprite;
+  } else {
+    const tile = Tile.nameToTile[tileName];
+    tileElt.style.backgroundImage = tile.url;
+  }
   tileElt.classList.add("memory");
 }
 
@@ -140,7 +144,7 @@ export function renderViewport() {
         renderTile(tX, tY, tileElt);
         renderEntities(map.getEntities(tX, tY), tileElt);
       } else if (player.getTileInMemory(tX, tY) !== undefined) {
-        renderMemoryTile(player.getTileInMemory(tX, tY), tileElt);
+        renderMemoryTile(player.getTileInMemory(tX, tY), player.getTileEntityInMemory(tX, tY)?.sprite, tileElt);
         renderEntities(player.getEntitiesInMemory(tX, tY), tileElt);
       } else {
         tileElt.style.backgroundImage = "none";
