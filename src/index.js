@@ -4,6 +4,7 @@ import {
   createGreenSlimeSmall,
 } from "./entities/index.js";
 import { getMap, getPlayer, newGame } from "./gameState.js";
+import { setupInventory } from "./inventory.js";
 import { simpleDoor } from "./tileEntities/door.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
@@ -32,6 +33,7 @@ async function init() {
 
   setUpViewport();
   setUpActions();
+  setupInventory();
   renderViewport();
 }
 

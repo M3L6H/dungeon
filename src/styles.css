@@ -1,5 +1,6 @@
 body,
 div,
+h3,
 main,
 p,
 section,
@@ -34,6 +35,7 @@ section {
 #main {
   margin: auto;
   height: 100vh;
+  position: relative;
 }
 
 #game {
@@ -43,6 +45,18 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+
+#inventory {
+  position: absolute;
+  inset: 10%;
+  background-color: #35354d;
+  border-radius: 8px;
+  padding: 16px;
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
 }
 
 #viewport {
@@ -95,7 +109,7 @@ section {
 }
 
 .action {
-  background-color: #ababbb;
+  background-color: #6b6b84;
   border-radius: 8px;
 
   position: relative;
@@ -169,6 +183,21 @@ section {
   font-weight: bold;
 }
 
+.close-button {
+  background-color: #ff5555;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.contents {
+  flex: 1 0 auto;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
 .entity {
   display: none;
   animation-fill-mode: backwards;
@@ -209,6 +238,10 @@ section {
   left: 0;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .highlight::before {
   content: " ";
   position: absolute;
@@ -238,6 +271,14 @@ section {
   inset: 0;
   background-color: green;
   opacity: 0.25;
+}
+
+.inventory-button {
+  background-color: #454555;
+  border: 1px solid #232333;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px;
 }
 
 .log.danger {
@@ -279,4 +320,13 @@ section {
   background-repeat: no-repeat;
   image-rendering: pixelated;
   position: relative;
+}
+
+.top-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #232333;
+  justify-content: space-between;
+  padding-bottom: 4px;
 }

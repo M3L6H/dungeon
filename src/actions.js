@@ -2,9 +2,11 @@ import {
   getActions,
   getSelectedAction,
   getSelectedIndex,
+  INTERACT,
   NONE,
   setSelectedIndex,
 } from "./gameState.js";
+import { inventoryElt } from "./inventory.js";
 import { addLog } from "./logs.js";
 import { renderViewport } from "./viewport.js";
 
@@ -29,7 +31,11 @@ function createAction() {
   actionElt.classList.add("material-symbols-outlined");
   actionElt.addEventListener("click", () => {
     const action = actionElt.dataset.action;
-    if (action === NONE || getSelectedAction() === action) return;
+    if (action === NONE) return;
+    if (action === INTERACT) {
+      inventoryElt.classList.remove("hidden");
+    }
+    if (getSelectedAction() === action) return;
     setSelectedIndex(getActions().indexOf(action));
     renderActions();
     renderViewport();

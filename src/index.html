@@ -9,12 +9,23 @@
     <link rel="stylesheet" href="./styles.css" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_selector_tool,front_hand,open_with,point_scan,settings,shield,swords,touch_app,visibility"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_selector_tool,close,front_hand,open_with,pan_tool_alt,point_scan,settings,shield,swords,touch_app,visibility"
     />
     <script src="./index.js" type="module"></script>
   </head>
   <body>
     <main id="main">
+      <div id="inventory" class="hidden">
+        <section class="top-bar">
+          <h3>Inventory</h3>
+          <span class="close-button material-symbols-outlined">close</span>
+        </section>
+        <section class="contents">
+          <span class="inventory-button material-symbols-outlined"
+            >pan_tool_alt</span
+          >
+        </section>
+      </div>
       <div id="game">
         <section id="viewport"></section>
         <section id="vitals">

@@ -5,7 +5,6 @@ import {
   getSelectedAction,
   inRange,
 } from "./gameState.js";
-import { Tile } from "./tile.js";
 import { advance } from "./time.js";
 
 const W = 11;
@@ -143,7 +142,11 @@ export function renderViewport() {
         renderTile(tX, tY, tileElt);
         renderEntities(map.getEntities(tX, tY), tileElt);
       } else if (player.getTileInMemory(tX, tY) !== undefined) {
-        renderMemoryTile(player.getTileInMemory(tX, tY), player.getTileEntityInMemory(tX, tY)?.sprite, tileElt);
+        renderMemoryTile(
+          player.getTileInMemory(tX, tY),
+          player.getTileEntityInMemory(tX, tY)?.sprite,
+          tileElt,
+        );
         renderEntities(player.getEntitiesInMemory(tX, tY), tileElt);
       } else {
         tileElt.style.backgroundImage = "none";
