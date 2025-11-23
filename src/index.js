@@ -5,7 +5,6 @@ import {
 } from "./entities/index.js";
 import { getMap, getPlayer, newGame } from "./gameState.js";
 import { setupInventory } from "./inventory.js";
-import { lockedDoor } from "./tileEntities/door.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
 function setSize() {
@@ -29,7 +28,6 @@ async function init() {
   createGreenSlimeSmall(map.w, map.h, x - 1, y + 1);
   createGreenSlimeSmall(map.w, map.h, x - 1, y - 1);
   createGreenSlimeSmall(map.w, map.h, x + 1, y - 1);
-  map._setTileEntity(x + 1, y, lockedDoor(x + 1, y));
 
   setUpViewport();
   setUpActions();

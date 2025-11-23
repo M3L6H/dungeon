@@ -16,7 +16,7 @@ export function createPlayer(w, h) {
     w,
     h,
     inventory: {
-      key: 1,
+      key: 2,
     },
   });
 }
