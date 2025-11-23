@@ -17,7 +17,7 @@ export function createBlueSlimeSmall(w, h, x, y) {
   return startEntity(
     new Entity({
       displayName: "Slime",
-      name: "Blue Slime",
+      name: "blue-slime",
       variant: "small",
       description: {
         0: (self) =>
@@ -32,6 +32,7 @@ export function createBlueSlimeSmall(w, h, x, y) {
       constitution: 2,
       behaviors: [simpleAttack, findTarget, hunt, wander, rest],
       immunities: new Set([STATUS.poison]),
+      tSet: new Set(["player", "rat"]),
       additionalProps: {
         hands: false,
       },
@@ -49,7 +50,7 @@ export function createGreenSlimeSmall(w, h, x, y) {
   return startEntity(
     new Entity({
       displayName: "Poison Slime",
-      name: "Green Slime",
+      name: "green-slime",
       variant: "small",
       description: {
         0: (self) =>
@@ -71,6 +72,7 @@ export function createGreenSlimeSmall(w, h, x, y) {
         rest,
       ],
       immunities: new Set([STATUS.poison]),
+      tSet: new Set(["player", "rat"]),
       additionalProps: {
         hands: false,
       },

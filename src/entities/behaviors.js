@@ -10,7 +10,7 @@ import {
 } from "../gameState.js";
 import { addLog } from "../logs.js";
 import { poisonTouch } from "../skills.js";
-import { DIRS } from "../utils.js";
+import { DIRS, Heap } from "../utils.js";
 import { Entity, getEntityById } from "./entity.js";
 
 /**
@@ -48,6 +48,77 @@ export function findTarget(entity) {
       }
     }
   }
+  return false;
+}
+
+/**
+ * Behavior where entity will flee from things it is afraid of.
+ * @param entity {Entity} - The entity this behavior is for
+ */
+export function flee(entity, afraid = (() => true)) {
+  const { entityMemory, memory, name, sightRange, w, h, x, y } = entity;
+  const options = {};
+  for (let dx = -sightRange; dx <= sightRange; ++dx) {
+    for (let dy = -sightRange; dy <= sightRange; ++dy) {
+      const [eX, eY] = [x + dx, y + dy];
+      if (getMap().isTraversable(entity, eX, eY)) {
+        options[eX + eY * w] = {
+          x: eX,
+          y: eY,
+          heat: 0,
+        };
+      }
+    }
+  }
+  const extRange = sightRange + 3;
+  let enemiesInRange = false;
+  for (let dx = -extRange; dx <= extRange; ++dx) {
+    for (let dy = -extRange; dy <= extRange; ++dy) {
+      const [eX, eY] = [x + dx, y + dy];
+      if (eX < 0 || eY < 0 || eX >= w || eY >= h) continue;
+      const entities = entityMemory[eX + eY * w];
+      for (const { id } of entities) {
+        const other = getEntityById(id);
+        if (!other.dead && other.name !== name && afraid(other)) {
+          enemiesInRange = true;
+          for (let ddx = -3; ddx <= 3; ++ddx) {
+            for (let ddy = -3; ddy <= 3; ++ddy) {
+              const sum = Math.abs(ddx) + Math.abs(ddy);
+              if (sum > 3) continue;
+              const [hX, hY] = [eX + ddx, eY + ddy];
+              const idx = hX + hY * w;
+              if (!options[idx]) continue;
+              options[idx].heat += 4 - sum;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!enemiesInRange) return false;
+ 
+  const heap = new Heap((a, b) => {
+    if (a.heat < b.heat) return -1;
+    if (b.heat < a.heat) return 1;
+    return 0;
+  });
+ 
+  for (const option of Object.values(options)) {
+    heap.push(option);
+    const tile = memory[option.x + option.y * w];
+    if (tile) tile.heat = option.heat;
+  }
+ 
+  while (heap.length > 0) {
+    const { x: tX, y: tY } = heap.pop();
+    const path = getMap().path(entity, tX, tY);
+    if (path && path.length > 1) {
+      logBehavior(entity, "fleeing");
+      return act(entity, MOVE, path[1]);
+    } 
+  }
+ 
   return false;
 }
 

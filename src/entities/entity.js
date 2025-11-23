@@ -46,6 +46,7 @@ export class Entity {
     this.damageMod = 0;
     this.defenseMod = 0;
     this.dodgeMod = 0;
+    this.speedMod = props.speedMod ?? 0;
 
     this._health = this.maxHealth;
     this.mana = this.maxMana;
@@ -239,12 +240,12 @@ export class Entity {
   }
 
   get speed() {
-    return this.agility;
+    return this.agility + this.speedMod;
   }
 
   get sprite() {
     const file = [
-      this.name.toLowerCase().replaceAll(" ", "-"),
+      this.name,
       this.variant,
       this.dir,
     ]
