@@ -164,6 +164,8 @@ export function act(entity, action, data) {
       return attack(entity, data);
     case "examine":
       return examine(entity, data);
+    case "interact":
+      return interact(entity, data); 
     case "move":
       return move(entity, data);
     case "skill":
@@ -309,6 +311,16 @@ function examine(entity, target) {
   return true;
 }
 
+function interact(entity, target) {
+  const { x, y } = target;
+  turnToFaceTarget(entity, target);
+  schedule(entity, 1, () => {
+    const tileEntity = getMap().getTileEntity(entity, x, y);
+    tileEntity?.interact(entity, getSelectedItem());
+  });
+  return true;
+}
+
 function move(entity, target) {
   const { x, y } = target;
   if (x === entity.x && y === entity.y) {
@@ -372,7 +384,7 @@ function logActionStart(entity, action) {
   }
 }
 
-function logActionEnd(entity, action) {
+export function logActionEnd(entity, action) {
   const { displayName, isPlayer, x, y } = entity;
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
     const logElt = addEndLog(`${displayName} ${action}.`);

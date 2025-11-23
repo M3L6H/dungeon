@@ -1,4 +1,4 @@
-import { getMap } from "../gameState.js";
+import { getMap, logActionEnd } from "../gameState.js";
 import { DIRS } from "../utils.js";
 import { TileEntity } from "./tileEntity.js";
 
@@ -25,7 +25,19 @@ export function simpleDoor() {
         getMap().moveEntity(entity, newX, newY);
       } else {
         getMap().moveEntity(entity, x - dx, y - dy);
+      } 
+    },
+    onInteract: (state, entity, item) => {
+      if (entity.hands ?? true) {
+        state.open = !state.open;
+        if (state.open) {
+          logActionEnd(entity, "opened the door");
+        } else {
+          logActionEnd(entity, "closed the door");
+        }
+        return true;
       }
+      return false;
     },
     initialState: {
       open: false,
