@@ -42,7 +42,9 @@ export function explore(entity, range = 2) {
     for (let dy = -range; dy <= range; ++dy) {
       const tX = x + dx;
       const tY = y + dy;
-      if (!entity.getTileInMemory(tX, tY)) opts.push({ x: tX, y: tY });
+      if (!entity.getTileInMemory(tX, tY) && getMap().canEntitySeeTile(entity, tX, tY)) {
+        opts.push({ x: tX, y: tY });
+      }
     }
   }
   if (opts.length < 12) return false;
