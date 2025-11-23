@@ -11,6 +11,7 @@ export function simpleDoor() {
       0: ({ open }) =>
         `The door is ${open ? "open" : "closed"}. It is made of a sturdy wood, reinforced with iron.`,
     },
+    canInteract: (_, entity) => (entity.hands ?? true),
     isOpaque: ({ open }) => !open,
     isTraversable: ({ open }, entity) => {
       return open || (entity.hands ?? true);

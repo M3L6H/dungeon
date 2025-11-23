@@ -223,6 +223,10 @@ section {
   justify-content: flex-start;
 }
 
+.empty-hand {
+  background-image: url("images/empty-hand.png");
+}
+
 .entity {
   display: none;
   animation-fill-mode: backwards;
@@ -262,8 +266,6 @@ section {
   bottom: -0.7em;
   left: 0;
 }
-
-
 
 .hidden {
   display: none !important;
@@ -343,10 +345,6 @@ section {
   -moz-user-select: none;
   -ms-user-select: none;
   -webkit-touch-callout: none;
-}
-
-.pointing-finger {
-  background-image: url("images/pointing-finger.png");
 }
 
 .tile {

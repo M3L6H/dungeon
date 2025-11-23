@@ -132,6 +132,10 @@ export function getSelectedIndex() {
   return gameState.selected;
 }
 
+export function getSelectedItem() {
+  return gameState.selectedItem;
+}
+
 export function getTileEntities() {
   return gameState.tileEntities;
 }
@@ -146,6 +150,10 @@ export function getTimeline() {
 
 export function setSelectedIndex(i) {
   gameState.selected = i;
+}
+
+export function setSelectedItem(item) {
+  gameState.selectedItem = item;
 }
 
 export function act(entity, action, data) {
@@ -188,6 +196,12 @@ export function inRange(entity, action, data) {
         dx <= examineRange &&
         dy <= examineRange &&
         getMap().entityHasLoS(entity, x, y)
+      );
+    case "interact":
+      return (
+        !!getSelectedItem() &&
+        getMap().getTileEntity(x, y)?.canInteract(getSelectedItem()) &&
+        dx + dy <= 1
       );
     case "move":
       return (

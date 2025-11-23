@@ -11,6 +11,7 @@ export class TileEntity {
       0: () => `You see nothing interesting about ${this.name}`,
     };
 
+    this._canInteract = props.canInteract ?? (() => false);
     this._isOpaque = props.isOpaque ?? (() => false);
     this._isTraversable = props.isTraversable ?? (() => true);
     this.onEnter = props.onEnter;
@@ -18,6 +19,10 @@ export class TileEntity {
     this.state = props.initialState ?? {};
 
     addTileEntity(this);
+  }
+  
+  canInteract(entity, item) {
+    return this._canInteract(this.state, entity, item);
   }
 
   examine({ perception }) {

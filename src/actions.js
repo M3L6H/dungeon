@@ -2,9 +2,11 @@ import {
   getActions,
   getSelectedAction,
   getSelectedIndex,
+  getSelectedItem,
   INTERACT,
   NONE,
   setSelectedIndex,
+  setSelectedItem,
 } from "./gameState.js";
 import { hideInventory, showInventory } from "./inventory.js";
 import { addLog } from "./logs.js";
@@ -18,7 +20,6 @@ function renderActions() {
     actionElt.dataset.action = action;
     
     if (action !== INTERACT) {
-      delete actionElt.dataset.mode;
       actionElt.querySelector(".se").classList.add("hidden");
     }
 
@@ -40,14 +41,14 @@ function createAction() {
   actionElt.addEventListener("click", () => {
     const action = actionElt.dataset.action;
     if (action === NONE) return;
-    if (action === INTERACT && (!actionElt.dataset.mode || getSelectedAction() === action)) {
+    if (action === INTERACT && (!getSelectedItem() || getSelectedAction() === action)) {
       showInventory((selectedItem) => {
-        actionElt.dataset.mode = selectedItem;
+        setSelectedItem(selectedItem);
         const badge = actionElt.querySelector(".se");
         badge.style.backgroundImage = `url("images/${selectedItem}.png")`;
         badge.classList.remove("hidden");
         hideInventory();
-        addLog(`Selected ${selectedItem} for interaction.`);
+        addLog(`Selected ${selectedItem.replaceAll("-", " ")} for interaction.`);
       }, true);
     }
     if (getSelectedAction() === action) return;
