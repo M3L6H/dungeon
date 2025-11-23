@@ -92,9 +92,10 @@ export function getInput(entity) {
     for (const behavior of entity.behaviors) {
       if (behavior(entity)) {
         entity.releaseControl();
-        break;
+        return;
       }
     }
+    console.error("Entity lost", entity);
   }
 }
 
@@ -378,16 +379,18 @@ function getTimeToMove(entity) {
 
 function logActionStart(entity, action) {
   const { displayName, isPlayer, x, y } = entity;
+  const msg = `${displayName} is ${action}.`;
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addStartLog(`${displayName} is ${action}.`);
+    const logElt = addStartLog(msg);
     if (isPlayer) logElt.classList.add("player");
   }
 }
 
 export function logActionEnd(entity, action) {
   const { displayName, isPlayer, x, y } = entity;
+  const msg = `${displayName} ${action}.`;
   if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addEndLog(`${displayName} ${action}.`);
+    const logElt = addEndLog(msg);
     if (isPlayer) logElt.classList.add("player");
   }
 }

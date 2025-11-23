@@ -29,7 +29,7 @@ async function init() {
   createGreenSlimeSmall(map.w, map.h, x - 1, y + 1);
   createGreenSlimeSmall(map.w, map.h, x - 1, y - 1);
   createGreenSlimeSmall(map.w, map.h, x + 1, y - 1);
-  
+
   createRat(map.w, map.h, x + 1, y);
   createRat(map.w, map.h, x - 1, y);
   createRat(map.w, map.h, x, y + 1);

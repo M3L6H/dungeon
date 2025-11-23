@@ -32,6 +32,25 @@ export function basicPoisonTouch(entity, baseChance = 0.5) {
 }
 
 /**
+ * Behavior where entity will use examine to look around itself
+ * @param entity {Entity} - The entity this behavior is for
+ */
+export function explore(entity, range = 2) {
+  const { x, y } = entity;
+  const opts = [];
+  for (let dx = -range; dx <= range; ++dx) {
+    for (let dy = -range; dy <= range; ++dy) {
+      const tX = x + dx;
+      const tY = y + dy;
+      if (!entity.getTileInMemory(tX, tY)) opts.push({ x: tX, y: tY });
+    }
+  }
+  if (opts.length < 12) return false;
+  logBehavior(entity, "exploring");
+  return act(entity, EXAMINE, opts[Math.floor(Math.random() * opts.length)]);
+}
+
+/**
  * Behavior where entity will search for the first target in its memory that is on the targets list
  * @param entity {Entity} - The entity this behavior is for
  */
@@ -55,7 +74,7 @@ export function findTarget(entity) {
  * Behavior where entity will flee from things it is afraid of.
  * @param entity {Entity} - The entity this behavior is for
  */
-export function flee(entity, afraid = (() => true)) {
+export function flee(entity, afraid = () => true) {
   const { entityMemory, memory, name, sightRange, w, h, x, y } = entity;
   const options = {};
   for (let dx = -sightRange; dx <= sightRange; ++dx) {
@@ -88,7 +107,8 @@ export function flee(entity, afraid = (() => true)) {
               const [hX, hY] = [eX + ddx, eY + ddy];
               const idx = hX + hY * w;
               if (!options[idx]) continue;
-              options[idx].heat += 4 - sum;
+              options[idx].heat +=
+                4 - sum + (hX === other.x && hY === other.y ? 1 : 0);
             }
           }
         }
@@ -97,28 +117,29 @@ export function flee(entity, afraid = (() => true)) {
   }
 
   if (!enemiesInRange) return false;
- 
+
   const heap = new Heap((a, b) => {
     if (a.heat < b.heat) return -1;
     if (b.heat < a.heat) return 1;
     return 0;
   });
- 
+
   for (const option of Object.values(options)) {
     heap.push(option);
     const tile = memory[option.x + option.y * w];
     if (tile) tile.heat = option.heat;
   }
- 
+
   while (heap.length > 0) {
     const { x: tX, y: tY } = heap.pop();
     const path = getMap().path(entity, tX, tY);
     if (path && path.length > 1) {
       logBehavior(entity, "fleeing");
+
       return act(entity, MOVE, path[1]);
-    } 
+    }
   }
- 
+
   return false;
 }
 
@@ -183,12 +204,18 @@ export function wander(entity) {
   let target = { x: x + dx, y: y + dy };
 
   if (Math.random() >= 0.75 || !inRange(entity, MOVE, target)) {
-    let attempts = 0;
-    do {
-      [dx, dy] = DIRS[Math.floor(Math.random() * DIRS.length)];
+    const dirsCopy = [...DIRS];
+    const pDirs = [];
+    while (dirsCopy.length > 0) {
+      pDirs.push(
+        dirsCopy.splice(Math.floor(Math.random(dirsCopy.length)), 1)[0],
+      );
+    }
+    for (const dir of pDirs) {
+      const [dx, dy] = dir;
       target = { x: x + dx, y: y + dy };
-      ++attempts;
-    } while (attempts < 4 && !inRange(entity, MOVE, target));
+      if (inRange(entity, MOVE, target)) break;
+    }
   }
 
   logBehavior(entity, "wandering");
