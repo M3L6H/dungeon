@@ -202,7 +202,7 @@ export function inRange(entity, action, data) {
     case "interact":
       return (
         !!getSelectedItem() &&
-        getMap().getTileEntity(x, y)?.canInteract(getSelectedItem()) &&
+        getMap().getTileEntity(x, y)?.canInteract(entity, getSelectedItem()) &&
         dx + dy <= 1
       );
     case "move":
