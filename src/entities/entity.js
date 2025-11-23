@@ -210,7 +210,7 @@ export class Entity {
   }
 
   get isPlayer() {
-    return this.name === "Player";
+    return this.name === "player";
   }
 
   get label() {
@@ -244,11 +244,7 @@ export class Entity {
   }
 
   get sprite() {
-    const file = [
-      this.name,
-      this.variant,
-      this.dir,
-    ]
+    const file = [this.name, this.variant, this.dir]
       .filter((part) => part !== undefined)
       .join("-");
     return `url('images/${file}.png')`;

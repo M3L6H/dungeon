@@ -439,7 +439,7 @@ export class Map {
     });
     const { x, y } = entity;
     let hcost = cbd(x, y, tX, tY);
-    heap.push({ x, y, fcost: 0, hcost, prev: null });
+    heap.push({ x, y, fcost: 0, hcost, pcount: 0, prev: null });
 
     while (heap.length > 0) {
       let curr = heap.pop();
@@ -448,7 +448,7 @@ export class Map {
       visited[idx] = true;
 
       if (curr.x === tX && curr.y === tY) {
-        const path = new Array(curr.fcost + 1);
+        const path = new Array(curr.pcount + 1);
         for (let i = path.length - 1; i >= 0; --i) {
           path[i] = curr;
           curr = curr.prev;
@@ -462,13 +462,16 @@ export class Map {
         const newY = curr.y + dy;
         if (visited[newX + newY * this.w]) continue;
         if (!this._isTraversable(entity, newX, newY, entity.memory)) continue;
-        const fcost = curr.fcost + 1 + (entity.memory[newX + newY * w]?.heat ?? 0);
+        const fcost =
+          curr.fcost + 1 + (entity.memory[newX + newY * this.w]?.heat ?? 0);
+        const pcount = curr.pcount + 1;
         hcost = fcost + cbd(newX, newY, tX, tY);
         const neighbor = {
           x: newX,
           y: newY,
           fcost,
           hcost,
+          pcount,
           prev: curr,
         };
         heap.push(neighbor);
@@ -660,7 +663,7 @@ export class Map {
     const tileEntity = getTileEntities()[tileEntityData?.id];
     return (
       (tile?.isTraversable(entity) ?? false) &&
-            (tileEntity?._isTraversable(tileEntityData?.state, entity) ?? true)
+      (tileEntity?._isTraversable(tileEntityData?.state, entity) ?? true)
     );
   }
 

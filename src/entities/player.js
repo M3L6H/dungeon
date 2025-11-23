@@ -2,7 +2,7 @@ import { Entity } from "./entity.js";
 
 export function createPlayer(w, h) {
   return new Entity({
-    name: "Player",
+    name: "player",
     variant: "female",
     description: {
       0: (self) =>
