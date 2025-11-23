@@ -18,7 +18,7 @@ function renderActions() {
   getActions().forEach((action, i) => {
     const actionElt = actionsElt.children[i];
     actionElt.dataset.action = action;
-    
+
     if (action !== INTERACT) {
       actionElt.querySelector(".se").classList.add("hidden");
     }
@@ -41,14 +41,20 @@ function createAction() {
   actionElt.addEventListener("click", () => {
     const action = actionElt.dataset.action;
     if (action === NONE) return;
-    if (action === INTERACT && (!getSelectedItem() || getSelectedAction() === action)) {
+    if (
+      action === INTERACT &&
+      (!getSelectedItem() || getSelectedAction() === action)
+    ) {
       showInventory((selectedItem) => {
         setSelectedItem(selectedItem);
         const badge = actionElt.querySelector(".se");
         badge.style.backgroundImage = `url("images/${selectedItem}.png")`;
         badge.classList.remove("hidden");
         hideInventory();
-        addLog(`Selected ${selectedItem.replaceAll("-", " ")} for interaction.`);
+        addLog(
+          `Selected ${selectedItem.replaceAll("-", " ")} for interaction.`,
+        );
+        renderViewport();
       }, true);
     }
     if (getSelectedAction() === action) return;

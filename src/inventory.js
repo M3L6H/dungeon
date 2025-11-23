@@ -6,15 +6,15 @@ export function hideInventory() {
 
 export function showInventory(onSelect, showFinger = false) {
   inventoryElt.classList.remove("hidden");
-  
-  inventoryElt.querySelectorAll(".inventory-button").forEach(btn => {
-    btn.onclick = () => onSelect(btn.dataset.item); 
-  }); 
-  
+
+  inventoryElt.querySelectorAll(".inventory-button").forEach((btn) => {
+    btn.onclick = () => onSelect(btn.dataset.item);
+  });
+
   if (showFinger) {
-    inventoryElt.querySelector(".pointing-finger").classList.remove("hidden");
+    inventoryElt.querySelector(".empty-hand").classList.remove("hidden");
   } else {
-    inventoryElt.querySelector(".pointing-finger").classList.add("hidden");
+    inventoryElt.querySelector(".empty-hand").classList.add("hidden");
   }
 }
 
