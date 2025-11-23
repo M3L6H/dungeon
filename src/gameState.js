@@ -165,7 +165,7 @@ export function act(entity, action, data) {
     case "examine":
       return examine(entity, data);
     case "interact":
-      return interact(entity, data); 
+      return interact(entity, data);
     case "move":
       return move(entity, data);
     case "skill":
@@ -315,7 +315,7 @@ function interact(entity, target) {
   const { x, y } = target;
   turnToFaceTarget(entity, target);
   schedule(entity, 1, () => {
-    const tileEntity = getMap().getTileEntity(entity, x, y);
+    const tileEntity = getMap().getTileEntity(x, y);
     tileEntity?.interact(entity, getSelectedItem());
   });
   return true;

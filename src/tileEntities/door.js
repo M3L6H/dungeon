@@ -2,7 +2,7 @@ import { getMap, logActionEnd } from "../gameState.js";
 import { DIRS } from "../utils.js";
 import { TileEntity } from "./tileEntity.js";
 
-export function simpleDoor() {
+export function simpleDoor(x, y) {
   return new TileEntity({
     name: "Door",
     getSprite: ({ open }) =>
@@ -11,7 +11,8 @@ export function simpleDoor() {
       0: ({ open }) =>
         `The door is ${open ? "open" : "closed"}. It is made of a sturdy wood, reinforced with iron.`,
     },
-    canInteract: (_, entity) => (entity.hands ?? true),
+    canInteract: ({ x, y }, entity) =>
+      (entity.hands ?? true) && !(entity.x === x && entity.y === y),
     isOpaque: ({ open }) => !open,
     isTraversable: ({ open }, entity) => {
       return open || (entity.hands ?? true);
@@ -25,7 +26,7 @@ export function simpleDoor() {
         getMap().moveEntity(entity, newX, newY);
       } else {
         getMap().moveEntity(entity, x - dx, y - dy);
-      } 
+      }
     },
     onInteract: (state, entity, item) => {
       if (entity.hands ?? true) {
@@ -41,7 +42,8 @@ export function simpleDoor() {
     },
     initialState: {
       open: false,
+      x,
+      y,
     },
   });
 }
-

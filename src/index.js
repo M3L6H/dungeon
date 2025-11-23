@@ -29,7 +29,7 @@ async function init() {
   createGreenSlimeSmall(map.w, map.h, x - 1, y + 1);
   createGreenSlimeSmall(map.w, map.h, x - 1, y - 1);
   createGreenSlimeSmall(map.w, map.h, x + 1, y - 1);
-  map._setTileEntity(x + 1, y, simpleDoor());
+  map._setTileEntity(x + 1, y, simpleDoor(x + 1, y));
 
   setUpViewport();
   setUpActions();
