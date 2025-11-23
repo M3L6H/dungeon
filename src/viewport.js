@@ -161,7 +161,7 @@ export function renderViewport() {
 
 function createTile() {
   const tileElt = document.createElement("div");
-  tileElt.classList.add("tile");
+  tileElt.classList.add("no-highlight", "tile");
   return tileElt;
 }
 

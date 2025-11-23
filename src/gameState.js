@@ -41,7 +41,6 @@ class GameState {
     this.tileEntities = [];
     this.entityLabels = {};
     this.logs = [];
-    this.map = props.map;
     this.selected = 0;
     this.time = 0;
     this.timeline = {};
@@ -53,10 +52,8 @@ let gameState = {
 };
 
 export async function newGame() {
-  const map = await generateMap();
-  gameState = new GameState({
-    map,
-  });
+  gameState = new GameState();
+  gameState.map = await generateMap();
   gameState.player = createPlayer(map.w, map.h);
 }
 
