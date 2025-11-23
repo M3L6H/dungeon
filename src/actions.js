@@ -6,7 +6,7 @@ import {
   NONE,
   setSelectedIndex,
 } from "./gameState.js";
-import { showInventory } from "./inventory.js";
+import { hideInventory, showInventory } from "./inventory.js";
 import { addLog } from "./logs.js";
 import { renderViewport } from "./viewport.js";
 
@@ -46,6 +46,7 @@ function createAction() {
         const badge = actionElt.querySelector(".se");
         badge.style.backgroundImage = `url("images/${selectedItem}.png")`;
         badge.classList.remove("hidden");
+        hideInventory();
         addLog(`Selected ${selectedItem} for interaction.`);
       }, true);
     }

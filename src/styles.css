@@ -38,26 +38,6 @@ section {
   margin-bottom: 16px !important;
 }
 
-span.ne {
-  top: -0.7em;
-  right: 0;
-}
-
-span.nw {
-  top: -0.7em;
-  left: 0;
-}
-
-span.se {
-  bottom: -0.7em;
-  right: 0;
-}
-
-span.sw {
-  bottom: -0.7em;
-  left: 0;
-}
-
 #main {
   margin: auto;
   height: 100vh;
@@ -194,6 +174,11 @@ span.sw {
   width: 16px;
 }
 
+.action .se  {
+  bottom: -8px;
+  right: 0;
+}
+
 .bar {
   flex: 1;
 
@@ -257,6 +242,28 @@ span.sw {
   font-size: 10px;
   position: absolute;
 }
+
+.entity .ne {
+  top: -0.7em;
+  right: 0;
+}
+
+.entity .nw {
+  top: -0.7em;
+  left: 0;
+}
+
+.entity .se  {
+  bottom: -0.7em;
+  right: 0;
+}
+
+.entity .sw {
+  bottom: -0.7em;
+  left: 0;
+}
+
+
 
 .hidden {
   display: none !important;
