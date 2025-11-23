@@ -174,7 +174,7 @@ section {
   width: 16px;
 }
 
-.action .se  {
+.action .se {
   bottom: -8px;
   right: 0;
 }
@@ -257,7 +257,7 @@ section {
   left: 0;
 }
 
-.entity .se  {
+.entity .se {
   bottom: -0.7em;
   right: 0;
 }
@@ -303,16 +303,31 @@ section {
 }
 
 .inventory-button {
+  aspect-ratio: 1/1;
   background-color: #454555;
-  background-size: cover;
   background-repeat: no-repeat;
-  image-rendering: pixelated;
+  background-size: cover;
   border: 1px solid #232333;
   border-radius: 4px;
   cursor: pointer;
+  image-rendering: pixelated;
+  margin-right: 6px;
   padding: 4px;
-  aspect-ratio: 1/1;
-  width: calc((100% - 18px) / 10);
+  position: relative;
+  width: calc((100% - 60px) / 10);
+}
+
+.inventory-button[data-count]::after {
+  background-color: #454555;
+  border-radius: 2px;
+  color: white;
+  content: attr(data-count);
+  font-family: sans-serif;
+  font-size: 10px;
+  padding: 2px 4px;
+  position: absolute;
+  bottom: -0.7em;
+  right: -0.5em;
 }
 
 .log.danger {

@@ -14,13 +14,20 @@ import { renderViewport } from "./viewport.js";
 
 const actionsElt = document.getElementById("actions");
 
-function renderActions() {
+export function renderActions() {
   getActions().forEach((action, i) => {
     const actionElt = actionsElt.children[i];
     actionElt.dataset.action = action;
 
     if (action !== INTERACT) {
       actionElt.querySelector(".se").classList.add("hidden");
+    } else if (getSelectedItem()) {
+      const badge = actionElt.querySelector(".se");
+      badge.style.backgroundImage = getSelectedItem().sprite;
+      badge.classList.remove("hidden");
+    } else {
+      const badge = actionElt.querySelector(".se");
+      badge.classList.add("hidden");
     }
 
     if (i === getSelectedIndex()) {
@@ -47,13 +54,8 @@ function createAction() {
     ) {
       showInventory((selectedItem) => {
         setSelectedItem(selectedItem);
-        const badge = actionElt.querySelector(".se");
-        badge.style.backgroundImage = `url("images/${selectedItem}.png")`;
-        badge.classList.remove("hidden");
         hideInventory();
-        addLog(
-          `Selected ${selectedItem.replaceAll("-", " ")} for interaction.`,
-        );
+        addLog(`Selected ${getSelectedItem().name} for interaction.`);
         renderViewport();
       }, true);
     }

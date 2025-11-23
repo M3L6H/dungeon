@@ -4,8 +4,10 @@ import {
   getEntityLabels,
   getInput,
   getMap,
+  getSelectedItem,
   logDanger,
   logWarn,
+  setSelectedItem,
 } from "../gameState.js";
 
 const HITPOINTS_PER_CONSTITUTION = 3;
@@ -62,12 +64,13 @@ export class Entity {
     this.dead = false;
     this.idToLoc = {};
     this.immunities = props.immunities ?? new Set();
+    this.inventory = props.inventory ?? {};
     this.statuses = [];
     this.targetId = null;
     this.tSet = props.tSet ?? new Set(["player"]);
     this._unique = props.unique ?? false;
-    
-    for (const k in (props.additionalProps ?? {})) {
+
+    for (const k in props.additionalProps ?? {}) {
       this[k] = props.additionalProps[k];
     }
 
@@ -130,6 +133,14 @@ export class Entity {
 
   releaseControl() {
     this.controlling = false;
+  }
+
+  removeItem(item) {
+    --this.inventory[item.id];
+
+    if (this.inventory[item.id] <= 0 && getSelectedItem().id === item.id) {
+      setSelectedItem(undefined);
+    }
   }
 
   setEntitiesInMemory(x, y, entities) {
@@ -200,9 +211,11 @@ export class Entity {
   get isPlayer() {
     return this.name === "Player";
   }
-  
+
   get label() {
-    return this._label === undefined ? undefined : String.fromCharCode("A".charCodeAt(0) + (this._label % 26));
+    return this._label === undefined
+      ? undefined
+      : String.fromCharCode("A".charCodeAt(0) + (this._label % 26));
   }
 
   get maxHealth() {
@@ -247,7 +260,7 @@ export class Entity {
   get status() {
     return `${this.displayName}: Level: ${this.level}. Health: ${this.health} / ${this.maxHealth}. Mana: ${this.mana} / ${this.maxMana}. Stamina: ${this.stamina} / ${this.maxStamina}.`;
   }
-  
+
   get unique() {
     return this._unique;
   }
@@ -259,7 +272,7 @@ export class Entity {
       logDanger(this, `${this.displayName} died.`)?.classList.add("bold");
     }
   }
-  
+
   set label(val) {
     this._label = val;
   }
@@ -278,7 +291,7 @@ export function startEntity(entity, x, y) {
 
   if (labels[entity.name] === undefined) {
     labels[entity.name] = 0;
-    
+
     if (!entity.unique) entity.label = 0;
   } else if (entity.unique) {
     console.error("Failed to create duplicate of unique entity", entity);

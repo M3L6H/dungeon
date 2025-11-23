@@ -1,3 +1,6 @@
+import { renderActions } from "./actions.js";
+import { createPlayer } from "./entities/index.js";
+import { Item } from "./items/item.js";
 import {
   addDangerLog,
   addEndLog,
@@ -7,7 +10,6 @@ import {
   addWarnLog,
 } from "./logs.js";
 import { Map, generateMap } from "./map.js";
-import { createPlayer } from "./entities/index.js";
 import { schedule } from "./time.js";
 
 export const NONE = "none";
@@ -133,7 +135,7 @@ export function getSelectedIndex() {
 }
 
 export function getSelectedItem() {
-  return gameState.selectedItem;
+  return Item.idToItem[gameState.selectedItem];
 }
 
 export function getTileEntities() {
@@ -152,8 +154,9 @@ export function setSelectedIndex(i) {
   gameState.selected = i;
 }
 
-export function setSelectedItem(item) {
-  gameState.selectedItem = item;
+export function setSelectedItem(itemId) {
+  gameState.selectedItem = itemId;
+  renderActions();
 }
 
 export function act(entity, action, data) {

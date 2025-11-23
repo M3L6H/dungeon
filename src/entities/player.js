@@ -15,5 +15,8 @@ export function createPlayer(w, h) {
     wisdom: 5,
     w,
     h,
+    inventory: {
+      key: 1,
+    },
   });
 }

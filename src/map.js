@@ -1,6 +1,6 @@
 import { getTileEntities } from "./gameState.js";
 import { Tile } from "./tile.js";
-import { simpleDoor } from "./tileEntities/index.js";
+import { lockedDoor } from "./tileEntities/index.js";
 import { DIRS } from "./utils.js";
 
 const ROWS = 512;
@@ -685,7 +685,9 @@ export class Map {
           room.treasure = true;
           const { dir, x, y } = roomIdToEdge[q[i].id][0];
           const [dx, dy] = DIRS[dir];
-          this._setTileEntity(x + dx, y + dy, simpleDoor());
+          const newX = x + dx;
+          const newY = y + dy;
+          this._setTileEntity(newX, newY, lockedDoor(newX, newY));
         }
       }
     }
