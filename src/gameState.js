@@ -23,7 +23,7 @@ export const SETTINGS = "settings";
 export const SKILL = "skill";
 
 class GameState {
-  constructor(props) {
+  constructor() {
     this.actions = [
       MOVE,
       EXAMINE,
@@ -54,7 +54,7 @@ let gameState = {
 export async function newGame() {
   gameState = new GameState();
   gameState.map = await generateMap();
-  gameState.player = createPlayer(map.w, map.h);
+  gameState.player = createPlayer(getMap().w, getMap().h);
 }
 
 export function addEntity(entity) {
