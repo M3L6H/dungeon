@@ -717,7 +717,7 @@ export class Map {
     const tileEntity = getTileEntities()[tileEntityData?.id];
     return (
       (tile?.isTraversable(entity) ?? false) &&
-      (tileEntity?._isTraversable(tileEntityData?.state, entity) ?? true)
+      (tileEntity?.isTraversable(entity) ?? true)
     );
   }
 

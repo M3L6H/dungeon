@@ -314,7 +314,7 @@ section {
   margin-right: 6px;
   padding: 4px;
   position: relative;
-  width: calc((100% - 60px) / 10);
+  width: calc((100% - 42px) / 8);
 }
 
 .inventory-button[data-count]::after {
