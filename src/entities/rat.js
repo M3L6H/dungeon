@@ -58,9 +58,10 @@ export function resetRat(rat, props) {
   rat._health = rat.maxHealth;
   rat.mana = rat.maxMana;
   rat._stamina = rat.maxStamina;
+  
+  rat.entityMemory = {};
 
-  for (let i = 0; i < rat.entityMemory.length; ++i) {
-    rat.entityMemory[i] = [];
+  for (let i = 0; i < rat.memory.length; ++i) {
     rat.memory[i] = [];
   }
 

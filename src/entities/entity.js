@@ -55,10 +55,9 @@ export class Entity {
     this.w = props.w;
     this.behaviors = props.behaviors ?? [];
     this.memory = new Array(props.w * props.h);
-    this.entityMemory = new Array(props.w * props.h);
+    this.entityMemory = {};
 
-    for (let i = 0; i < this.entityMemory.length; ++i) {
-      this.entityMemory[i] = [];
+    for (let i = 0; i < this.memory.length; ++i) {
       this.memory[i] = [];
     }
 
@@ -112,7 +111,7 @@ export class Entity {
   }
 
   getEntitiesInMemory(x, y) {
-    return this.entityMemory[x + y * this.w].map(({ dir, id, sprite }) => {
+    return this.entityMemory[x + y * getMap().w]?.map(({ dir, id, sprite }) => {
       const { displayName, name } = getEntityById(id);
       return {
         id,
@@ -121,7 +120,7 @@ export class Entity {
         name,
         sprite,
       };
-    });
+    }) ?? [];
   }
 
   getTileEntityInMemory(x, y) {
@@ -145,7 +144,8 @@ export class Entity {
   }
 
   setEntitiesInMemory(x, y, entities) {
-    const myEntities = this.entityMemory[x + y * this.w];
+    const idx = x + y * getMap().w;
+    const myEntities = this.entityMemory[idx] ?? [];
     const toDelete = new Set();
     myEntities.forEach(({ id }) => {
       toDelete.add(id);
@@ -157,13 +157,15 @@ export class Entity {
       if (this.idToLoc[id]) {
         const { x: oldX, y: oldY } = this.idToLoc[id];
         if (oldX === x && oldY === y) continue;
-        const tile = this.entityMemory[oldX + oldY * this.w];
+        const oldIdx = oldX + oldY * getMap().w;
+        const tile = this.entityMemory[oldIdx] ?? [];
         for (let i = tile.length - 1; i >= 0; --i) {
           if (tile[i].id === id) {
             tile.splice(i, 1);
             break;
           }
         }
+        if (this.entityMemory[oldIdx].length === 0) delete this.entityMemory[oldIdx];
       }
       this.idToLoc[id] = { x, y };
       myEntities.push({ dir, id, sprite });
@@ -173,6 +175,12 @@ export class Entity {
       if (toDelete.has(myEntities[i].id)) {
         myEntities.splice(i, 1);
       }
+    }
+    
+    if (myEntities.length === 0) {
+      delete this.entityMemory[idx];
+    } else {
+      this.entityMemory[idx] = myEntities;
     }
   }
 

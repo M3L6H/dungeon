@@ -63,7 +63,8 @@ export function findTarget(entity) {
   const { entityMemory, tSet } = entity;
   if (tSet.size === 0) return false;
   if (entity.targetId !== null) return false;
-  for (const entities of entityMemory) {
+  for (const k in entityMemory) {
+    const entities = entityMemory[k];
     for (const { id } of entities) {
       const other = getEntityById(id);
       if (!other.dead && tSet.has(other.name.toLowerCase())) {
