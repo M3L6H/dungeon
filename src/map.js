@@ -1,6 +1,6 @@
 import { getTileEntities } from "./gameState.js";
 import { Tile } from "./tile.js";
-import { lockedDoor } from "./tileEntities/index.js";
+import { lockedDoor, ratSpawner } from "./tileEntities/index.js";
 import { DIRS, Heap } from "./utils.js";
 
 const ROWS = 512;
@@ -289,6 +289,7 @@ export class Map {
     this.w = width;
     this.h = height;
     this.origins = origins;
+    this.points = rooms;
     this.entities = new Array(width * height);
     this.tiles = new Array(width * height);
     this.tileToId = new Array(width * height).fill();
@@ -628,11 +629,12 @@ export class Map {
         q.push(origin);
       });
 
-      const room = this.origins[q[i].id];
+      const { id } = q[i];
+      const room = this.origins[id];
       if (room.type !== undefined) continue;
 
       // Terminating room
-      if (adj[q[i].id].length === 1 && room.radius < 10) {
+      if (adj[id].length === 1 && room.radius < 10) {
         const r = Math.random();
 
         if (r < 0.1) {
@@ -642,7 +644,7 @@ export class Map {
         } else if (r < 1.3) {
           // 20% chance of treasure room
           room.type = RoomType.TREASURE;
-          const { dir, x, y } = roomIdToEdge[q[i].id][0];
+          const { dir, x, y } = roomIdToEdge[id][0];
           const [dx, dy] = DIRS[dir];
           const newX = x + dx;
           const newY = y + dy;
@@ -650,9 +652,32 @@ export class Map {
           continue;
         }
       }
-      
+
       if (room.radius < 15 && Math.random() < 0.75) {
-        room.type = RoomType.COMBAT; 
+        room.type = RoomType.COMBAT;
+        const endpoints = [
+          [this.points[id][0], this.points[id][1]],
+          [this.points[id][3], this.points[id][4]],
+          [this.points[id][6], this.points[id][7]],
+          [this.points[id][9], this.points[id][10]],
+        ];
+        for (let i = 0; i < endpoints.length; ++i) {
+          const [a, b] = endpoints[i];
+          const xMin = Math.min(a.x, b.x);
+          const xMax = Math.max(a.x, b.x);
+          const yMin = Math.min(a.y, b.y);
+          const yMax = Math.max(a.y, b.y);
+          for (let x = xMin; x <= xMax; ++x) {
+            for (let y = yMin; y <= yMax; ++y) {
+              const newX = x - (i % 2) * (i - 2);
+              const newY = y + ((i + 1) % 2) * (i - 1);
+              if (this.getTile(newX, newY).isTraversable()) continue;
+              if (Math.random() < 0.05) {
+                this._setTileEntity(newX, newY, ratSpawner(x, y));
+              }
+            }
+          }
+        }
         continue;
       }
     }
