@@ -275,11 +275,11 @@ function cbd(x1, y1, x2, y2) {
   return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 }
 
-export const RoomType {
+export const RoomType = {
   BOSS: "boss",
   COMBAT: "combat",
   MAZE: "maze",
-  SECRET: "secret", 
+  SECRET: "secret",
   START: "start",
   TREASURE: "treasure",
 };
@@ -620,7 +620,7 @@ export class Map {
         origin.difficulty = q[i].difficulty + 1;
         q.push(origin);
       });
-      
+
       const room = this.origins[q[i].id];
       if (room.type !== undefined) continue;
 
