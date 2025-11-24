@@ -2,7 +2,11 @@ import { getMap } from "../gameState.js";
 import { Entity, startEntity } from "./entity.js";
 
 export function createPlayer() {
-  const { w, h, x, y } = getMap().start;
+  const {
+    w,
+    h,
+    start: { x, y },
+  } = getMap();
   return startEntity(
     new Entity({
       name: "player",
