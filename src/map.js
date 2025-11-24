@@ -1,6 +1,6 @@
 import { getTileEntities } from "./gameState.js";
 import { Tile } from "./tile.js";
-import { lockedDoor, ratSpawner } from "./tileEntities/index.js";
+import { lockedDoor, ratSpawner, simpleDoor } from "./tileEntities/index.js";
 import { DIRS, Heap } from "./utils.js";
 
 const ROWS = 512;
@@ -671,7 +671,12 @@ export class Map {
             for (let y = yMin; y <= yMax; ++y) {
               const newX = x - (i % 2) * (i - 2);
               const newY = y + ((i + 1) % 2) * (i - 1);
-              if (this.getTile(newX, newY).isTraversable()) continue;
+              if (this.getTile(newX, newY).isTraversable()) {
+                if (Math.random() < 0.5) {
+                  this._setTileEntity(newX, newY, simpleDoor(newX, newY));
+                }
+                continue;
+              }
               if (Math.random() < 0.05) {
                 this._setTileEntity(newX, newY, ratSpawner(x, y));
               }

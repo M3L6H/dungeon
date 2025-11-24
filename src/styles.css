@@ -17,14 +17,14 @@ a:visited {
 }
 
 body {
+  background-color: #232333;
   margin: auto;
+  padding: 2px;
   width: 100vw;
   max-width: 960px;
   max-height: 100vh;
-  background-color: #232333;
-  padding: 2px;
-
   overflow: hidden;
+  touch-action: manipulation;
 }
 
 h1,
