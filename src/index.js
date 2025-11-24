@@ -21,19 +21,16 @@ async function init() {
   setSize();
 
   await newGame();
-  const map = getMap();
-  const { x, y } = map.start;
-  const player = getPlayer();
-  map.moveEntity(player, x, y);
-  createBlueSlimeSmall(map.w, map.h, x + 1, y + 1);
-  createGreenSlimeSmall(map.w, map.h, x - 1, y + 1);
-  createGreenSlimeSmall(map.w, map.h, x - 1, y - 1);
-  createGreenSlimeSmall(map.w, map.h, x + 1, y - 1);
+  const { x, y } getMap().start;
+  createBlueSlimeSmall(x + 1, y + 1);
+  createGreenSlimeSmall(x - 1, y + 1);
+  createGreenSlimeSmall(x - 1, y - 1);
+  createGreenSlimeSmall(x + 1, y - 1);
 
-  createRat(map.w, map.h, x + 1, y);
-  createRat(map.w, map.h, x - 1, y);
-  createRat(map.w, map.h, x, y + 1);
-  createRat(map.w, map.h, x, y - 1);
+  createRat(x + 1, y);
+  createRat(x - 1, y);
+  createRat(x, y + 1);
+  createRat(x, y - 1);
 
   setUpViewport();
   setUpActions();

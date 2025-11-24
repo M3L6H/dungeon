@@ -1,3 +1,4 @@
+import { getMap } from "../gameState.js";
 import { explore, flee, rest, wander } from "./behaviors.js";
 import { Entity, startEntity } from "./entity.js";
 
@@ -5,7 +6,8 @@ import { Entity, startEntity } from "./entity.js";
  * Creates a rat.
  * @returns {Entity} A rat entity
  */
-export function createRat(w, h, x, y) {
+export function createRat(x, y) {
+  const { w, h } = getMap();
   return startEntity(
     new Entity({
       displayName: "Rat",

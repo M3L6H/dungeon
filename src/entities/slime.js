@@ -1,3 +1,4 @@
+import { getMap } from "../gameState.js";
 import { STATUS } from "../statuses.js";
 import {
   findTarget,
@@ -13,7 +14,8 @@ import { Entity, startEntity } from "./entity.js";
  * Creates a small blue slime.
  * @returns {Entity} A small blue slime entity
  */
-export function createBlueSlimeSmall(w, h, x, y) {
+export function createBlueSlimeSmall(x, y) {
+  const { w, h } = getMap();
   return startEntity(
     new Entity({
       displayName: "Slime",
@@ -46,7 +48,8 @@ export function createBlueSlimeSmall(w, h, x, y) {
  * Creates a small green slime.
  * @returns {Entity} A small green slime entity
  */
-export function createGreenSlimeSmall(w, h, x, y) {
+export function createGreenSlimeSmall( x, y) {
+  const { w, h } = getMap();
   return startEntity(
     new Entity({
       displayName: "Poison Slime",

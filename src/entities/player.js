@@ -1,22 +1,28 @@
-import { Entity } from "./entity.js";
+import { getMap } from "../gameState.js";
+import { Entity, startEntity } from "./entity.js";
 
-export function createPlayer(w, h) {
-  return new Entity({
-    name: "player",
-    variant: "female",
-    description: {
-      0: (self) =>
-        `You are a ${self.variant} elf. Your oddly colored hair is the only remarkable feature about you.`,
-    },
-    agility: 4,
-    constitution: 4,
-    endurance: 3,
-    intelligence: 5,
-    wisdom: 5,
-    w,
-    h,
-    inventory: {
-      key: 2,
-    },
-  });
+export function createPlayer() {
+  const { x, y } = getMap().start;
+  return startEntity(
+    new Entity({
+      name: "player",
+      variant: "female",
+      description: {
+        0: (self) =>
+          `You are a ${self.variant} elf. Your oddly colored hair is the only remarkable feature about you.`,
+      },
+      agility: 4,
+      constitution: 4,
+      endurance: 3,
+      intelligence: 5,
+      wisdom: 5,
+      w,
+      h,
+      inventory: {
+        key: 2,
+      },
+    }),
+    x,
+    y,
+  );
 }
