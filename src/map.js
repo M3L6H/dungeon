@@ -275,6 +275,15 @@ function cbd(x1, y1, x2, y2) {
   return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 }
 
+export const RoomType {
+  BOSS: "boss",
+  COMBAT: "combat",
+  MAZE: "maze",
+  SECRET: "secret", 
+  START: "start",
+  TREASURE: "treasure",
+};
+
 export class Map {
   constructor(width, height, origins, rooms, edges) {
     this.w = width;
@@ -332,8 +341,8 @@ export class Map {
     ) {
       this.start = this.getRandomRoom();
     }
-    this.start.start = true;
-    this._assignDifficultyAndSecretTreasure(edges);
+    this.start.type = RoomType.START;
+    this._assignDifficultyAndRoomType(edges);
   }
 
   /**
@@ -552,7 +561,7 @@ export class Map {
             imageData.data[r1] = 0;
             imageData.data[g1] = 255;
             imageData.data[b1] = 0;
-          } else if (this.origins[id]?.secret) {
+          } else if (this.origins[id]?.type === RoomType.SECRET) {
             imageData.data[r] = 0;
             imageData.data[g] = 0;
             imageData.data[b] = 255;
@@ -587,9 +596,9 @@ export class Map {
   }
 
   /**
-   * Assign room difficulty and annotate secret/treasure rooms
+   * Assign room difficulty and annotate room types.
    */
-  _assignDifficultyAndSecretTreasure(edges) {
+  _assignDifficultyAndRoomType(edges) {
     const adj = Array.from({ length: this.origins.length }, () => []);
     const roomIdToEdge = {};
     edges.forEach(({ a, b }) => {
@@ -611,31 +620,27 @@ export class Map {
         origin.difficulty = q[i].difficulty + 1;
         q.push(origin);
       });
+      
+      if (room.type !== undefined) continue;
 
       // Terminating room
       const room = this.origins[q[i].id];
-      if (
-        adj[q[i].id].length === 1 &&
-        room.radius < 10 &&
-        room.secret === undefined &&
-        room.treasure === undefined &&
-        !room.start
-      ) {
+      if (adj[q[i].id].length === 1 && room.radius < 10) {
         const r = Math.random();
-        room.secret = false;
-        room.treasure = false;
 
         if (r < 0.1) {
           // 10% chance of secret room
-          room.secret = true;
+          room.type = RoomType.SECRET;
+          continue;
         } else if (r < 1.3) {
           // 20% chance of treasure room
-          room.treasure = true;
+          room.type = RoomType.TREASURE;
           const { dir, x, y } = roomIdToEdge[q[i].id][0];
           const [dx, dy] = DIRS[dir];
           const newX = x + dx;
           const newY = y + dy;
           this._setTileEntity(newX, newY, lockedDoor(newX, newY));
+          continue;
         }
       }
     }
