@@ -111,16 +111,18 @@ export class Entity {
   }
 
   getEntitiesInMemory(x, y) {
-    return this.entityMemory[x + y * getMap().w]?.map(({ dir, id, sprite }) => {
-      const { displayName, name } = getEntityById(id);
-      return {
-        id,
-        dir,
-        displayName,
-        name,
-        sprite,
-      };
-    }) ?? [];
+    return (
+      this.entityMemory[x + y * getMap().w]?.map(({ dir, id, sprite }) => {
+        const { displayName, name } = getEntityById(id);
+        return {
+          id,
+          dir,
+          displayName,
+          name,
+          sprite,
+        };
+      }) ?? []
+    );
   }
 
   getTileEntityInMemory(x, y) {
@@ -165,7 +167,8 @@ export class Entity {
             break;
           }
         }
-        if (this.entityMemory[oldIdx].length === 0) delete this.entityMemory[oldIdx];
+        if (this.entityMemory[oldIdx]?.length === 0)
+          delete this.entityMemory[oldIdx];
       }
       this.idToLoc[id] = { x, y };
       myEntities.push({ dir, id, sprite });
@@ -176,7 +179,7 @@ export class Entity {
         myEntities.splice(i, 1);
       }
     }
-    
+
     if (myEntities.length === 0) {
       delete this.entityMemory[idx];
     } else {
