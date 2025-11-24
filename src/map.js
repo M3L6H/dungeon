@@ -621,10 +621,10 @@ export class Map {
         q.push(origin);
       });
       
+      const room = this.origins[q[i].id];
       if (room.type !== undefined) continue;
 
       // Terminating room
-      const room = this.origins[q[i].id];
       if (adj[q[i].id].length === 1 && room.radius < 10) {
         const r = Math.random();
 
