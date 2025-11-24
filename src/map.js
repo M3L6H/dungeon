@@ -568,20 +568,27 @@ export class Map {
             imageData.data[r1] = 0;
             imageData.data[g1] = 0;
             imageData.data[b1] = 255;
-          } else if (this.origins[id]?.treasure) {
+          } else if (this.origins[id]?.type === RoomType.TREASURE) {
             imageData.data[r] = 255;
             imageData.data[g] = 255;
             imageData.data[b] = 0;
             imageData.data[r1] = 255;
             imageData.data[g1] = 255;
             imageData.data[b1] = 0;
-          } else if (tile.isTraversable()) {
+          } else if (this.origins[id]?.type === RoomType.COMBAT) {
             imageData.data[r] = 255;
             imageData.data[g] = Math.max(0, 255 - difficulty * 8);
             imageData.data[b] = Math.max(0, 255 - difficulty * 8);
             imageData.data[r1] = 255;
             imageData.data[g1] = Math.max(0, 255 - difficulty * 8);
             imageData.data[b1] = Math.max(0, 255 - difficulty * 8);
+          } else if (tile.isTraversable()) {
+            imageData.data[r] = 255;
+            imageData.data[g] = 255;
+            imageData.data[b] = 255;
+            imageData.data[r1] = 255;
+            imageData.data[g1] = 255;
+            imageData.data[b1] = 255;
           } else {
             imageData.data[r] = 0;
             imageData.data[g] = 0;
@@ -642,6 +649,11 @@ export class Map {
           this._setTileEntity(newX, newY, lockedDoor(newX, newY));
           continue;
         }
+      }
+      
+      if (room.radius < 15 && Math.random() < 0.75) {
+        room.type = RoomType.COMBAT; 
+        continue;
       }
     }
   }
