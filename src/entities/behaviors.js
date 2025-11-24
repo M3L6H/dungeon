@@ -42,7 +42,10 @@ export function explore(entity, range = 2) {
     for (let dy = -range; dy <= range; ++dy) {
       const tX = x + dx;
       const tY = y + dy;
-      if (!entity.getTileInMemory(tX, tY) && getMap().canEntitySeeTile(entity, tX, tY)) {
+      if (
+        !entity.getTileInMemory(tX, tY) &&
+        getMap().canEntitySeeTile(entity, tX, tY)
+      ) {
         opts.push({ x: tX, y: tY });
       }
     }
@@ -97,7 +100,7 @@ export function flee(entity, afraid = () => true) {
     for (let dy = -extRange; dy <= extRange; ++dy) {
       const [eX, eY] = [x + dx, y + dy];
       if (eX < 0 || eY < 0 || eX >= w || eY >= h) continue;
-      const entities = entityMemory[eX + eY * w];
+      const entities = entityMemory[eX + eY * w] ?? [];
       for (const { id } of entities) {
         const other = getEntityById(id);
         if (!other.dead && other.name !== name && afraid(other)) {

@@ -51,7 +51,7 @@ export function tick() {
       }
     }
   });
-  getTileEntities().forEach(tileEntity => tileEntity.tick());
+  getTileEntities().forEach((tileEntity) => tileEntity.tick(time));
   const events = timeline[time] ?? [];
   events.forEach(([entityId, event]) => {
     if (getEntities()[entityId].dead) return;
