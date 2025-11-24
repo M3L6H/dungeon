@@ -6,7 +6,7 @@ import { Entity, startEntity } from "./entity.js";
  * Creates a rat.
  * @returns {Entity} A rat entity
  */
-export function createRat(x, y) {
+export function createRat(x, y, props) {
   const { w, h } = getMap();
   return startEntity(
     new Entity({
@@ -26,8 +26,51 @@ export function createRat(x, y) {
       additionalProps: {
         hands: false,
       },
+      ...props,
     }),
     x,
     y,
   );
+}
+
+export function resetRat(rat, props) {
+  rat.controlling = true;
+  rat.dir = props.dir ?? Math.floor(Math.random() * 4);
+
+  rat.level = 1;
+  rat.xp = 0;
+
+  rat.agility = 4;
+  rat.constitution = 1;
+  rat.endurance = 1;
+  rat.intelligence = 1;
+  rat.strength = 1;
+  rat.wisdom = 1;
+
+  rat.attackRange = 1;
+  rat.attackDelayMod = 0;
+  rat.accuracyMod = 0;
+  rat.damageMod = 0;
+  rat.defenseMod = 0;
+  rat.dodgeMod = 0;
+  rat.speedMod = 5;
+
+  rat._health = rat.maxHealth;
+  rat.mana = rat.maxMana;
+  rat._stamina = rat.maxStamina;
+
+  for (let i = 0; i < rat.entityMemory.length; ++i) {
+    rat.entityMemory[i] = [];
+    rat.memory[i] = [];
+  }
+
+  rat.dead = false;
+  rat.idToLoc = {};
+  rat.inventory = {};
+  rat.statuses = [];
+  rat.targetId = null;
+  rat.tSet = props.tSet ?? new Set(["player"]);
+  for (const k in props.additionalProps ?? {}) {
+    rat[k] = props.additionalProps[k];
+  }
 }

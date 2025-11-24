@@ -2,6 +2,7 @@ import {
   getEntities,
   getInput,
   getPlayer,
+  getTileEntities,
   getTime,
   getTimeline,
   incrementTime,
@@ -50,6 +51,7 @@ export function tick() {
       }
     }
   });
+  getTileEntities().forEach(tileEntity => tileEntity.tick());
   const events = timeline[time] ?? [];
   events.forEach(([entityId, event]) => {
     if (getEntities()[entityId].dead) return;

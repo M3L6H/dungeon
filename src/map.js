@@ -678,7 +678,7 @@ export class Map {
                 continue;
               }
               if (Math.random() < 0.05) {
-                this._setTileEntity(newX, newY, ratSpawner(x, y));
+                this._setTileEntity(newX, newY, ratSpawner(x, y, (i + 2) % 4));
               }
             }
           }

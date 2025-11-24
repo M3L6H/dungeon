@@ -16,6 +16,7 @@ export class TileEntity {
     this._isTraversable = props.isTraversable ?? (() => true);
     this.onEnter = props.onEnter;
     this.onInteract = props.onInteract;
+    this.onTick = props.onTick;
     this.state = props.initialState ?? {};
 
     addTileEntity(this);
@@ -56,6 +57,12 @@ export class TileEntity {
 
   isTraversable(entity) {
     return this._isTraversable(this.state, entity);
+  }
+  
+  tick(time) {
+    if (this.onTick !== undefined) {
+      this.onTick(this.state, time);
+    }
   }
 
   get displayName() {
