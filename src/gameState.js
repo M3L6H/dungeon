@@ -54,7 +54,7 @@ let gameState = {
 export async function newGame() {
   gameState = new GameState();
   gameState.map = await generateMap();
-  gameState.player = createPlayer(getMap().w, getMap().h);
+  gameState.player = createPlayer();
 }
 
 export function addEntity(entity) {
