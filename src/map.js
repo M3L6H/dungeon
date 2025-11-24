@@ -3,8 +3,8 @@ import { Tile } from "./tile.js";
 import { lockedDoor, ratSpawner, simpleDoor } from "./tileEntities/index.js";
 import { DIRS, Heap } from "./utils.js";
 
-const ROWS = 512;
-const COLS = 512;
+const ROWS = 256;
+const COLS = 256;
 const ROOMS = Math.floor((ROWS * COLS) / 500);
 const MIN_RADIUS = 3;
 const OFFSETS = [
