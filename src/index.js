@@ -21,7 +21,7 @@ async function init() {
   setSize();
 
   await newGame();
-  const { x, y } getMap().start;
+  const { x, y } = getMap().start;
   createBlueSlimeSmall(x + 1, y + 1);
   createGreenSlimeSmall(x - 1, y + 1);
   createGreenSlimeSmall(x - 1, y - 1);
