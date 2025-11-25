@@ -86,17 +86,12 @@ export function getInput(entity) {
     rest(entity, true);
     return;
   }
-  if (entity.isPlayer) {
-    entity.controlling = true;
-  } else {
-    for (const behavior of entity.behaviors) {
-      if (behavior(entity)) {
-        entity.releaseControl();
-        return;
-      }
+  for (const behavior of entity.behaviors) {
+    if (behavior(entity)) {
+      return;
     }
-    console.error("Entity lost", entity);
   }
+  console.error("Entity lost", entity);
 }
 
 /**
@@ -227,13 +222,12 @@ export function incrementTime() {
 export function interrupt(entity, interrupter) {
   turnToFaceTarget(entity, interrupter);
   if (entity.inControl) return;
-  for (const k in getTimeline()) {
-    const events = getTimeline()[k];
-    for (let i = events.length - 1; i >= 0; --i) {
-      const [id] = events[i];
-      if (id === entity.id) {
-        events.splice(i, 1);
-      }
+  const events = getTimeline()[entity.nextActionTime];
+  for (let i = events.length - 1; i >= 0; --i) {
+    const [id] = events[i];
+    if (id === entity.id) {
+      events.splice(i, 1);
+      break;
     }
   }
   logCombatWarn(
@@ -241,7 +235,7 @@ export function interrupt(entity, interrupter) {
     interrupter,
     `${entity.displayName} has been interrupted.`,
   )?.classList.add("bold");
-  getInput(entity);
+  entity.nextActionTime = getTime();
   return;
 }
 

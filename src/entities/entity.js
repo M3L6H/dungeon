@@ -5,6 +5,7 @@ import {
   getInput,
   getMap,
   getSelectedItem,
+  getTime,
   logDanger,
   logWarn,
   setSelectedItem,
@@ -29,7 +30,7 @@ export class Entity {
     this.x = props.x ?? 0;
     this.y = props.y ?? 0;
 
-    this.controlling = true;
+    this.nextActionTime = 0;
     this.dir = props.dir ?? Math.floor(Math.random() * 4);
 
     this.level = 1;
@@ -136,8 +137,8 @@ export class Entity {
       : undefined;
   }
 
-  releaseControl() {
-    this.controlling = false;
+  releaseControl(nextActionTime) {
+    this.nextActionTime = nextActionTime;
   }
 
   removeItem(item) {
@@ -225,7 +226,7 @@ export class Entity {
   }
 
   get inControl() {
-    return this.controlling;
+    return this.nextActionTime >= getTime();
   }
 
   get isPlayer() {

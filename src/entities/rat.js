@@ -1,4 +1,4 @@
-import { getMap } from "../gameState.js";
+import { getMap, getTime } from "../gameState.js";
 import { explore, flee, rest, wander } from "./behaviors.js";
 import { Entity, startEntity } from "./entity.js";
 
@@ -34,7 +34,7 @@ export function createRat(x, y, props) {
 }
 
 export function resetRat(rat, props) {
-  rat.controlling = true;
+  rat.nextActionTime = getTime();
   rat.dir = props.dir ?? Math.floor(Math.random() * 4);
 
   rat.level = 1;

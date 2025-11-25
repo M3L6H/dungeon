@@ -28,10 +28,11 @@ export function schedule(entity, timeOffset, effect) {
     entity.id,
     () => {
       effect();
-      getInput(entity);
     },
   ]);
-  timeline[time + timeOffset] = events;
+  const nextActionTime = time + timeOffset;
+  timeline[nextActionTime] = events;
+  entity.releaseControl(nextActionTime);
 }
 
 export function tick() {
@@ -54,8 +55,10 @@ export function tick() {
   getTileEntities().forEach((tileEntity) => tileEntity.tick(time));
   const events = timeline[time] ?? [];
   events.forEach(([entityId, event]) => {
-    if (getEntities()[entityId].dead) return;
+    const entity = getEntities()[entityId];
+    if (entity.dead) return;
     event();
+    if (entity.inControl) getInput(entity);
   });
   renderViewport();
   delete timeline[time];
