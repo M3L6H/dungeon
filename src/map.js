@@ -499,6 +499,28 @@ export class Map {
 
     return [];
   }
+  
+  spawnEntities() {
+    for (let id = 0; id < this.origins.length; ++id) {
+      const room = this.origins[id];
+      if (room.type !== RoomType.COMBAT) continue;
+      const count = (room.radius - 1) * (room.radius - 1);
+      for (let i = 0; i < count; ++i) {
+        if (Math.random() < 0.5) continue;
+        const creator = getRandomEntityForDifficultyRange(room.difficulty - 3, room.difficulty + 3);
+        if (!creator) continue;
+        if (Math.random() < 0.5) {
+          const x = randInRange(this.points[id][0].x, this.points[id][6].x);
+          const y = randInRange(this.points[id][0].y, this.points[id][6].y);
+          creator(x, y);
+        } else {
+          const x = randInRange(this.points[id][10].x, this.points[id][4].x);
+          const y = randInRange(this.points[id][10].y, this.points[id][4].y);
+          creator(x, y);
+        }
+      }
+    }
+  }
 
   updateMemory(entity) {
     const dirMod2 = entity.dir % 2;
@@ -689,21 +711,6 @@ export class Map {
                 this._setTileEntity(newX, newY, ratSpawner(x, y, (i + 2) % 4));
               }
             }
-          }
-        }
-        const count = (room.radius - 1) * (room.radius - 1);
-        for (let i = 0; i < count; ++i) {
-          if (Math.random() < 0.5) continue;
-          const creator = getRandomEntityForDifficultyRange(room.difficulty - 3, room.difficulty + 3);
-          if (!creator) continue;
-          if (Math.random() < 0.5) {
-            const x = randInRange(this.points[id][0].x, this.points[id][6].x);
-            const y = randInRange(this.points[id][0].y, this.points[id][6].y);
-            creator(x, y);
-          } else {
-            const x = randInRange(this.points[id][10].x, this.points[id][4].x);
-            const y = randInRange(this.points[id][10].y, this.points[id][4].y);
-            creator(x, y);
           }
         }
         continue;

@@ -55,6 +55,7 @@ export async function newGame() {
   gameState = new GameState();
   gameState.map = await generateMap();
   gameState.player = createPlayer();
+  gameState.map.spawnEntities();
 }
 
 export function addEntity(entity) {
