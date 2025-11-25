@@ -14,6 +14,8 @@ const HITPOINTS_PER_CONSTITUTION = 3;
 const MANA_PER_INTELLIGENCE = 5;
 const STAMINA_PER_ENDURANCE = 2;
 
+const ZERO = 0 | 0;
+
 export class Entity {
   constructor(props) {
     this._displayName = props.displayName ?? props.name;
@@ -52,14 +54,10 @@ export class Entity {
     this.mana = this.maxMana;
     this._stamina = this.maxStamina;
 
-    this.w = props.w;
     this.behaviors = props.behaviors ?? [];
-    this.memory = new Array(props.w * props.h);
+    this.memory = {};
     this.entityMemory = {};
-
-    for (let i = 0; i < this.memory.length; ++i) {
-      this.memory[i] = [];
-    }
+    this.tileEntityMemory = {};
 
     this.dead = false;
     this.idToLoc = {};
@@ -126,11 +124,14 @@ export class Entity {
   }
 
   getTileEntityInMemory(x, y) {
-    return this.memory[x + y * this.w][1];
+    return this.tileEntityMemory[x + y * getMap().w];
   }
 
   getTileInMemory(x, y) {
-    return this.memory[x + y * this.w][0];
+    const idx = x + y * getMap().w;
+    const q = Math.floor(idx / 32);
+    const r = idx % 32;
+    return (this.memory[q] ?? ZERO) & (1 << r) > 0 ? getMap().getTile(x, y) : undefined;
   }
 
   releaseControl() {
@@ -187,8 +188,13 @@ export class Entity {
     }
   }
 
-  setTileInMemory(x, y, tuple) {
-    this.memory[x + y * this.w] = tuple;
+  setTileInMemory(x, y, tileEntity) {
+    const idx = x + y * getMap().w;
+    const q = Math.floor(idx / 32);
+    const r = idx % 32;
+    const flags = this.memory[q] ?? ZERO;
+    this.memory[q] = flags | (1 << r);
+    this.tileEntityMemory[idx] = tileEntity;
   }
 
   get accuracy() {

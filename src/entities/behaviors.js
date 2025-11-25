@@ -9,6 +9,7 @@ import {
   inRange,
 } from "../gameState.js";
 import { addLog } from "../logs.js";
+import { getHeat } from "../map.js";
 import { poisonTouch } from "../skills.js";
 import { DIRS, Heap } from "../utils.js";
 import { Entity, getEntityById } from "./entity.js";
@@ -81,7 +82,7 @@ export function findTarget(entity) {
  * @param entity {Entity} - The entity this behavior is for
  */
 export function flee(entity, afraid = () => true) {
-  const { entityMemory, memory, name, sightRange, w, h, x, y } = entity;
+  const { entityMemory, name, sightRange, w, h, x, y } = entity;
   const options = {};
   for (let dx = -sightRange; dx <= sightRange; ++dx) {
     for (let dy = -sightRange; dy <= sightRange; ++dy) {
@@ -132,13 +133,12 @@ export function flee(entity, afraid = () => true) {
 
   for (const option of Object.values(options)) {
     heap.push(option);
-    const tile = memory[option.x + option.y * w];
-    if (tile) tile.heat = option.heat;
+    getHeat()[option.x + option.y * w] = option.heat;
   }
 
   while (heap.length > 0) {
     const { x: tX, y: tY } = heap.pop();
-    const path = getMap().path(entity, tX, tY);
+    const path = getMap().path(entity, tX, tY, true);
     if (path && path.length > 1) {
       logBehavior(entity, "fleeing");
 

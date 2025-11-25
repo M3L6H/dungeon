@@ -59,11 +59,9 @@ export function resetRat(rat, props) {
   rat.mana = rat.maxMana;
   rat._stamina = rat.maxStamina;
   
+  rat.memory = {};
   rat.entityMemory = {};
-
-  for (let i = 0; i < rat.memory.length; ++i) {
-    rat.memory[i] = [];
-  }
+  rat.tileEntityMemory = {};
 
   rat.dead = false;
   rat.idToLoc = {};

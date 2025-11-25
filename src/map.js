@@ -14,6 +14,12 @@ const OFFSETS = [
   [-1, 0],
 ];
 
+const heat = new Array(ROWS * COLS).fill(0);
+
+export function getHeat() {
+  return heat;
+}
+
 function randInRange(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -413,7 +419,7 @@ export class Map {
 
   isTraversable(entity, x, y) {
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) return false;
-    return this._isTraversable(entity, x, y, this.tiles);
+    return this._isTraversable(entity, this.getTile(x, y), this.getTileEntity(x, y));
   }
 
   /**
@@ -442,7 +448,7 @@ export class Map {
     return entityToMove;
   }
 
-  path(entity, tX, tY) {
+  path(entity, tX, tY, useHeat = false) {
     const visited = new Array(this.w * this.h);
     const heap = new Heap((a, b) => {
       if (a.hcost < b.hcost) return -1;
@@ -473,9 +479,9 @@ export class Map {
         const newX = curr.x + dx;
         const newY = curr.y + dy;
         if (visited[newX + newY * this.w]) continue;
-        if (!this._isTraversable(entity, newX, newY, entity.memory)) continue;
+        if (!this._isTraversable(entity, entity.getTileInMemory(newX, newY), entity.getTileEntityInMemory(newX, newY))) continue;
         const fcost =
-          curr.fcost + 1 + (entity.memory[newX + newY * this.w]?.heat ?? 0);
+          curr.fcost + 1 + (useHeat ? heat[newX + newY * this.w] : 0);
         const pcount = curr.pcount + 1;
         hcost = fcost + cbd(newX, newY, tX, tY);
         const neighbor = {
@@ -513,8 +519,9 @@ export class Map {
           continue;
 
         const tileEntity = this.getTileEntity(x, y);
-        entity.setTileInMemory(x, y, [
-          this.getTile(x, y),
+        entity.setTileInMemory(
+          x,
+          y,
           tileEntity === undefined
             ? undefined
             : {
@@ -522,7 +529,7 @@ export class Map {
                 sprite: tileEntity.sprite,
                 state: tileEntity.state,
               },
-        ]);
+        );
         entity.setEntitiesInMemory(x, y, this.getEntities(x, y));
       }
     }
@@ -707,8 +714,7 @@ export class Map {
     }
   }
 
-  _isTraversable(entity, x, y, tiles) {
-    const [tile, tileEntityData] = tiles[x + y * this.w];
+  _isTraversable(entity, tile, tileEntityData) {
     const tileEntity = getTileEntities()[tileEntityData?.id];
     return (
       (tile?.isTraversable(entity) ?? false) &&
