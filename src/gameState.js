@@ -91,7 +91,6 @@ export function getInput(entity) {
       return;
     }
   }
-  console.error("Entity lost", entity);
 }
 
 /**
@@ -223,6 +222,7 @@ export function interrupt(entity, interrupter) {
   turnToFaceTarget(entity, interrupter);
   if (entity.inControl) return;
   const events = getTimeline()[entity.nextActionTime];
+  if (!events) return;
   for (let i = events.length - 1; i >= 0; --i) {
     const [id] = events[i];
     if (id === entity.id) {

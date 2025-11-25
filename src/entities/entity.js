@@ -226,7 +226,7 @@ export class Entity {
   }
 
   get inControl() {
-    return this.nextActionTime >= getTime();
+    return this.nextActionTime <= getTime();
   }
 
   get isPlayer() {

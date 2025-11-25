@@ -11,11 +11,7 @@ import {
 import { renderViewport } from "./viewport.js";
 
 export function advance() {
-  while (
-    !getPlayer().dead &&
-    !getPlayer().inControl &&
-    Object.keys(getTimeline()).length > 0
-  ) {
+  while (!getPlayer().dead && !getPlayer().inControl) {
     tick();
   }
 }

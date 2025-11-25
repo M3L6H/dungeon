@@ -70,7 +70,6 @@ function renderRange(tX, tY, tileElt) {
   tileElt.onclick = () => {
     if (!getPlayer().inControl || getPlayer().dead) return;
     if (act(getPlayer(), getSelectedAction(), target)) {
-      getPlayer().releaseControl();
       advance();
     }
   };
