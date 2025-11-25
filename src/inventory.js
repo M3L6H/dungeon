@@ -37,7 +37,7 @@ export function showInventory(onSelect, showFinger = false) {
   });
 }
 
-export function setupInventory() {
+export function setUpInventory() {
   inventoryElt.querySelector(".close-button")?.addEventListener("click", () => {
     hideInventory();
   });

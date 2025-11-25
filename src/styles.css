@@ -18,6 +18,7 @@ a:visited {
 
 body {
   background-color: #232333;
+  font-family: "Tiny5", sans-serif;
   margin: auto;
   padding: 2px;
   width: 100vw;
@@ -31,6 +32,11 @@ h1,
 h2,
 h3 {
   color: white;
+  font-family: "Jacquard 12", system-ui;
+}
+
+h3 {
+  font-size: 2rem;
 }
 
 section {
@@ -43,13 +49,18 @@ section {
   position: relative;
 }
 
-#game {
-  height: 100%;
-  width: 100%;
+#level-up {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  right: 10%;
+  background-color: #35354d;
+  border-radius: 8px;
+  padding: 16px;
+  z-index: 20;
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
 }
 
 #inventory {
@@ -62,6 +73,15 @@ section {
 
   display: flex;
   flex-direction: column;
+}
+
+#game {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 #viewport {
@@ -101,15 +121,15 @@ section {
 }
 
 #health .fill {
-  background-color: #ff4000;
+  background-color: #a82a00;
 }
 
 #mana .fill {
-  background-color: #3185fc;
+  background-color: #0359d3;
 }
 
 #stamina .fill {
-  background-color: #0ac848;
+  background-color: #05752a;
 }
 
 #actions {
@@ -375,6 +395,28 @@ section {
   -webkit-touch-callout: none;
 }
 
+.pip {
+  flex: 1 1 auto;
+  border-radius: 4px;
+  background-color: #454555;
+}
+
+.pip.filled {
+  background-color: #0ac848;
+}
+
+.stat {
+  width: 100%;
+}
+
+.stat-bar {
+  height: 3vh;
+  display: flex;
+  gap: 2px;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
 .tile {
   aspect-ratio: 1 / 1;
   background-color: black;
@@ -391,4 +433,16 @@ section {
   border-bottom: 1px solid #232333;
   justify-content: space-between;
   padding-bottom: 4px;
+}
+
+.vbox {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  padding: 8px 0;
+}
+
+.vbox > * {
+  margin-bottom: 8px;
 }

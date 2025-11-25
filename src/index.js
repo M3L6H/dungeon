@@ -1,6 +1,7 @@
 import { setUpActions } from "./actions.js";
 import { newGame } from "./gameState.js";
-import { setupInventory } from "./inventory.js";
+import { setUpInventory } from "./inventory.js";
+import { setUpStats } from "./stats.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
 function setSize() {
@@ -19,7 +20,8 @@ async function init() {
 
   setUpViewport();
   setUpActions();
-  setupInventory();
+  setUpInventory();
+  setUpStats();
   renderViewport();
 }
 
