@@ -131,7 +131,7 @@ export class Entity {
     const idx = x + y * getMap().w;
     const q = Math.floor(idx / 32);
     const r = idx % 32;
-    return (this.memory[q] ?? ZERO) & (1 << r) > 0 ? getMap().getTile(x, y) : undefined;
+    return (this.memory[q] ?? ZERO) & (1 << r) !== 0 ? getMap().getTile(x, y) : undefined;
   }
 
   releaseControl() {
