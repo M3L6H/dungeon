@@ -420,7 +420,11 @@ export class Map {
 
   isTraversable(entity, x, y) {
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) return false;
-    return this._isTraversable(entity, this.getTile(x, y), this.getTileEntity(x, y));
+    return this._isTraversable(
+      entity,
+      this.getTile(x, y),
+      this.getTileEntity(x, y),
+    );
   }
 
   /**
@@ -480,7 +484,14 @@ export class Map {
         const newX = curr.x + dx;
         const newY = curr.y + dy;
         if (visited[newX + newY * this.w]) continue;
-        if (!this._isTraversable(entity, entity.getTileInMemory(newX, newY), entity.getTileEntityInMemory(newX, newY))) continue;
+        if (
+          !this._isTraversable(
+            entity,
+            entity.getTileInMemory(newX, newY),
+            entity.getTileEntityInMemory(newX, newY),
+          )
+        )
+          continue;
         const fcost =
           curr.fcost + 1 + (useHeat ? heat[newX + newY * this.w] : 0);
         const pcount = curr.pcount + 1;
@@ -499,7 +510,7 @@ export class Map {
 
     return [];
   }
-  
+
   spawnEntities() {
     for (let id = 0; id < this.origins.length; ++id) {
       const room = this.origins[id];
@@ -507,7 +518,10 @@ export class Map {
       const count = (room.radius - 1) * (room.radius - 1);
       for (let i = 0; i < count; ++i) {
         if (Math.random() < 0.5) continue;
-        const creator = getRandomEntityForDifficultyRange(room.difficulty - 3, room.difficulty + 3);
+        const creator = getRandomEntityForDifficultyRange(
+          room.difficulty - 3,
+          room.difficulty + 3,
+        );
         if (!creator) continue;
         if (Math.random() < 0.5) {
           const x = randInRange(this.points[id][0].x, this.points[id][6].x);

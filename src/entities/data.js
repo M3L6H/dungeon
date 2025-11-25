@@ -7,7 +7,7 @@ function getEntitiesForDifficulty(difficulty) {
 export function getRandomEntityForDifficultyRange(min, max) {
   const entityCreators = [];
   for (let i = Math.max(0, min); i <= max; ++i) {
-    entityCreators += getEntitiesForDifficulty(i);
+    entityCreators.push(...getEntitiesForDifficulty(i));
   }
   return entityCreators[Math.floor(Math.random() * entityCreators.length)];
 }
@@ -19,3 +19,4 @@ export function setDifficultyForEntityCreator(difficulty, creator) {
 }
 
 const baseXpMap = {};
+
