@@ -35,7 +35,6 @@ h3 {
 
 section {
   width: 100%;
-  margin-bottom: 16px !important;
 }
 
 #main {
@@ -79,6 +78,18 @@ section {
   overflow: hidden;
 }
 
+#xp {
+  margin-bottom: 16px;
+}
+
+#xp .bar {
+  height: 8px;
+}
+
+#xp-bar .fill {
+  background-color: #0ac848;
+}
+
 #vitals {
   height: 10px;
 
@@ -86,6 +97,7 @@ section {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
+  margin-bottom: 16px;
 }
 
 #health .fill {
@@ -106,6 +118,7 @@ section {
   display: grid;
   grid-template-columns: repeat(11, 1fr [col-start]);
   gap: 2px;
+  margin-bottom: 16px;
 }
 
 #logs {

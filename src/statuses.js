@@ -4,7 +4,8 @@ export const STATUS = {
   poison: "poison",
 };
 
-export const poisonWeak = {
+export const poisonWeak = (id) => ({
+  id,
   type: STATUS.poison,
   freq: 4,
   count: 3,
@@ -15,4 +16,4 @@ export const poisonWeak = {
       `${entity.displayName} takes 2 damage from ${STATUS.poison}.`,
     );
   },
-};
+});

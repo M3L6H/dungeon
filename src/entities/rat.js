@@ -1,5 +1,6 @@
 import { getMap, getTime } from "../gameState.js";
 import { explore, flee, rest, wander } from "./behaviors.js";
+import { setBaseXp, setLevelStrategy } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
 /**
@@ -32,6 +33,8 @@ export function createRat(x, y, props) {
     y,
   );
 }
+setBaseXp("rat", 1);
+setLevelStrategy("rat", [0.5, 0.25, 0.25, 0, 0, 0]);
 
 export function resetRat(rat, props) {
   rat.nextActionTime = getTime();
@@ -58,7 +61,7 @@ export function resetRat(rat, props) {
   rat._health = rat.maxHealth;
   rat.mana = rat.maxMana;
   rat._stamina = rat.maxStamina;
-  
+
   rat.memory = {};
   rat.entityMemory = {};
   rat.tileEntityMemory = {};

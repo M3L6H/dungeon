@@ -1,4 +1,5 @@
 import { renderActions } from "./actions.js";
+import { getXpValue } from "./entities/data.js";
 import { createPlayer } from "./entities/index.js";
 import { Item } from "./items/item.js";
 import {
@@ -284,6 +285,14 @@ function attack(entity, target) {
         `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
       );
       other.health -= damageDealt;
+      if (other.dead) {
+        const xp = getXpValue(other);
+        logSafe(
+          entity,
+          `${entity.displayName} earned ${xp} xp from defeating ${other.name}.`,
+        );
+        entity.xp += xp;
+      }
     });
     const suffix = entities.length === 0 ? " and hit nothing" : "";
     logActionEnd(entity, `attacked${suffix}`);

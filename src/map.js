@@ -513,24 +513,38 @@ export class Map {
 
   spawnEntities() {
     for (let id = 0; id < this.origins.length; ++id) {
-      const room = this.origins[id];
-      if (room.type !== RoomType.COMBAT) continue;
-      const count = (room.radius - 1) * (room.radius - 1);
-      for (let i = 0; i < count; ++i) {
+      const { difficulty, radius, type } = this.origins[id];
+      if (type !== RoomType.COMBAT) continue;
+      const count = Math.min(20, (radius - 1) * (radius - 1));
+      let budget = difficulty * count;
+      for (let i = 0; i < count && budget > 0; ++i) {
         if (Math.random() < 0.5) continue;
-        const creator = getRandomEntityForDifficultyRange(
-          room.difficulty - 3,
-          room.difficulty + 3,
+        const [creator, actualDifficulty] = getRandomEntityForDifficultyRange(
+          difficulty - 3,
+          difficulty + 3,
         );
         if (!creator) continue;
+
+        let a, b;
         if (Math.random() < 0.5) {
-          const x = randInRange(this.points[id][0].x, this.points[id][6].x);
-          const y = randInRange(this.points[id][0].y, this.points[id][6].y);
-          creator(x, y);
+          a = this.points[id][0];
+          b = this.points[id][6];
         } else {
-          const x = randInRange(this.points[id][10].x, this.points[id][4].x);
-          const y = randInRange(this.points[id][10].y, this.points[id][4].y);
-          creator(x, y);
+          a = this.points[id][10];
+          b = this.points[id][4];
+        }
+
+        while (true) {
+          const x = randInRange(a.x, b.x);
+          const y = randInRange(a.y, b.y);
+          if (
+            this.getTile(x, y).name === Tile.floor.name &&
+            this.getTileEntity(x, y) === undefined
+          ) {
+            creator(x, y);
+            budget -= actualDifficulty;
+            break;
+          }
         }
       }
     }

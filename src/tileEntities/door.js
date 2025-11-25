@@ -24,7 +24,10 @@ export function lockedDoor(x, y, locked = true) {
       const { dir, x, y } = entity;
       const [dx, dy] = DIRS[dir];
       const [newX, newY] = [x + dx, y + dy];
-      if (getMap().getTile(newX, newY).isTraversable(entity)) {
+      if (
+        (entity.hands ?? true) &&
+        getMap().getTile(newX, newY).isTraversable(entity)
+      ) {
         getMap().moveEntity(entity, newX, newY);
       } else {
         getMap().moveEntity(entity, x - dx, y - dy);

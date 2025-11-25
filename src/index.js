@@ -1,10 +1,5 @@
 import { setUpActions } from "./actions.js";
-import {
-  createBlueSlimeSmall,
-  createGreenSlimeSmall,
-  createRat,
-} from "./entities/index.js";
-import { getMap, newGame } from "./gameState.js";
+import { newGame } from "./gameState.js";
 import { setupInventory } from "./inventory.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
@@ -21,16 +16,6 @@ async function init() {
   setSize();
 
   await newGame();
-  const { x, y } = getMap().start;
-  createBlueSlimeSmall(x + 1, y + 1);
-  createGreenSlimeSmall(x - 1, y + 1);
-  createGreenSlimeSmall(x - 1, y - 1);
-  createGreenSlimeSmall(x + 1, y - 1);
-
-  createRat(x + 1, y);
-  createRat(x - 1, y);
-  createRat(x, y + 1);
-  createRat(x, y - 1);
 
   setUpViewport();
   setUpActions();

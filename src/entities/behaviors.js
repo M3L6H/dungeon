@@ -20,9 +20,7 @@ import { Entity, getEntityById } from "./entity.js";
  */
 export function basicPoisonTouch(entity, baseChance = 0.5) {
   if (Math.random() >= baseChance) return false;
-  const { targetId } = entity;
-  if (targetId === null) return false;
-  const targetLoc = entity.idToLoc[targetId];
+  const targetLoc = getTargetLoc(entity);
   if (!targetLoc) return false;
   const { x: tX, y: tY } = targetLoc;
   const data = poisonTouch(entity, tX, tY);
@@ -172,10 +170,8 @@ export function flee(entity, afraid = () => true) {
  * @param entity {Entity} - The entity this behavior is for
  */
 export function hunt(entity) {
-  const { searching, targetId, x, y } = entity;
-  if (targetId === null) return false;
-
-  const targetLoc = entity.idToLoc[targetId];
+  const { searching, x, y } = entity;
+  const targetLoc = getTargetLoc(entity);
   if (!targetLoc) return false;
   const { x: tX, y: tY } = targetLoc;
   if (x === tX && y === tY) {
@@ -206,9 +202,7 @@ export function hunt(entity) {
  * @param entity {Entity} - The entity this behavior is for
  */
 export function simpleAttack(entity) {
-  const { targetId } = entity;
-  if (targetId === null) return false;
-  const targetLoc = entity.idToLoc[targetId];
+  const targetLoc = getTargetLoc(entity);
   if (!targetLoc) return false;
   const { x: tX, y: tY } = targetLoc;
   const target = { x: tX, y: tY };
@@ -255,6 +249,16 @@ export function wander(entity) {
 export function rest(entity) {
   const { x, y } = entity;
   return act(entity, MOVE, { x, y });
+}
+
+function getTargetLoc(entity) {
+  const { targetId } = entity;
+  if (targetId === null) return undefined;
+  if (getEntityById(targetId).dead) {
+    entity.targetId = null;
+    return undefined;
+  }
+  return entity.idToLoc[targetId];
 }
 
 function logBehavior(entity, behavior) {

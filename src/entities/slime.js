@@ -8,7 +8,11 @@ import {
   simpleAttack,
   wander,
 } from "./behaviors.js";
-import { setDifficultyForEntityCreator } from "./data.js";
+import {
+  setBaseXp,
+  setDifficultyForEntityCreator,
+  setLevelStrategy,
+} from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
 /**
@@ -26,8 +30,6 @@ export function createBlueSlimeSmall(x, y) {
         0: (self) =>
           `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
         3: (self) => `The ${self.displayName} does physical damage.`,
-        5: () =>
-          `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
       },
       w,
       h,
@@ -45,12 +47,14 @@ export function createBlueSlimeSmall(x, y) {
   );
 }
 setDifficultyForEntityCreator(1, createBlueSlimeSmall);
+setBaseXp("blue-slime", 2);
+setLevelStrategy("blue-slime", [0, 0.3, 0.3, 0, 0.4, 0]);
 
 /**
  * Creates a small green slime.
  * @returns {Entity} A small green slime entity
  */
-export function createGreenSlimeSmall( x, y) {
+export function createGreenSlimeSmall(x, y) {
   const { w, h } = getMap();
   return startEntity(
     new Entity({
@@ -61,8 +65,6 @@ export function createGreenSlimeSmall( x, y) {
         0: (self) =>
           `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
         3: (self) => `The ${self.displayName} is slightly poisonous.`,
-        5: () =>
-          `Slimes have the ability to merge with each other. Each time they do so, they become stronger.`,
       },
       w,
       h,
@@ -87,3 +89,5 @@ export function createGreenSlimeSmall( x, y) {
   );
 }
 setDifficultyForEntityCreator(2, createGreenSlimeSmall);
+setBaseXp("green-slime", 3);
+setLevelStrategy("green-slime", [0, 0.2, 0.2, 0.3, 0, 0.3]);

@@ -1,3 +1,4 @@
+import { xpRequiredForLevel } from "./entities/data.js";
 import {
   act,
   getMap,
@@ -16,6 +17,7 @@ const healthElt = document.getElementById("health");
 const manaElt = document.getElementById("mana");
 const staminaElt = document.getElementById("stamina");
 const viewportElt = document.getElementById("viewport");
+const xpElt = document.getElementById("xp-bar");
 
 export function highlight(id) {
   const elt = viewportElt.querySelector(`div[data-id="${id}"]`)?.parentElement;
@@ -30,14 +32,16 @@ function renderBar(elt, curr, max) {
   const textElt = elt.querySelector(".bar-text");
 
   fillElt.style.width = `${(curr / max) * 100}%`;
-  textElt.textContent = `${curr} / ${max}`;
+  if (textElt) textElt.textContent = `${curr} / ${max}`;
 }
 
 function renderBars() {
-  const { health, maxHealth, mana, maxMana, stamina, maxStamina } = getPlayer();
+  const { health, maxHealth, mana, maxMana, stamina, maxStamina, xp, level } =
+    getPlayer();
   renderBar(healthElt, health, maxHealth);
   renderBar(manaElt, mana, maxMana);
   renderBar(staminaElt, stamina, maxStamina);
+  renderBar(xpElt, xp, xpRequiredForLevel(level));
 }
 
 function renderTile(tX, tY, tileElt) {

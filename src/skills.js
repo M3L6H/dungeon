@@ -36,7 +36,7 @@ export const poisonTouch = (entity, tX, tY) => {
         );
         return;
       }
-      const success = other.addStatus(poisonWeak);
+      const success = other.addStatus(poisonWeak(entity.id));
       if (success) {
         logCombatDanger(
           entity,

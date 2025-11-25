@@ -7,13 +7,17 @@ import {
   getSelectedItem,
   getTime,
   logDanger,
+  logSafe,
   logWarn,
   setSelectedItem,
 } from "../gameState.js";
+import { levelUp, xpRequiredForLevel } from "./data.js";
 
 const HITPOINTS_PER_CONSTITUTION = 4;
 const MANA_PER_INTELLIGENCE = 5;
 const STAMINA_PER_ENDURANCE = 2;
+
+const MAX_LEVEL = 70;
 
 const ZERO = 0 | 0;
 
@@ -33,15 +37,16 @@ export class Entity {
     this.nextActionTime = 0;
     this.dir = props.dir ?? Math.floor(Math.random() * 4);
 
-    this.level = 1;
-    this.xp = 0;
-
     this.agility = props.agility ?? 1;
     this.constitution = props.constitution ?? 1;
     this.endurance = props.endurance ?? 1;
     this.intelligence = props.intelligence ?? 1;
     this.strength = props.strength ?? 1;
     this.wisdom = props.wisdom ?? 1;
+
+    this.level = props.level ?? 1;
+    for (let i = 1; i < this.level; ++i) levelUp(this);
+    this._xp = 0;
 
     this.attackRange = 1;
     this.attackDelayMod = 0;
@@ -282,6 +287,10 @@ export class Entity {
     return this._unique;
   }
 
+  get xp() {
+    return this._xp;
+  }
+
   set health(val) {
     this._health = clamp(val, 0, this.maxHealth);
     if (this._health === 0) {
@@ -296,6 +305,19 @@ export class Entity {
 
   set stamina(val) {
     this._stamina = clamp(val, 0, this.maxStamina);
+  }
+
+  set xp(val) {
+    this._xp = val;
+    const xpRequired = xpRequiredForLevel(this.level);
+    if (this._xp >= xpRequired && this.level < MAX_LEVEL) {
+      levelUp(this);
+      logSafe(
+        this,
+        `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored.`,
+      );
+      this._xp -= xpRequired;
+    }
   }
 }
 
