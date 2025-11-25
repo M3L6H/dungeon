@@ -6,6 +6,7 @@ import { DIRS, Heap } from "./utils.js";
 const ROWS = 256;
 const COLS = 256;
 const ROOMS = Math.floor((ROWS * COLS) / 500);
+const MAX_DIFFICULTY = 250;
 const MIN_RADIUS = 3;
 const OFFSETS = [
   [0, -1],
@@ -627,12 +628,14 @@ export class Map {
       roomIdToEdge[b.id] = edgesB;
     });
     this.start.difficulty = 0;
+    let maxDifficulty = 0;
     const q = [this.start];
     for (let i = 0; i < q.length; ++i) {
       adj[q[i].id].forEach((id) => {
         const origin = this.origins[id];
         if (origin.difficulty !== undefined) return;
         origin.difficulty = q[i].difficulty + 1;
+        maxDifficulty = Math.max(maxDifficulty, origin.difficulty);
         q.push(origin);
       });
 
@@ -692,6 +695,12 @@ export class Map {
         }
         continue;
       }
+    }
+    
+    const ratio = MAX_DIFFICULTY / maxDifficulty;
+    
+    for (const origin of this.origins) {
+      origin.difficulty = Math.floor(origin.difficulty * ratio);
     }
   }
 

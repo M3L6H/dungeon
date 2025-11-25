@@ -11,7 +11,7 @@ import {
   setSelectedItem,
 } from "../gameState.js";
 
-const HITPOINTS_PER_CONSTITUTION = 3;
+const HITPOINTS_PER_CONSTITUTION = 4;
 const MANA_PER_INTELLIGENCE = 5;
 const STAMINA_PER_ENDURANCE = 2;
 
