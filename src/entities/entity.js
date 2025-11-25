@@ -129,8 +129,8 @@ export class Entity {
 
   getTileInMemory(x, y) {
     const idx = x + y * getMap().w;
-    const q = Math.floor(idx / 32);
-    const r = idx % 32;
+    const r = idx % 31;
+    const q = (idx - r) / 31;
     return (this.memory[q] ?? ZERO) & (1 << r) !== 0 ? getMap().getTile(x, y) : undefined;
   }
 
@@ -190,8 +190,8 @@ export class Entity {
 
   setTileInMemory(x, y, tileEntity) {
     const idx = x + y * getMap().w;
-    const q = Math.floor(idx / 32);
-    const r = idx % 32;
+    const r = idx % 31;
+    const q = (idx - r) / 31;
     const flags = this.memory[q] ?? ZERO;
     this.memory[q] = flags | (1 << r);
     this.tileEntityMemory[idx] = tileEntity;
