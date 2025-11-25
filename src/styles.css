@@ -422,6 +422,7 @@ section {
   opacity: 0.75;
 }
 
+.pip.bonus,
 .pip.filled {
   background-color: #0ac848;
 }
