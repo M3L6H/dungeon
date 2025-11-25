@@ -23,8 +23,8 @@ async function init() {
   setUpInventory();
   setUpStats();
   renderViewport();
-  
-  showStats(getPlayer(), true, 10);
+
+  showStats(getPlayer(), true, 5);
 }
 
 addEventListener("load", async () => await init());

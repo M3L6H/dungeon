@@ -2,8 +2,14 @@ import { getPlayer } from "./gameState.js";
 
 const statsElt = document.getElementById("level-up");
 
-export function showStats(entity, showButtons = false, points = null, bonus = [0, 0, 0, 0, 0, 0]) {
-  const { agility, constitution, endurance, intelligence, strength, wisdom } = entity;
+export function showStats(
+  entity,
+  showButtons = false,
+  points = null,
+  bonus = [0, 0, 0, 0, 0, 0],
+) {
+  const { agility, constitution, endurance, intelligence, strength, wisdom } =
+    entity;
   const stats = [
     agility,
     constitution,
@@ -12,7 +18,7 @@ export function showStats(entity, showButtons = false, points = null, bonus = [0
     strength,
     wisdom,
   ];
-  
+
   const pr = statsElt.querySelector("#points-remaining");
   if (points === null) {
     pr.classList.add("hidden");
@@ -52,7 +58,7 @@ export function showStats(entity, showButtons = false, points = null, bonus = [0
       plus.classList.add("hidden");
     }
     plus.disabled = stats[i] === 25 || points === 0;
-    plus.onclick = () => { 
+    plus.onclick = () => {
       ++bonus[i];
       --points;
       showStats(entity, showButtons, points, bonus);

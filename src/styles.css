@@ -405,7 +405,13 @@ section {
 
 .pip::after {
   color: white;
-  font-size: 6px;
+  font-size: 12px;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
 .pip:disabled {
@@ -428,8 +434,6 @@ section {
 
 .pip.minus::after {
   content: "remove";
-  position: absolute;
-  inset: 0;
 }
 
 .pip.plus {
@@ -440,8 +444,6 @@ section {
 
 .pip.plus::after {
   content: "add";
-  position: absolute;
-  inset: 0;
 }
 
 .stat {
