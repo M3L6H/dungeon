@@ -1,4 +1,5 @@
 body,
+button,
 div,
 h3,
 main,
@@ -403,7 +404,7 @@ section {
 }
 
 .pip:disabled {
-  opacity: 0.5;
+  opacity: 0.2;
 }
 
 .pip.filled {
@@ -412,10 +413,26 @@ section {
 
 .pip.minus {
   background-color: #a82a00;
+  border: none;
+  position: relative;
+}
+
+.pip.minus::after {
+  content: "remove";
+  position: absolute;
+  inset: 0;
 }
 
 .pip.plus {
   background-color: #05752a;
+  border: none;
+  position: relative;
+}
+
+.pip.plus::after {
+  content: "add";
+  position: absolute;
+  inset: 0;
 }
 
 .stat {

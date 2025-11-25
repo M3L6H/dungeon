@@ -16,7 +16,7 @@ function init() {
 
   statsElt.querySelectorAll(".stat-bar").forEach((sb, i) => {
     const minus = document.createElement("button");
-    minus.classList.add("pip", "minus");
+    minus.classList.add("material-symbols-outlined", "pip", "minus");
     minus.disabled = true;
     sb.appendChild(minus);
     for (let j = 1; j <= 25; ++j) {
@@ -26,7 +26,7 @@ function init() {
       sb.appendChild(pip);
     }
     const plus = document.createElement("button");
-    plus.classList.add("pip", "plus");
+    plus.classList.add("material-symbols-outlined", "pip", "plus");
     sb.appendChild(plus);
   });
 }
