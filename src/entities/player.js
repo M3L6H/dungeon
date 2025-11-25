@@ -25,6 +25,7 @@ export function createPlayer() {
       inventory: {
         key: 2,
       },
+      unique: true,
     }),
     x,
     y,

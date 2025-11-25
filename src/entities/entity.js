@@ -131,7 +131,9 @@ export class Entity {
     const idx = x + y * getMap().w;
     const q = idx >>> 5; // Divide by 32
     const r = idx & 31; // Modulo 32
-    return (this.memory[q] ?? ZERO) & (1 << r) !== 0 ? getMap().getTile(x, y) : undefined;
+    return ((this.memory[q] ?? ZERO) & (1 << r)) !== 0
+      ? getMap().getTile(x, y)
+      : undefined;
   }
 
   releaseControl() {
@@ -194,7 +196,7 @@ export class Entity {
     const r = idx & 31; // Modulo 32
     const flags = this.memory[q] ?? ZERO;
     this.memory[q] = flags | (1 << r);
-    this.tileEntityMemory[idx] = tileEntity;
+    if (tileEntity !== undefined) this.tileEntityMemory[idx] = tileEntity;
   }
 
   get accuracy() {
