@@ -402,8 +402,20 @@ section {
   background-color: #454555;
 }
 
+.pip:disabled {
+  opacity: 0.5;
+}
+
 .pip.filled {
   background-color: #0ac848;
+}
+
+.pip.minus {
+  background-color: #a82a00;
+}
+
+.pip.plus {
+  background-color: #05752a;
 }
 
 .stat {

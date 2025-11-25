@@ -15,12 +15,19 @@ function init() {
   ];
 
   statsElt.querySelectorAll(".stat-bar").forEach((sb, i) => {
+    const minus = document.createElement("button");
+    pip.classList.add("pip", "minus");
+    minus.disabled = true;
+    sb.appendChild(minus);
     for (let j = 1; j <= 25; ++j) {
       const pip = document.createElement("span");
       pip.classList.add("pip");
       if (j <= stats[i]) pip.classList.add("filled");
       sb.appendChild(pip);
     }
+    const plus = document.createElement("button");
+    pip.classList.add("pip", "plus");
+    sb.appendChild(plus);
   });
 }
 
