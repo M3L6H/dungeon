@@ -403,8 +403,17 @@ section {
   background-color: #454555;
 }
 
+.pip::after {
+  color: white;
+  font-size: 6px;
+}
+
 .pip:disabled {
   opacity: 0.2;
+}
+
+.pip.bonus {
+  opacity: 0.75;
 }
 
 .pip.filled {

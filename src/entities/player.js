@@ -15,11 +15,12 @@ export function createPlayer() {
         0: (self) =>
           `You are a ${self.variant} elf. Your oddly colored hair is the only remarkable feature about you.`,
       },
-      agility: 4,
-      constitution: 4,
-      endurance: 3,
-      intelligence: 5,
-      wisdom: 5,
+      agility: 0,
+      constitution: 0,
+      endurance: 0,
+      intelligence: 0,
+      strength: 0,
+      wisdom: 0,
       w,
       h,
       inventory: {

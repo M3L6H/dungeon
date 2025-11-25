@@ -1,7 +1,7 @@
 import { setUpActions } from "./actions.js";
-import { newGame } from "./gameState.js";
+import { getPlayer, newGame } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
-import { setUpStats } from "./stats.js";
+import { setUpStats, showStats } from "./stats.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
 function setSize() {
@@ -23,6 +23,8 @@ async function init() {
   setUpInventory();
   setUpStats();
   renderViewport();
+  
+  showStats(getPlayer(), true, 10);
 }
 
 addEventListener("load", async () => await init());
