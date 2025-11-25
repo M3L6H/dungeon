@@ -233,16 +233,16 @@ export function interrupt(entity, interrupter) {
       const [id] = events[i];
       if (id === entity.id) {
         events.splice(i, 1);
-        logCombatWarn(
-          entity,
-          interrupter,
-          `${entity.displayName} has been interrupted.`,
-        )?.classList.add("bold");
-        getInput(entity);
-        return;
       }
     }
   }
+  logCombatWarn(
+    entity,
+    interrupter,
+    `${entity.displayName} has been interrupted.`,
+  )?.classList.add("bold");
+  getInput(entity);
+  return;
 }
 
 const DIRS = ["North", "East", "South", "West"];
@@ -261,6 +261,7 @@ function attack(entity, target) {
       if (entity.stamina === 0) return; // Can't attack with no stamina
       --entity.stamina;
       other.tSet.add(entity.name.toLowerCase());
+      other.targetId = entity.id;
       const attack = roll(accuracy);
       const dodge = roll(other.dodge);
       if (attack <= dodge) {

@@ -82,7 +82,8 @@ export function findTarget(entity) {
  * @param entity {Entity} - The entity this behavior is for
  */
 export function flee(entity, afraid = () => true) {
-  const { entityMemory, name, sightRange, w, h, x, y } = entity;
+  const { w, h } = getMap();
+  const { entityMemory, name, sightRange, x, y } = entity;
   const options = {};
   for (let dx = -sightRange; dx <= sightRange; ++dx) {
     for (let dy = -sightRange; dy <= sightRange; ++dy) {
@@ -123,7 +124,7 @@ export function flee(entity, afraid = () => true) {
     }
   }
 
-  if (!enemiesInRange) return false;
+  if (options[x + y * w].heat === 0) return false;
 
   const heap = new Heap((a, b) => {
     if (a.heat < b.heat) return -1;
@@ -136,14 +137,31 @@ export function flee(entity, afraid = () => true) {
     getHeat()[option.x + option.y * w] = option.heat;
   }
 
+  let minHeat = Infinity;
+  let minCost = Infinity;
+  let minPath = undefined;
+
   while (heap.length > 0) {
-    const { x: tX, y: tY } = heap.pop();
+    const { x: tX, y: tY, heat } = heap.pop();
+    if (heat > minHeat) break;
     const path = getMap().path(entity, tX, tY, true);
     if (path && path.length > 1) {
-      logBehavior(entity, "fleeing");
-
-      return act(entity, MOVE, path[1]);
+      minHeat = Math.min(minHeat, heat);
+      const cost = path.reduce(
+        (prev, { x: cX, y: cY }) =>
+          prev + 1 + (options[cX + cY * w]?.heat ?? 0),
+        0,
+      );
+      if (cost < minCost) {
+        minPath = path;
+        minCost = cost;
+      }
     }
+  }
+
+  if (minPath !== undefined) {
+    logBehavior(entity, "fleeing");
+    return act(entity, MOVE, minPath[1]);
   }
 
   return false;
@@ -220,7 +238,9 @@ export function wander(entity) {
     for (const dir of pDirs) {
       const [dx, dy] = dir;
       target = { x: x + dx, y: y + dy };
-      if (inRange(entity, MOVE, target)) break;
+      if (inRange(entity, MOVE, target)) {
+        return act(entity, EXAMINE, target);
+      }
     }
   }
 

@@ -4,7 +4,7 @@ import {
   createGreenSlimeSmall,
   createRat,
 } from "./entities/index.js";
-import { getMap, getPlayer, newGame } from "./gameState.js";
+import { getMap, newGame } from "./gameState.js";
 import { setupInventory } from "./inventory.js";
 import { renderViewport, setUpViewport } from "./viewport.js";
 
