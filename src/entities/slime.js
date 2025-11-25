@@ -8,6 +8,7 @@ import {
   simpleAttack,
   wander,
 } from "./behaviors.js";
+import { setDifficultyForEntityCreator } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
 /**
@@ -43,6 +44,7 @@ export function createBlueSlimeSmall(x, y) {
     y,
   );
 }
+setDifficultyForEntityCreator(1, createBlueSlimeSmall);
 
 /**
  * Creates a small green slime.
@@ -84,3 +86,4 @@ export function createGreenSlimeSmall( x, y) {
     y,
   );
 }
+setDifficultyForEntityCreator(2, createGreenSlimeSmall);

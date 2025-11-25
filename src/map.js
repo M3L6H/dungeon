@@ -1,3 +1,4 @@
+import { getRandomEntityForDifficultyRange } from "./entities/data.js";
 import { getTileEntities } from "./gameState.js";
 import { Tile } from "./tile.js";
 import { lockedDoor, ratSpawner, simpleDoor } from "./tileEntities/index.js";
@@ -6,7 +7,6 @@ import { DIRS, Heap } from "./utils.js";
 const ROWS = 256;
 const COLS = 256;
 const ROOMS = Math.floor((ROWS * COLS) / 500);
-const MAX_DIFFICULTY = 250;
 const MIN_RADIUS = 3;
 const OFFSETS = [
   [0, -1],
@@ -628,14 +628,12 @@ export class Map {
       roomIdToEdge[b.id] = edgesB;
     });
     this.start.difficulty = 0;
-    let maxDifficulty = 0;
     const q = [this.start];
     for (let i = 0; i < q.length; ++i) {
       adj[q[i].id].forEach((id) => {
         const origin = this.origins[id];
         if (origin.difficulty !== undefined) return;
         origin.difficulty = q[i].difficulty + 1;
-        maxDifficulty = Math.max(maxDifficulty, origin.difficulty);
         q.push(origin);
       });
 
@@ -693,14 +691,23 @@ export class Map {
             }
           }
         }
+        const count = (room.radius - 1) * (room.radius - 1);
+        for (let i = 0; i < count; ++i) {
+          if (Math.random() < 0.5) continue;
+          const creator = getRandomEntityForDifficultyRange(room.difficulty - 3, room.difficulty + 3);
+          if (!creator) continue;
+          if (Math.random() < 0.5) {
+            const x = randInRange(this.points[id][0].x, this.points[id][6].x);
+            const y = randInRange(this.points[id][0].y, this.points[id][6].y);
+            creator(x, y);
+          } else {
+            const x = randInRange(this.points[id][10].x, this.points[id][4].x);
+            const y = randInRange(this.points[id][10].y, this.points[id][4].y);
+            creator(x, y);
+          }
+        }
         continue;
       }
-    }
-    
-    const ratio = MAX_DIFFICULTY / maxDifficulty;
-    
-    for (const origin of this.origins) {
-      origin.difficulty = Math.floor(origin.difficulty * ratio);
     }
   }
 
