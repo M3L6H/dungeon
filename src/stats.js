@@ -40,7 +40,7 @@ export function showStats(
       ++points;
       showStats(entity, showButtons, points, bonus);
     };
-    const pips = sb.querySelectorAll(".pip");
+    const pips = sb.children;
     for (let j = 1; j <= 25; ++j) {
       const pip = pips[i];
       if (j <= stats[i]) {
