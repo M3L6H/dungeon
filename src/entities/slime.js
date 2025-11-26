@@ -28,8 +28,8 @@ export function createBlueSlimeSmall(x, y) {
       variant: "small",
       description: {
         0: (self) =>
-          `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
-        3: (self) => `The ${self.displayName} does physical damage.`,
+          `${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
+        3: (self) => `${self.displayName} does physical damage.`,
       },
       w,
       h,
@@ -63,8 +63,8 @@ export function createGreenSlimeSmall(x, y) {
       variant: "small",
       description: {
         0: (self) =>
-          `The ${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
-        3: (self) => `The ${self.displayName} is slightly poisonous.`,
+          `${self.displayName} is tinged a venomous green. Its gelatinous body wobbles as it moves around.`,
+        3: (self) => `${self.displayName} is slightly poisonous.`,
       },
       w,
       h,

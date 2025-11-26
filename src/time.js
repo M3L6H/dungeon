@@ -44,8 +44,8 @@ export function tick() {
     if (entity.dead) return;
     entity.mana = Math.min(entity.mana + 1, entity.maxMana);
     for (let i = entity.statuses.length - 1; i >= 0; --i) {
-      const { count, effect, freq, id, type } = entity.statuses[i];
-      if (time % freq !== 0) continue;
+      const { count, effect, freq, id, offset, type } = entity.statuses[i];
+      if ((time + offset) % freq !== 0) continue;
       effect(entity);
       --entity.statuses[i].count;
       if (count <= 0) {

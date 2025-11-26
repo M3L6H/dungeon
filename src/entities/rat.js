@@ -15,9 +15,8 @@ export function createRat(x, y, props) {
       name: "rat",
       description: {
         0: (self) =>
-          `The ${self.displayName} is small and whiskered. It sniffs the air nervously.`,
-        3: (self) => `The ${self.displayName} does physical damage.`,
-        5: () => `Rats are notorious thieves, but they are also very cowardly.`,
+          `${self.displayName} is small and whiskered. It sniffs the air nervously.`,
+        3: () => `Rats are notorious thieves, but they are also very cowardly.`,
       },
       w,
       h,
