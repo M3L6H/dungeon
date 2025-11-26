@@ -12,7 +12,7 @@ import {
   setSelectedItem,
 } from "../gameState.js";
 import { Item } from "../items/item.js";
-import { ItemEntity } from "../items/itemEntity.js";
+import { spawnItem } from "../items/itemEntity.js";
 import { showStats } from "../stats.js";
 import { getDrop, levelUp, xpRequiredForLevel } from "./data.js";
 
@@ -23,6 +23,27 @@ const STAMINA_PER_ENDURANCE = 2;
 const MAX_LEVEL = 70;
 
 const ZERO = 0 | 0;
+
+export function examineEntity(entity, examiner) {
+  const { perception } = examiner;
+  const details = [];
+
+  if (perception >= 3 && entity.status !== undefined) {
+    details.push(entity.status);
+  }
+
+  if (perception >= 5 && entity.immunities !== undefined) {
+    details.push(`${entity.displayName} immunities: ${Array.from(entity.immunities).join(", ")}`);
+  }
+
+  for (const threshold in entity.description) {
+    if (perception >= threshold) {
+      details.push(entity.description[threshold](entity));
+    }
+  }
+
+  return details.join("\r\n");
+}
 
 export class Entity {
   constructor(props) {
@@ -94,28 +115,6 @@ export class Entity {
     this.statuses.push(status);
 
     return true;
-  }
-
-  examine({ perception }) {
-    const details = [];
-
-    if (perception >= 3) {
-      details.push(this.status);
-    }
-
-    if (perception >= 6) {
-      details.push(
-        `${this.displayName} immunities: ${Array.from(this.immunities).join(", ")}`,
-      );
-    }
-
-    for (const threshold in this.description) {
-      if (perception >= threshold) {
-        details.push(this.description[threshold](this));
-      }
-    }
-
-    return details.join("\r\n");
   }
 
   getEntitiesInMemory(x, y) {
@@ -302,8 +301,8 @@ export class Entity {
       this.dead = true;
       const drop = getDrop(this);
       if (drop) {
-        const itemEntity = new ItemEntity({ item: Item.idToItem[drop] });
-        getMap().moveEntity(itemEntity, this.x, this.y);
+        const itemEntity = spawnItem(Item.idToItem[drop], this.x, this.y);
+        logSafe(itemEntity, `${this.displayName} dropped a ${itemEntity.displayName}.`);
       }
       logDanger(this, `${this.displayName} died.`)?.classList.add("bold");
     }

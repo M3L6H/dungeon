@@ -41,7 +41,7 @@ export function tick() {
     event();
   });
   getEntities().forEach((entity) => {
-    if (entity.dead || entity.dir === undefined) return;
+    if (entity.dead || entity.isItem) return;
     entity.mana = Math.min(entity.mana + 1, entity.maxMana);
     for (let i = entity.statuses.length - 1; i >= 0; --i) {
       const { count, effect, freq, id, offset, type } = entity.statuses[i];

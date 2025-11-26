@@ -1,16 +1,31 @@
-let id = 0;
+import { addEntity, getMap } from "../gameState.js";
+
+export function spawnItem(item, x, y) {
+  const entity = new ItemEntity(item);
+  getMap().moveEntity(entity, x, y);
+  return entity;
+}
 
 export class ItemEntity {
   constructor(props) {
-    this._id = id++;
     this._item = props.item;
 
     this.x = 0;
     this.y = 0;
+
+    addEntity(this);
   }
 
-  get id() {
-    return [this.item.id, this._id].join("-");
+  get behaviors() {
+    return [];
+  }
+
+  get displayName() {
+    return `<a data-id="${this.id}">${this.item.name}</a>`;
+  }
+
+  get isItem() {
+    return true;
   }
 
   get item() {

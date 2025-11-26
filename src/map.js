@@ -1,4 +1,4 @@
-import { getRandomEntityForDifficultyRange } from "./entities/data.js";
+import { getRandomEntityForDifficultyRange, examineEntity } from "./entities/index.js";
 import { getTileEntities } from "./gameState.js";
 import { Tile } from "./tile.js";
 import { lockedDoor, ratSpawner, simpleDoor } from "./tileEntities/index.js";
@@ -384,7 +384,7 @@ export class Map {
     const details = [];
     this.getEntities(tX, tY).forEach((entity) => {
       if (!entity.dir) return;
-      details.push(entity.examine(examiner));
+      details.push(examineEntity(entity, examiner));
     });
     const tileEntity = this.getTileEntity(tX, tY);
     if (tileEntity) details.push(tileEntity.examine(examiner));
