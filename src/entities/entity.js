@@ -23,6 +23,15 @@ const MAX_LEVEL = 70;
 
 const ZERO = 0 | 0;
 
+export function canEntityInteract(entity, other, item) {
+  const canInteractWithOther = other.canInteract?(entity, item);
+  if (canInteractWithOther !== undefined) {
+    return canInteractWithOther;
+  }
+  
+  return item.canInteract?(entity, other) ?? false;
+}
+
 export function entityInControl(entity) {
   return entity.nextActionTime <= getTime();
 }
@@ -110,6 +119,8 @@ export class Entity {
     for (const k in props.additionalProps ?? {}) {
       this[k] = props.additionalProps[k];
     }
+    
+    this._canInteract = props.canInteract;
 
     addEntity(this);
   }
@@ -124,6 +135,10 @@ export class Entity {
     this.statuses.push(status);
 
     return true;
+  }
+  
+  canInteract(entity, item) {
+    return this._canInteract?(this, entity, item) ?? false;
   }
 
   getEntitiesInMemory(x, y) {

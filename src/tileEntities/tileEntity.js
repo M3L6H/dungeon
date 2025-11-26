@@ -22,10 +22,6 @@ export class TileEntity {
     addTileEntity(this);
   }
 
-  canInteract(entity, item) {
-    return this._canInteract(this.state, entity, item);
-  }
-
   examine({ perception }) {
     const details = [];
     for (const threshold in this.description) {

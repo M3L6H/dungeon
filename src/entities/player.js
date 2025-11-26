@@ -25,6 +25,9 @@ export function createPlayer() {
       additionalProps: {
         picksItems: true,
       },
+      canInteract: (self, other, item) => {
+        return item.isHealthPotion && self.health < self.maxHealth;
+      },
     }),
     x,
     y,

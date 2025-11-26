@@ -196,11 +196,13 @@ export function inRange(entity, action, data) {
         getMap().entityHasLoS(entity, x, y)
       );
     case "interact":
-      return (
-        !!getSelectedItem() &&
-        getMap().getTileEntity(x, y)?.canInteract(entity, getSelectedItem()) &&
-        dx + dy <= 1
-      );
+      if (!getSelectedItem() || dx + dy > 1) return false;
+      const tileEntity = getMap().getTileEntity(x, y);
+      if (!!tileEntity && canEntityInteract(entity, tileEntity, getSelectedItem()) return true;
+      for (const other of getMap().getEntities(x, y)) {
+        if (canEntityInteract(entity, other, getSelectedItem()) return true;
+      }
+      return false;
     case "move":
       return (
         (dx + dy === 0 && entity.stamina < entity.maxStamina) ||
