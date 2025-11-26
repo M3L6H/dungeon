@@ -21,7 +21,7 @@ export class TileEntity {
 
     addTileEntity(this);
   }
-  
+
   canInteract(entity, item) {
     return this._canInteract(this.state, entity, item);
   }
@@ -47,7 +47,10 @@ export class TileEntity {
     if (this.onInteract !== undefined) {
       return this.onInteract(this.state, entity, item);
     }
-    logActionEnd(entity, `failed to use ${item.replaceAll("-", " ")} on ${this.name}`);
+    logActionEnd(
+      entity,
+      `failed to use ${item.replaceAll("-", " ")} on ${this.name}`,
+    );
     return false;
   }
 
@@ -58,7 +61,7 @@ export class TileEntity {
   isTraversable(entity) {
     return this._isTraversable(this.state, entity);
   }
-  
+
   tick(time) {
     if (this.onTick !== undefined) {
       this.onTick(this.state, time);
@@ -77,4 +80,3 @@ export class TileEntity {
     return this._sprite;
   }
 }
-

@@ -14,7 +14,7 @@ export const poisonTouch = (entity, tX, tY) => {
     name: "Poison Touch",
     manaCost,
     staminaCost,
-    timeTaken: 2,
+    timeTaken: 3,
     filter,
     inRange: () => {
       const entities = getMap().getEntities(tX, tY).filter(filter);

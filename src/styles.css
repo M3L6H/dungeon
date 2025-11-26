@@ -453,7 +453,7 @@ section {
   border-radius: 8px;
   font-size: 1.2rem;
   background-color: #05752a;
-  padding: 4px 0; 
+  padding: 4px 0;
   width: 100%;
 }
 
@@ -501,4 +501,8 @@ section {
 
 .vbox > * {
   margin-bottom: 8px;
+}
+
+.vbox > *:last-child {
+  margin-bottom: 0;
 }

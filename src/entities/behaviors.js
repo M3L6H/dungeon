@@ -64,7 +64,8 @@ export function findTarget(entity) {
   if (entity.targetId !== null) return false;
   for (const k in entityMemory) {
     const entities = entityMemory[k];
-    for (const { id } of entities) {
+    for (const { dir, id } of entities) {
+      if (dir === undefined) continue;
       const other = getEntityById(id);
       if (!other.dead && tSet.has(other.name.toLowerCase())) {
         entity.targetId = id;
@@ -102,7 +103,8 @@ export function flee(entity, afraid = () => true) {
       const [eX, eY] = [x + dx, y + dy];
       if (eX < 0 || eY < 0 || eX >= w || eY >= h) continue;
       const entities = entityMemory[eX + eY * w] ?? [];
-      for (const { id } of entities) {
+      for (const { dir, id } of entities) {
+        if (dir === undefined) continue;
         const other = getEntityById(id);
         if (!other.dead && other.name !== name && afraid(other)) {
           enemiesInRange = true;

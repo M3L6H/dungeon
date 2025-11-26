@@ -1,4 +1,5 @@
 import { getMap } from "../gameState.js";
+import { healthPotionMinor } from "../items/health-potion.js";
 import { STATUS } from "../statuses.js";
 import {
   findTarget,
@@ -11,6 +12,7 @@ import {
 import {
   setBaseXp,
   setDifficultyForEntityCreator,
+  setDropTable,
   setLevelStrategy,
 } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
@@ -93,3 +95,6 @@ export function createGreenSlimeSmall(x, y) {
 setDifficultyForEntityCreator(3, createGreenSlimeSmall);
 setBaseXp("green-slime", 3);
 setLevelStrategy("green-slime", [0, 0.2, 0.2, 0.3, 0, 0.3]);
+setDropTable("green-slime", {
+  [healthPotionMinor.id]: 0.2,
+});

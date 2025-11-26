@@ -33,7 +33,7 @@ export function showStats(
     cb.classList.add("hidden");
     title.textContent = points > 0 ? "Level Up" : "Confirm?";
   }
-  
+
   const submit = statsElt.querySelector(".submit");
   if (showButtons) {
     submit.classList.remove("hidden");
@@ -42,17 +42,25 @@ export function showStats(
   }
   submit.disabled = points !== 0;
   submit.onclick = () => {
-    ["agility", "constitution", "endurance", "intelligence", "strength", "wisdom"].forEach((k, i) => {
+    [
+      "agility",
+      "constitution",
+      "endurance",
+      "intelligence",
+      "strength",
+      "wisdom",
+    ].forEach((k, i) => {
       entity[k] += bonus[i];
     });
     ++entity.level;
     entity.health = entity.maxHealth;
     entity.mana = entity.maxMana;
     entity.stamina = entity.maxStamina;
+    entity.statuses = [];
     showStats(entity);
     logSafe(
       entity,
-      `${entity.displayName} leveled up to level ${entity.level}. Health, Mana, and Stamina restored.`,
+      `${entity.displayName} leveled up to level ${entity.level}. Health, Mana, and Stamina restored. Statuses cleared.`,
     );
     renderViewport();
   };

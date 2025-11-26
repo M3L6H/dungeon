@@ -11,8 +11,10 @@ import {
   logWarn,
   setSelectedItem,
 } from "../gameState.js";
+import { Item } from "../items/item.js";
+import { ItemEntity } from "../items/itemEntity.js";
 import { showStats } from "../stats.js";
-import { levelUp, xpRequiredForLevel } from "./data.js";
+import { getDrop, levelUp, xpRequiredForLevel } from "./data.js";
 
 const HITPOINTS_PER_CONSTITUTION = 4;
 const MANA_PER_INTELLIGENCE = 5;
@@ -119,6 +121,7 @@ export class Entity {
   getEntitiesInMemory(x, y) {
     return (
       this.entityMemory[x + y * getMap().w]?.map(({ dir, id, sprite }) => {
+        if (dir === undefined) return { id, sprite };
         const { displayName, name } = getEntityById(id);
         return {
           id,
@@ -297,6 +300,11 @@ export class Entity {
     this._health = clamp(val, 0, this.maxHealth);
     if (this._health === 0) {
       this.dead = true;
+      const drop = getDrop(this);
+      if (drop) {
+        const itemEntity = new ItemEntity({ item: Item.idToItem[drop] });
+        getMap().moveEntity(itemEntity, this.x, this.y);
+      }
       logDanger(this, `${this.displayName} died.`)?.classList.add("bold");
     }
   }
@@ -319,7 +327,7 @@ export class Entity {
         levelUp(this);
         logSafe(
           this,
-          `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored.`,
+          `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored. Statuses cleared.`,
         );
       }
       this._xp -= xpRequired;

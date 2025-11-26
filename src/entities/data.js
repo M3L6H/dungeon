@@ -64,6 +64,7 @@ export function levelUp(entity) {
   entity.health = entity.maxHealth;
   entity.mana = entity.maxMana;
   entity.stamina = entity.maxStamina;
+  entity.statuses = [];
 }
 
 /**
@@ -71,4 +72,24 @@ export function levelUp(entity) {
  */
 export function setLevelStrategy(name, strategy) {
   levelStrategy[name] = strategy;
+}
+
+const dropTable = {};
+
+export function getDrop(entity) {
+  const table = dropTable[entity.name] ?? {};
+  let r = Math.random();
+
+  for (const drop in table) {
+    if (r < table[drop]) {
+      return drop;
+    }
+    r -= table[drop];
+  }
+
+  return undefined;
+}
+
+export function setDropTable(name, table) {
+  dropTable[name] = table;
 }

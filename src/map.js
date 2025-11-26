@@ -383,6 +383,7 @@ export class Map {
   examine(examiner, tX, tY) {
     const details = [];
     this.getEntities(tX, tY).forEach((entity) => {
+      if (!entity.dir) return;
       details.push(entity.examine(examiner));
     });
     const tileEntity = this.getTileEntity(tX, tY);
@@ -431,14 +432,14 @@ export class Map {
    * UPDATES the entityToMove with tX, tY and moves them in the map.
    */
   moveEntity(entityToMove, tX, tY) {
-    const { name, x, y } = entityToMove;
+    const { id, x, y } = entityToMove;
     const entities = this.getEntities(x, y);
-    if (entities.length === 1 && entities[0].name === name) {
+    if (entities.length === 1 && entities[0].id === id) {
       entities.pop();
     } else if (entities.length > 1) {
       const replacement = entities.pop();
-      for (let i = 0; i < entities.length && replacement.name !== name; ++i) {
-        if (entities[i].name === name) {
+      for (let i = 0; i < entities.length && replacement.id !== id; ++i) {
+        if (entities[i].id === id) {
           entities[i] = replacement;
           break;
         }
@@ -732,7 +733,10 @@ export class Map {
               const newX = x + dx;
               const newY = y + dy;
               if (this.getTile(newX, newY).isTraversable()) {
-                if (Math.random() < 0.5 && this.getTile(newX + dx, newY + dy).isTraversable()) {
+                if (
+                  Math.random() < 0.5 &&
+                  this.getTile(newX + dx, newY + dy).isTraversable()
+                ) {
                   this._setTileEntity(newX, newY, simpleDoor(newX, newY));
                 }
                 continue;

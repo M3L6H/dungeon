@@ -182,7 +182,7 @@ export function inRange(entity, action, data) {
     case "attack":
       const entities = getMap()
         .getEntities(x, y)
-        .filter((other) => other.id !== entity.id);
+        .filter((other) => other.id !== entity.id && other.dir !== undefined);
       return (
         dx + dy <= entity.attackRange &&
         entity.stamina > 0 &&
@@ -252,7 +252,12 @@ function attack(entity, target) {
   schedule(entity, timeToAttack, () => {
     const entities = getMap()
       .getEntities(x, y)
-      .filter((other) => other.id !== entity.id && other.name !== entity.name); // Don't attack self or same type
+      .filter(
+        (other) =>
+          other.id !== entity.id &&
+          other.name !== entity.name &&
+          other.dir !== undefined,
+      ); // Don't attack self or same type
     entities.forEach((other) => {
       if (entity.stamina === 0) return; // Can't attack with no stamina
       --entity.stamina;
@@ -348,7 +353,9 @@ function move(entity, target) {
 }
 
 export function rest(entity, full = false) {
-  const time = full ? Math.ceil(entity.maxStamina / entity.constitution) : 1;
+  const time = full
+    ? Math.ceil(entity.maxStamina / entity.constitution) + 1
+    : 1;
   schedule(entity, time, () => {
     entity.stamina += full ? entity.maxStamina : entity.constitution;
     logActionEnd(entity, "rested");
@@ -362,7 +369,9 @@ function skill(entity, data) {
   turnToFaceTarget(entity, data);
 
   schedule(entity, timeTaken, () => {
-    const entities = getMap().getEntities(x, y).filter(filter);
+    const entities = getMap()
+      .getEntities(x, y)
+      .filter((entity) => filter(entity) && entity.dir !== undefined);
     entities.forEach((other) => {
       if (entity.stamina < staminaCost || entity.mana < manaCost) return;
       entity.mana -= manaCost;
