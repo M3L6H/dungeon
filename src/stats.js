@@ -1,4 +1,4 @@
-import { getPlayer } from "./gameState.js";
+import { getPlayer, logSafe } from "./gameState.js";
 
 const statsElt = document.getElementById("level-up");
 
@@ -25,7 +25,7 @@ export function showStats(
   if (points === null) {
     pr.classList.add("hidden");
     cb.classList.remove("hidden");
-    title.textContent = "Stats";
+    title.textContent = `Stats (Lvl. ${entity.level})`;
   } else {
     pr.classList.remove("hidden");
     pr.textContent = `Points Remaining: ${points}`;
@@ -44,7 +44,15 @@ export function showStats(
     ["agility", "constitution", "endurance", "intelligence", "strength", "wisdom"].forEach((k, i) => {
       entity[k] += bonus[i];
     });
+    ++entity.level;
+    entity.health = entity.maxHealth;
+    entity.mana = entity.maxMana;
+    entity.stamina = entity.maxStamina;
     showStats(entity);
+    logSafe(
+      entity,
+      `${entity.displayName} leveled up to level ${entity.level}. Health, Mana, and Stamina restored.`,
+    );
   };
 
   statsElt.querySelectorAll(".stat-bar").forEach((sb, i) => {
@@ -65,6 +73,7 @@ export function showStats(
       const pip = pips[j];
       if (j <= stats[i]) {
         pip.classList.add("filled");
+        pip.classList.remove("bonus");
       } else if (j <= stats[i] + bonus[i]) {
         pip.classList.add("bonus");
       } else {

@@ -11,6 +11,7 @@ import {
   logWarn,
   setSelectedItem,
 } from "../gameState.js";
+import { showStats } from "../stats.js";
 import { levelUp, xpRequiredForLevel } from "./data.js";
 
 const HITPOINTS_PER_CONSTITUTION = 4;
@@ -311,11 +312,15 @@ export class Entity {
     this._xp = val;
     const xpRequired = xpRequiredForLevel(this.level);
     if (this._xp >= xpRequired && this.level < MAX_LEVEL) {
-      levelUp(this);
-      logSafe(
-        this,
-        `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored.`,
-      );
+      if (this.isPlayer) {
+        showStats(this, true, 2);
+      } else {
+        levelUp(this);
+        logSafe(
+          this,
+          `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored.`,
+        );
+      }
       this._xp -= xpRequired;
     }
   }
