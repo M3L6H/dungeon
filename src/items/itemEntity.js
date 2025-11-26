@@ -1,8 +1,10 @@
 import { addEntity, getMap } from "../gameState.js";
+import { renderViewport } from "../viewport.js";
 
 export function spawnItem(item, x, y) {
-  const entity = new ItemEntity(item);
+  const entity = new ItemEntity({ item });
   getMap().moveEntity(entity, x, y);
+  renderViewport();
   return entity;
 }
 
@@ -20,8 +22,12 @@ export class ItemEntity {
     return [];
   }
 
+  get description() {
+    return this.item?.description;
+  }
+
   get displayName() {
-    return `<a data-id="${this.id}">${this.item.name}</a>`;
+    return `<a data-id="${this.id}">${this.item?.name}</a>`;
   }
 
   get isItem() {
@@ -33,6 +39,6 @@ export class ItemEntity {
   }
 
   get sprite() {
-    return this.item.sprite;
+    return this.item?.sprite;
   }
 }

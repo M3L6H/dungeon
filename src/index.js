@@ -1,4 +1,5 @@
 import { setUpActions } from "./actions.js";
+import { createGreenSlimeSmall } from "./entities/slime.js";
 import { getPlayer, newGame } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpStats, showStats } from "./stats.js";
@@ -24,6 +25,7 @@ async function init() {
   setUpStats();
   renderViewport();
 
+  // createGreenSlimeSmall(getPlayer().x + 1, getPlayer().y);
   showStats(getPlayer(), true, 5);
 }
 

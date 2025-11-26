@@ -11,8 +11,7 @@ import {
   logWarn,
   setSelectedItem,
 } from "../gameState.js";
-import { Item } from "../items/item.js";
-import { spawnItem } from "../items/itemEntity.js";
+import { Item, spawnItem } from "../items/index.js";
 import { showStats } from "../stats.js";
 import { getDrop, levelUp, xpRequiredForLevel } from "./data.js";
 
@@ -33,7 +32,9 @@ export function examineEntity(entity, examiner) {
   }
 
   if (perception >= 5 && entity.immunities !== undefined) {
-    details.push(`${entity.displayName} immunities: ${Array.from(entity.immunities).join(", ")}`);
+    details.push(
+      `${entity.displayName} immunities: ${Array.from(entity.immunities).join(", ")}`,
+    );
   }
 
   for (const threshold in entity.description) {
@@ -302,7 +303,10 @@ export class Entity {
       const drop = getDrop(this);
       if (drop) {
         const itemEntity = spawnItem(Item.idToItem[drop], this.x, this.y);
-        logSafe(itemEntity, `${this.displayName} dropped a ${itemEntity.displayName}.`);
+        logSafe(
+          itemEntity,
+          `${this.displayName} dropped a ${itemEntity.displayName}.`,
+        );
       }
       logDanger(this, `${this.displayName} died.`)?.classList.add("bold");
     }

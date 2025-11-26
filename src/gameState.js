@@ -294,7 +294,7 @@ function attack(entity, target) {
         const xp = getXpValue(other);
         logSafe(
           entity,
-          `${entity.displayName} earned ${xp} xp from defeating ${other.name}.`,
+          `${entity.displayName} earned ${xp} xp from defeating ${other.displayName}.`,
         );
         entity.xp += xp;
       }

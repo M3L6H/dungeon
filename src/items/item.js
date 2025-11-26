@@ -4,7 +4,7 @@ export class Item {
   constructor(props) {
     this._id = props.id;
     this._name = props.name ?? "Unknown";
-    thia._description = props.description;
+    this._description = props.description;
     this._sprite = props.sprite;
 
     for (const k in props.additionalProps ?? {}) {
@@ -13,7 +13,7 @@ export class Item {
 
     Item.idToItem[props.id] = this;
   }
-  
+
   get description() {
     return this._description;
   }

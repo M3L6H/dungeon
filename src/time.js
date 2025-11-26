@@ -57,7 +57,7 @@ export function tick() {
         const xp = getXpValue(entity);
         logSafe(
           owner,
-          `${owner.displayName} earned ${xp} xp from defeating ${entity.name} with ${type}.`,
+          `${owner.displayName} earned ${xp} xp from defeating ${entity.displayName} with ${type}.`,
         );
         owner.xp += xp;
       }
