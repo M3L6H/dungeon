@@ -42,7 +42,7 @@ export function showStats(
     };
     const pips = sb.children;
     for (let j = 1; j <= 25; ++j) {
-      const pip = pips[i];
+      const pip = pips[j];
       if (j <= stats[i]) {
         pip.classList.add("filled");
       } else if (j <= stats[i] + bonus[i]) {
