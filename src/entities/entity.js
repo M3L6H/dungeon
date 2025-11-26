@@ -50,7 +50,7 @@ export class Entity {
     this._xp = 0;
 
     this.attackRange = 1;
-    this.attackDelayMod = 0;
+    this.attackDelayMod = props.attackDelayMod ?? 0;
     this.accuracyMod = 0;
     this.damageMod = 0;
     this.defenseMod = 0;

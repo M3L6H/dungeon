@@ -8,12 +8,12 @@ export const poisonWeak = (id) => ({
   id,
   type: STATUS.poison,
   freq: 4,
-  count: 3,
+  count: 5,
   effect: (entity) => {
-    entity.health -= 2;
+    entity.health -= 1;
     logDanger(
       entity,
-      `${entity.displayName} takes 2 damage from ${STATUS.poison}.`,
+      `${entity.displayName} takes 1 damage from ${STATUS.poison}.`,
     );
   },
 });
