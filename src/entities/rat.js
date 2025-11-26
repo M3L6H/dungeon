@@ -25,6 +25,7 @@ export function createRat(x, y, props) {
       behaviors: [explore, flee, wander, rest],
       additionalProps: {
         hands: false,
+        picksItems: true,
       },
       ...props,
     }),

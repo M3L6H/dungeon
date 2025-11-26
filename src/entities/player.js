@@ -22,6 +22,9 @@ export function createPlayer() {
         key: 2,
       },
       unique: true,
+      additionalProps: {
+        picksItems: true,
+      },
     }),
     x,
     y,

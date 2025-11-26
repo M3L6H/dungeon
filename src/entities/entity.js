@@ -219,7 +219,7 @@ export class Entity {
   }
 
   get defense() {
-    return Math.max(this.constitution + this.defenseMod, 1);
+    return Math.max(this.constitution + this.wisdom + this.defenseMod, 1);
   }
 
   get displayName() {

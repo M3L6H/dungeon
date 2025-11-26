@@ -1,4 +1,5 @@
-import { addEntity, getMap } from "../gameState.js";
+import { SKILL, act, addEntity, getMap, inRange } from "../gameState.js";
+import { pickup } from "../skills.js";
 import { renderViewport } from "../viewport.js";
 
 export function spawnItem(item, x, y) {
@@ -19,7 +20,13 @@ export class ItemEntity {
   }
 
   get behaviors() {
-    return [];
+    return [({ x, y }) => {
+      const data = pickup(this, x, y);
+      if (inRange(this, SKILL, data)) {
+        return act(this, SKILL, data);
+      }
+      return false;
+    }];
   }
 
   get description() {

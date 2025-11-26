@@ -1,6 +1,32 @@
 import { getMap, logCombatDanger, logCombatWarn, roll } from "./gameState.js";
 import { poisonWeak } from "./statuses.js";
 
+export const pickup = (entity, tX, tY) => {
+  const filter = (other) => other.picksItems;
+  return {
+    x: tX,
+    y: tY,
+    name: "Pick Up",
+    manaCost: 0,
+    staminaCost: 0,
+    timeTaken: 1,
+    filter,
+    inRange: () => {
+      const entities = getMap().getEntities(tX, tY).filter(filter);
+      return tX === entity.x && tY === entity.y && entities.length > 0;
+    },
+    skill: (other) => {
+      if (entity.dead) return;
+      entity.dead = true;
+      other.inventory[entity.item.id] = (other.inventory[entity.item.id] ?? 0) + 1;
+      logSafe(
+        other,
+        `${other.displayName} has picked up ${entity.displayName}.`,
+      );
+    },
+  };
+};
+
 export const poisonTouch = (entity, tX, tY) => {
   const dx = Math.abs(tX - entity.x);
   const dy = Math.abs(tY - entity.y);
