@@ -9,6 +9,10 @@ export function showStats(
   points = null,
   bonus = [0, 0, 0, 0, 0, 0],
 ) {
+  if (entity.dead) {
+    statsElt.classList.add("hidden");
+    return;
+  }
   const { agility, constitution, endurance, intelligence, strength, wisdom } =
     entity;
   const stats = [

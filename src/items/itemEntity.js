@@ -15,18 +15,21 @@ export class ItemEntity {
 
     this.x = 0;
     this.y = 0;
+    this.nextActionTime = 0;
 
     addEntity(this);
   }
 
   get behaviors() {
-    return [({ x, y }) => {
-      const data = pickup(this, x, y);
-      if (inRange(this, SKILL, data)) {
-        return act(this, SKILL, data);
-      }
-      return false;
-    }];
+    return [
+      ({ x, y }) => {
+        const data = pickup(this, x, y);
+        if (inRange(this, SKILL, data)) {
+          return act(this, SKILL, data);
+        }
+        return false;
+      },
+    ];
   }
 
   get description() {

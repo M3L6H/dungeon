@@ -1,4 +1,4 @@
-import { xpRequiredForLevel } from "./entities/data.js";
+import { entityInControl, xpRequiredForLevel } from "./entities/index.js";
 import {
   act,
   getMap,
@@ -72,7 +72,7 @@ function renderRange(tX, tY, tileElt) {
   }
 
   tileElt.onclick = () => {
-    if (!getPlayer().inControl || getPlayer().dead) return;
+    if (!entityInControl(getPlayer()) || getPlayer().dead) return;
     if (act(getPlayer(), getSelectedAction(), target)) {
       advance();
     }

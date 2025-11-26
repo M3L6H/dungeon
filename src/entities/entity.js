@@ -23,6 +23,10 @@ const MAX_LEVEL = 70;
 
 const ZERO = 0 | 0;
 
+export function entityInControl(entity) {
+  return entity.nextActionTime <= getTime();
+}
+
 export function examineEntity(entity, examiner) {
   const { perception } = examiner;
   const details = [];
@@ -44,6 +48,10 @@ export function examineEntity(entity, examiner) {
   }
 
   return details.join("\r\n");
+}
+
+export function releaseControl(entity, time) {
+  entity.nextActionTime = time;
 }
 
 export class Entity {
@@ -147,10 +155,6 @@ export class Entity {
       : undefined;
   }
 
-  releaseControl(nextActionTime) {
-    this.nextActionTime = nextActionTime;
-  }
-
   removeItem(item) {
     --this.inventory[item.id];
 
@@ -233,10 +237,6 @@ export class Entity {
 
   get health() {
     return this._health;
-  }
-
-  get inControl() {
-    return this.nextActionTime <= getTime();
   }
 
   get isPlayer() {

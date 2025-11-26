@@ -1,6 +1,5 @@
 import { renderActions } from "./actions.js";
-import { getXpValue } from "./entities/data.js";
-import { createPlayer } from "./entities/index.js";
+import { createPlayer, entityInControl, getXpValue } from "./entities/index.js";
 import { Item } from "./items/item.js";
 import {
   addDangerLog,
@@ -222,7 +221,7 @@ export function incrementTime() {
 
 export function interrupt(entity, interrupter) {
   turnToFaceTarget(entity, interrupter);
-  if (entity.inControl) return;
+  if (entityInControl(entity)) return;
   const events = getTimeline()[entity.nextActionTime];
   if (!events) return;
   for (let i = events.length - 1; i >= 0; --i) {
@@ -376,7 +375,9 @@ function skill(entity, data) {
       if (entity.stamina < staminaCost || entity.mana < manaCost) return;
       entity.mana -= manaCost;
       entity.stamina -= staminaCost;
-      other.tSet.add(entity.name.toLowerCase());
+      if (!entity.isItem && entity.name !== other.name) {
+        other.tSet.add(entity.name.toLowerCase());
+      }
       skill(other);
     });
     const suffix = entities.length === 0 ? " and hit nothing" : "";
@@ -394,7 +395,7 @@ function getTimeToMove(entity) {
 function logActionStart(entity, action) {
   const { displayName, isPlayer, x, y } = entity;
   const msg = `${displayName} is ${action}.`;
-  if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+  if (!entity.isItem && getMap().canEntitySeeTile(getPlayer(), x, y)) {
     const logElt = addStartLog(msg);
     if (isPlayer) logElt.classList.add("player");
   }
@@ -403,7 +404,7 @@ function logActionStart(entity, action) {
 export function logActionEnd(entity, action) {
   const { displayName, isPlayer, x, y } = entity;
   const msg = `${displayName} ${action}.`;
-  if (getMap().canEntitySeeTile(getPlayer(), x, y)) {
+  if (!entity.isItem && getMap().canEntitySeeTile(getPlayer(), x, y)) {
     const logElt = addEndLog(msg);
     if (isPlayer) logElt.classList.add("player");
   }

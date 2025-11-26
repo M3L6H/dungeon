@@ -1,5 +1,9 @@
-import { getXpValue } from "./entities/data.js";
-import { getEntityById } from "./entities/entity.js";
+import {
+  entityInControl,
+  getXpValue,
+  getEntityById,
+  releaseControl,
+} from "./entities/index.js";
 import {
   getEntities,
   getInput,
@@ -13,7 +17,7 @@ import {
 import { renderViewport } from "./viewport.js";
 
 export function advance() {
-  while (!getPlayer().dead && !getPlayer().inControl) {
+  while (!getPlayer().dead && !entityInControl(getPlayer())) {
     tick();
   }
 }
@@ -30,7 +34,7 @@ export function schedule(entity, timeOffset, effect) {
   ]);
   const nextActionTime = time + timeOffset;
   timeline[nextActionTime] = events;
-  entity.releaseControl(nextActionTime);
+  releaseControl(entity, nextActionTime);
 }
 
 export function tick() {
@@ -62,7 +66,10 @@ export function tick() {
         owner.xp += xp;
       }
     }
-    if (entity.inControl) getInput(entity);
+  });
+  getEntities().forEach((entity) => {
+    if (entity.dead) return;
+    if (entityInControl(entity)) getInput(entity);
   });
   getTileEntities().forEach((tileEntity) => tileEntity.tick(time));
   renderViewport();
