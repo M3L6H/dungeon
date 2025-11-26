@@ -447,6 +447,16 @@ section {
   content: "add";
 }
 
+.submit {
+  border-radius: 8px;
+  font-size: 1.2rem;
+  background-color: #a82a00;
+}
+
+.submit:disabled {
+  background-color: #454555;
+}
+
 .stat {
   width: 100%;
 }

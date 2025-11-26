@@ -20,12 +20,32 @@ export function showStats(
   ];
 
   const pr = statsElt.querySelector("#points-remaining");
+  const cb = statsElt.querySelector(".close-button");
+  const title = statsElt.querySelector(".title");
   if (points === null) {
     pr.classList.add("hidden");
+    cb.classList.remove("hidden");
+    title.textContent = "Stats";
   } else {
     pr.classList.remove("hidden");
     pr.textContent = `Points Remaining: ${points}`;
+    cb.classList.add("hidden");
+    title.textContent = points > 0 ? "Level Up" : "Confirm?";
   }
+  
+  const submit = statsElt.querySelector(".submit");
+  if (showButtons) {
+    submit.classList.remove("hidden");
+  } else {
+    submit.classList.add("hidden");
+  }
+  submit.disabled = points !== 0;
+  submit.onclick = () => {
+    ["agility", "constitution", "endurance", "intelligence", "strength", "wisdom"].forEach((k, i) => {
+      entity[k] += bonus[i];
+    });
+    showStats(entity);
+  };
 
   statsElt.querySelectorAll(".stat-bar").forEach((sb, i) => {
     const minus = sb.querySelector(".minus");
@@ -67,6 +87,10 @@ export function showStats(
   statsElt.classList.remove("hidden");
 }
 
+function hideStats() {
+  statsElt.classList.add("hidden");
+}
+
 function init() {
   const { agility, constitution, endurance, intelligence, strength, wisdom } =
     getPlayer();
@@ -93,6 +117,9 @@ function init() {
     const plus = document.createElement("button");
     plus.classList.add("material-symbols-outlined", "pip", "plus");
     sb.appendChild(plus);
+  });
+  statsElt.querySelector(".close-button")?.addEventListener("click", () => {
+    hideStats();
   });
 }
 
