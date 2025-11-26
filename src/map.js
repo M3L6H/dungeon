@@ -727,10 +727,12 @@ export class Map {
           const yMax = Math.max(a.y, b.y);
           for (let x = xMin; x <= xMax; ++x) {
             for (let y = yMin; y <= yMax; ++y) {
-              const newX = x - (i % 2) * (i - 2);
-              const newY = y + ((i + 1) % 2) * (i - 1);
+              const dx = -(i % 2) * (i - 2);
+              const dy = ((i + 1) % 2) * (i - 1);
+              const newX = x + dx;
+              const newY = y + dy;
               if (this.getTile(newX, newY).isTraversable()) {
-                if (Math.random() < 0.5) {
+                if (Math.random() < 0.5 && this.getTile(newX + dx, newY + dy).isTraversable()) {
                   this._setTileEntity(newX, newY, simpleDoor(newX, newY));
                 }
                 continue;
