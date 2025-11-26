@@ -90,6 +90,6 @@ export function createGreenSlimeSmall(x, y) {
     y,
   );
 }
-setDifficultyForEntityCreator(2, createGreenSlimeSmall);
+setDifficultyForEntityCreator(3, createGreenSlimeSmall);
 setBaseXp("green-slime", 3);
 setLevelStrategy("green-slime", [0, 0.2, 0.2, 0.3, 0, 0.3]);
