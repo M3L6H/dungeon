@@ -15,6 +15,7 @@ export function createPlayer() {
         0: (self) =>
           `You are a ${self.variant} elf. Your oddly colored hair is the only remarkable feature about you.`,
       },
+      level: 0,
       w,
       h,
       inventory: {
