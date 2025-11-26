@@ -88,7 +88,7 @@ export class Entity {
       return false;
     }
 
-    status.offset = status.freq - (getTime() % status.freq);
+    status.offset = status.freq - ((getTime() - 1) % status.freq);
     this.statuses.push(status);
 
     return true;
