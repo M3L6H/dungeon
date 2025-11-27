@@ -1,5 +1,5 @@
 import { getMap } from "../gameState.js";
-import { healthPotionMinor } from "../items/health-potion.js";
+import { healthPotionMinor } from "../items/healthPotion.js";
 import { STATUS } from "../statuses.js";
 import {
   findTarget,

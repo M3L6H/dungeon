@@ -1,5 +1,10 @@
 import { renderActions } from "./actions.js";
-import { createPlayer, entityInControl, getXpValue } from "./entities/index.js";
+import {
+  canEntityInteract,
+  createPlayer,
+  entityInControl,
+  getXpValue,
+} from "./entities/index.js";
 import { Item } from "./items/item.js";
 import {
   addDangerLog,
@@ -198,9 +203,14 @@ export function inRange(entity, action, data) {
     case "interact":
       if (!getSelectedItem() || dx + dy > 1) return false;
       const tileEntity = getMap().getTileEntity(x, y);
-      if (!!tileEntity && canEntityInteract(entity, tileEntity, getSelectedItem()) return true;
+      if (
+        !!tileEntity &&
+        canEntityInteract(entity, tileEntity, getSelectedItem())
+      ) {
+        return true;
+      }
       for (const other of getMap().getEntities(x, y)) {
-        if (canEntityInteract(entity, other, getSelectedItem()) return true;
+        if (canEntityInteract(entity, other, getSelectedItem())) return true;
       }
       return false;
     case "move":

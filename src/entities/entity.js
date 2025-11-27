@@ -24,12 +24,14 @@ const MAX_LEVEL = 70;
 const ZERO = 0 | 0;
 
 export function canEntityInteract(entity, other, item) {
-  const canInteractWithOther = other.canInteract?(entity, item);
+  const canInteractWithOther = !!other.canInteract
+    ? other.canInteract(entity, item)
+    : undefined;
   if (canInteractWithOther !== undefined) {
     return canInteractWithOther;
   }
-  
-  return item.canInteract?(entity, other) ?? false;
+
+  return item.canInteract(entity, other) ?? false;
 }
 
 export function entityInControl(entity) {
@@ -119,7 +121,7 @@ export class Entity {
     for (const k in props.additionalProps ?? {}) {
       this[k] = props.additionalProps[k];
     }
-    
+
     this._canInteract = props.canInteract;
 
     addEntity(this);
@@ -136,9 +138,10 @@ export class Entity {
 
     return true;
   }
-  
+
   canInteract(entity, item) {
-    return this._canInteract?(this, entity, item) ?? false;
+    if (!this._canInteract) return undefined;
+    return this._canInteract(this, entity, item);
   }
 
   getEntitiesInMemory(x, y) {

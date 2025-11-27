@@ -1,4 +1,6 @@
 import { getMap } from "../gameState.js";
+import { healthPotionMinor } from "../items/healthPotion.js";
+import { key } from "../items/key.js";
 import { Entity, startEntity } from "./entity.js";
 
 export function createPlayer() {
@@ -19,7 +21,8 @@ export function createPlayer() {
       w,
       h,
       inventory: {
-        key: 2,
+        [key.id]: 2,
+        [healthPotionMinor.id]: 1,
       },
       unique: true,
       additionalProps: {

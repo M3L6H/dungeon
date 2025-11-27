@@ -12,6 +12,7 @@ export const healthPotionMinor = new Item({
   sprite: "health-potion-minor",
   additionalProperties: {
     health: 10,
+    isHealthPotion: true,
   },
 });
 
@@ -21,6 +22,7 @@ export const healthPotionImproved = new Item({
   sprite: "health-potion-improved",
   additionalProperties: {
     health: 20,
+    isHealthPotion: true,
   },
 });
 
@@ -30,5 +32,6 @@ export const healthPotionMajor = new Item({
   sprite: "health-potion-major",
   additionalProperties: {
     health: 40,
+    isHealthPotion: true,
   },
 });

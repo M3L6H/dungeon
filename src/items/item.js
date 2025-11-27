@@ -11,7 +11,14 @@ export class Item {
       this[k] = props.additionalProps[k];
     }
 
+    this._canInteract = props.canInteract;
+
     Item.idToItem[props.id] = this;
+  }
+
+  canInteract(entity, other) {
+    if (!this._canInteract) return false;
+    return this._canInteract(this, entity, other);
   }
 
   get description() {
