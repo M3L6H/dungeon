@@ -1,4 +1,4 @@
-import { addTileEntity, logActionEnd } from "../gameState.js";
+import { addTileEntity } from "../gameState.js";
 
 export class TileEntity {
   constructor(props) {
@@ -20,6 +20,11 @@ export class TileEntity {
     this.state = props.initialState ?? {};
 
     addTileEntity(this);
+  }
+
+  canInteract(entity, item) {
+    if (!this._canInteract) return undefined;
+    return this._canInteract(this, entity, item);
   }
 
   examine({ perception }) {

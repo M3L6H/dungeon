@@ -10,6 +10,7 @@ const description = {
 const onInteract = (item, entity, other) => {
   if (entity.id !== other.id) return false;
   other.addStatus(item.status(entity.id));
+  entity.removeItem(item);
   logActionEnd(entity, `used ${item.name}`);
 };
 
