@@ -352,6 +352,13 @@ export class Entity {
   set label(val) {
     this._label = val;
   }
+  
+  set location(val) {
+    if (val !== this._location && val !== undefined) {
+      // showRoomName(val);
+    }
+    this._location = val;
+  }
 
   set stamina(val) {
     this._stamina = clamp(val, 0, this.maxStamina);

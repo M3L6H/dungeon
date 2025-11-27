@@ -3,6 +3,7 @@ import {
   examineEntity,
 } from "./entities/index.js";
 import { getTileEntities } from "./gameState.js";
+import { getNameForStart } from "./name.js";
 import { Tile } from "./tile.js";
 import { lockedDoor, ratSpawner, simpleDoor } from "./tileEntities/index.js";
 import { DIRS, Heap } from "./utils.js";
@@ -352,6 +353,7 @@ export class Map {
     ) {
       this.start = this.getRandomRoom();
     }
+    this.start.name = getNameForStart();
     this.start.type = RoomType.START;
     this._assignDifficultyAndRoomType(edges);
   }
@@ -451,6 +453,11 @@ export class Map {
     this.getEntities(tX, tY).push(entityToMove);
     entityToMove.x = tX;
     entityToMove.y = tY;
+    
+    if (entityToMove.isPlayer) {
+      entityToMove.location = this.origins[this.tileToId[tX + tY * this.w]]?.name;
+    } 
+ 
     this.updateMemory(entityToMove);
     this.getTileEntity(tX, tY)?.enter(entityToMove);
     return entityToMove;
