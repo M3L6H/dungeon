@@ -5,19 +5,32 @@ import {
 import { getTileEntities } from "./gameState.js";
 import { getNameForCombat, getNameForStart } from "./name.js";
 import { Tile } from "./tile.js";
-import { lockedDoor, ratSpawner, simpleDoor } from "./tileEntities/index.js";
+import {
+  lockedDoor,
+  ratSpawner,
+  sign,
+  simpleDoor,
+} from "./tileEntities/index.js";
 import { DIRS, Heap } from "./utils.js";
 
 const ROWS = 256;
 const COLS = 256;
 const ROOMS = Math.floor((ROWS * COLS) / 500);
 const MIN_RADIUS = 3;
+const CARDINAL = ["North", "East", "South", "West"];
 const OFFSETS = [
   [0, -1],
   [1, 0],
   [0, 1],
   [-1, 0],
 ];
+
+function getDirIndex(x, y) {
+  for (let i = 0; i < DIRS.length; ++i) {
+    const [dx, dy] = DIRS[i];
+    if (dx === x && dy === y) return i;
+  }
+}
 
 const heat = new Array(ROWS * COLS).fill(0);
 
@@ -749,6 +762,49 @@ export class Map {
                   this.getTile(newX + dx, newY + dy).isTraversable()
                 ) {
                   this._setTileEntity(newX, newY, simpleDoor(newX, newY));
+                }
+                let prev = { x: newX, y: newY };
+                let curr = { x: newX + dx, y: newY + dy };
+                let dist = 0;
+
+                while (this.getTile(curr.x, curr.y).isTraversable()) {
+                  const neighbors = [];
+                  for (let i = 0; i < DIRS.length; ++i) {
+                    const nX = curr.x + DIRS[i][0];
+                    const nY = curr.y + DIRS[i][1];
+                    if (
+                      (nX !== prev.x || nY !== prev.y) &&
+                      this.getTile(nX, nY).isTraversable()
+                    ) {
+                      neighbors.push({ x: nX, y: nY });
+                    }
+                  }
+                  if (neighbors.length === 0) break;
+                  if (
+                    neighbors.length > 1 ||
+                    this.getTileEntity(neighbors[0].x, neighbors[0].y) !==
+                      undefined
+                  ) {
+                    if (dist > 5) {
+                      const dir = getDirIndex(prev.x - curr.x, prev.y - curr.y);
+                      this._setTileEntity(
+                        curr.x,
+                        curr.y,
+                        sign(
+                          {
+                            0: () =>
+                              `The sign says: "Go ${CARDINAL[dir]} to find ${room.name}."`,
+                          },
+                          dir,
+                        ),
+                      );
+                    }
+                    break;
+                  }
+
+                  prev = curr;
+                  curr = neighbors[0];
+                  ++dist;
                 }
                 continue;
               }
