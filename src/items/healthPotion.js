@@ -10,7 +10,7 @@ export const healthPotionMinor = new Item({
   name: "Minor Health Potion",
   description,
   sprite: "health-potion-minor",
-  additionalProperties: {
+  additionalProps: {
     health: 10,
     isHealthPotion: true,
   },
@@ -20,7 +20,7 @@ export const healthPotionImproved = new Item({
   id: "health-potion-improved",
   name: "Improved Health Potion",
   sprite: "health-potion-improved",
-  additionalProperties: {
+  additionalProps: {
     health: 20,
     isHealthPotion: true,
   },
@@ -30,7 +30,7 @@ export const healthPotionMajor = new Item({
   id: "health-potion-major",
   name: "Major Health Potion",
   sprite: "health-potion-major",
-  additionalProperties: {
+  additionalProps: {
     health: 40,
     isHealthPotion: true,
   },
