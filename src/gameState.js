@@ -3,6 +3,7 @@ import {
   canEntityInteract,
   createPlayer,
   entityInControl,
+  entityInteract,
   getXpValue,
 } from "./entities/index.js";
 import { Item } from "./items/item.js";
@@ -338,7 +339,12 @@ function interact(entity, target) {
   turnToFaceTarget(entity, target);
   schedule(entity, 1, () => {
     const tileEntity = getMap().getTileEntity(x, y);
-    tileEntity?.interact(entity, getSelectedItem());
+    if (!!tileEntity && entityInteract(entity, tileEntity, getSelectedItem())) {
+      return;
+    }
+    for (const other of getMap().getEntities(x, y)) {
+      if (entityInteract(entity, other, getSelectedItem())) return;
+    }
   });
   return true;
 }

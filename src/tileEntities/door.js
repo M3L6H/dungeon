@@ -1,5 +1,5 @@
 import { getMap, logActionEnd } from "../gameState.js";
-import { key } from "../items/index.js";
+import { emptyHand, key } from "../items/index.js";
 import { DIRS } from "../utils.js";
 import { TileEntity } from "./tileEntity.js";
 
@@ -14,8 +14,8 @@ export function lockedDoor(x, y, locked = true) {
       0: ({ locked, open }) =>
         `The door is ${locked ? "locked" : open ? "open" : "closed"}. It is made of a sturdy wood, reinforced with iron.`,
     },
-    canInteract: ({ x, y }, entity) =>
-      (entity.hands ?? true) && !(entity.x === x && entity.y === y),
+    canInteract: ({ x, y }, entity, item) =>
+      (entity.hands ?? true) && !(entity.x === x && entity.y === y) && (item.id === emptyHand.id || item.id === key.id),
     isOpaque: ({ open }) => !open,
     isTraversable: ({ locked, open }, entity) =>
       !locked && (open || (entity.hands ?? true)),
@@ -44,7 +44,7 @@ export function lockedDoor(x, y, locked = true) {
         return true;
       }
 
-      if (entity.hands ?? true) {
+      if (entity.hands ?? true && (item.id === emptyHand.id || item.id === key.id)) {
         state.open = !state.open;
         if (state.open) {
           logActionEnd(entity, "opened the door");

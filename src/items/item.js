@@ -12,6 +12,7 @@ export class Item {
     }
 
     this._canInteract = props.canInteract;
+    this.onInteract = props.onInteract;
 
     Item.idToItem[props.id] = this;
   }
@@ -19,6 +20,11 @@ export class Item {
   canInteract(entity, other) {
     if (!this._canInteract) return false;
     return this._canInteract(this, entity, other);
+  }
+
+  interact(entity, other) {
+    if (!this.onInteract) return false;
+    return this.onInteract(this, entity, other);
   }
 
   get description() {

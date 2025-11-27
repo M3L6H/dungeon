@@ -38,6 +38,17 @@ export function entityInControl(entity) {
   return entity.nextActionTime <= getTime();
 }
 
+export function entityInteract(entity, other, item) {
+  const interactWithOther = !!other.interact
+    ? other.interact(entity, item)
+    : undefined;
+  if (interactWithOther !== undefined) {
+    return interactWithOther;
+  }
+
+  return item.interact(entity, other) ?? false;
+}
+
 export function examineEntity(entity, examiner) {
   const { perception } = examiner;
   const details = [];
@@ -123,6 +134,7 @@ export class Entity {
     }
 
     this._canInteract = props.canInteract;
+    this.onInteract = props.onInteract;
 
     addEntity(this);
   }
@@ -171,6 +183,13 @@ export class Entity {
     return ((this.memory[q] ?? ZERO) & (1 << r)) !== 0
       ? getMap().getTile(x, y)
       : undefined;
+  }
+
+  interact(entity, item) {
+    if (this.onInteract !== undefined) {
+      return this.onInteract(this, entity, item);
+    }
+    return undefined;
   }
 
   removeItem(item) {

@@ -43,11 +43,7 @@ export class TileEntity {
     if (this.onInteract !== undefined) {
       return this.onInteract(this.state, entity, item);
     }
-    logActionEnd(
-      entity,
-      `failed to use ${item.replaceAll("-", " ")} on ${this.name}`,
-    );
-    return false;
+    return undefined;
   }
 
   isOpaque(entity) {
