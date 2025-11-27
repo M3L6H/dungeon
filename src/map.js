@@ -763,7 +763,7 @@ export class Map {
                 ) {
                   this._setTileEntity(newX, newY, simpleDoor(newX, newY));
                 }
-                let prev = { x: newX, y: newY };
+                let prev = [undefined, undefined, { x: newX, y: newY }];
                 let curr = { x: newX + dx, y: newY + dy };
                 let dist = 0;
 
@@ -773,23 +773,19 @@ export class Map {
                     const nX = curr.x + DIRS[i][0];
                     const nY = curr.y + DIRS[i][1];
                     if (
-                      (nX !== prev.x || nY !== prev.y) &&
+                      (nX !== prev[prev.length - 1].x || nY !== prev[prev.length - 1].y) &&
                       this.getTile(nX, nY).isTraversable()
                     ) {
                       neighbors.push({ x: nX, y: nY });
                     }
                   }
                   if (neighbors.length === 0) break;
-                  if (
-                    neighbors.length > 1 ||
-                    this.getTileEntity(neighbors[0].x, neighbors[0].y) !==
-                      undefined
-                  ) {
+                  if (neighbors.length > 1) {
                     if (dist > 5) {
-                      const dir = getDirIndex(prev.x - curr.x, prev.y - curr.y);
+                      const dir = getDirIndex(prev[0].x - prev[1].x, prev[0].y - prev[1].y);
                       this._setTileEntity(
-                        curr.x,
-                        curr.y,
+                        prev[1].x,
+                        prev[1].y,
                         sign(
                           {
                             0: () =>
@@ -802,7 +798,10 @@ export class Map {
                     break;
                   }
 
-                  prev = curr;
+                  for (let i = 1; i < prev.length; ++i) {
+                    prev[i - 1] = prev[i];
+                  }
+                  prev[prev.length - 1] = curr;
                   curr = neighbors[0];
                   ++dist;
                 }
