@@ -13,6 +13,7 @@ import {
 } from "../gameState.js";
 import { Item, spawnItem } from "../items/index.js";
 import { showStats } from "../stats.js";
+import { showRoomNameEntering, showRoomNameLeaving } from "../title.js";
 import { getDrop, levelUp, xpRequiredForLevel } from "./data.js";
 
 const HITPOINTS_PER_CONSTITUTION = 4;
@@ -352,10 +353,17 @@ export class Entity {
   set label(val) {
     this._label = val;
   }
-  
+
+  /**
+   * @param {string} val - Name of the location
+   */
   set location(val) {
-    if (val !== this._location && val !== undefined) {
-      // showRoomName(val);
+    if (val !== this._location) {
+      if (val !== undefined) {
+        showRoomNameEntering(val);
+      } else {
+        showRoomNameLeaving(this._location);
+      }
     }
     this._location = val;
   }

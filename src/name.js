@@ -8,15 +8,7 @@ const START = [
     "Sinister",
     "Terrible",
   ],
-  [
-    "Beginning",
-    "Birth",
-    "Descent",
-    "Entrance",
-    "Greeting",
-    "Opening",
-    "Start",
-  ],
+  ["Approach", "Beginning", "Birth", "Descent", "Greeting", "Opening", "Start"],
 ];
 
 export function getNameForStart() {
@@ -24,5 +16,8 @@ export function getNameForStart() {
 }
 
 function getRandomWords(list) {
-  return list.map(words => words[Math.floor(Math.random() * words.length)]).join(" ");
+  return list
+    .map((words) => words[Math.floor(Math.random() * words.length)])
+    .join(" ");
 }
+
