@@ -93,6 +93,7 @@ section {
 }
 
 #title {
+  color: white;
   position: absolute;
   left: 50%;
   top: 10vh;
