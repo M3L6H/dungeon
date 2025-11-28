@@ -8,6 +8,6 @@ export const gold = new Item({
 
 export const goldPile = new Item({
   id: "gold-pile",
-  name: "Gold Pile",
+  name: "Pile of Gold",
   sprite: "gold-pile",
 });
