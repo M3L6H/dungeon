@@ -39,6 +39,15 @@ export function getNameForCombat() {
   return getRandomWords(COMBAT);
 }
 
+const SECRET = [
+  ["Hidden", "Hushed", "Secret", "Whispering"],
+  ["Alcove", "Chamber", "Corner", "Room"],
+];
+
+export function getNameForSecret() {
+  return getRandomWords(SECRET);
+}
+
 const START = [
   [
     "Adventurer's",
@@ -64,6 +73,37 @@ const START = [
 
 export function getNameForStart() {
   return getRandomWords(START);
+}
+
+const TREASURE = [
+  [
+    "Abundant",
+    "Bountiful",
+    "Copious",
+    "Dazzling",
+    "Glittering",
+    "Plentiful",
+    "Priceless",
+    "Radiant",
+    "Shining",
+    "Twinkling",
+  ],
+  [
+    "Cache",
+    "Heap",
+    "Hoard",
+    "Pile",
+    "Reserve",
+    "Stash",
+    "Stockpile",
+    "Treasure",
+    "Trove",
+    "Wealth",
+  ],
+];
+
+export function getNameForTreasure() {
+  return getRandomWords(TREASURE);
 }
 
 function getRandomWords(list) {

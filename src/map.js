@@ -3,7 +3,12 @@ import {
   examineEntity,
 } from "./entities/index.js";
 import { getTileEntities } from "./gameState.js";
-import { getNameForCombat, getNameForStart } from "./name.js";
+import {
+  getNameForCombat,
+  getNameForSecret,
+  getNameForStart,
+  getNameForTreasure,
+} from "./name.js";
 import { Tile } from "./tile.js";
 import {
   lockedDoor,
@@ -13,9 +18,10 @@ import {
 } from "./tileEntities/index.js";
 import { DIRS, Heap } from "./utils.js";
 
-const ROWS = 256;
-const COLS = 256;
+const ROWS = 384;
+const COLS = 384;
 const ROOMS = Math.floor((ROWS * COLS) / 500);
+const MAX_DIFFICULTY = 30;
 const MIN_RADIUS = 3;
 const CARDINAL = ["North", "East", "South", "West"];
 const OFFSETS = [
@@ -359,16 +365,16 @@ export class Map {
     this.start = this.getRandomRoom();
     while (
       this.start.radius > 5 ||
-      this.start.x < 30 ||
-      this.start.y < 30 ||
-      this.start.x > this.w - 30 ||
-      this.start.y > this.h - 30
+      (this.start.x > 30 && this.start.x < this.w - 30) ||
+      (this.start.y > 30 && this.start.y < this.h - 30)
     ) {
       this.start = this.getRandomRoom();
     }
     this.start.name = getNameForStart();
     this.start.type = RoomType.START;
-    this._assignDifficultyAndRoomType(edges);
+
+    this.maxDifficulty = this._assignDifficultyAndRoomType(edges);
+    console.debug(`Max difficulty: ${this.maxDifficulty}`);
   }
 
   /**
@@ -537,7 +543,8 @@ export class Map {
 
   spawnEntities() {
     for (let id = 0; id < this.origins.length; ++id) {
-      const { difficulty, radius, type } = this.origins[id];
+      const { radius, type } = this.origins[id];
+      const difficulty = this._getDifficulty(id);
       if (type !== RoomType.COMBAT) continue;
       const count = Math.min(20, (radius - 1) * (radius - 1));
       let budget = difficulty * count;
@@ -702,12 +709,14 @@ export class Map {
       roomIdToEdge[b.id] = edgesB;
     });
     this.start.difficulty = 0;
+    let maxDifficulty = 0;
     const q = [this.start];
     for (let i = 0; i < q.length; ++i) {
       adj[q[i].id].forEach((id) => {
         const origin = this.origins[id];
         if (origin.difficulty !== undefined) return;
         origin.difficulty = q[i].difficulty + 1;
+        maxDifficulty = Math.max(origin.difficulty, maxDifficulty);
         q.push(origin);
       });
 
@@ -721,105 +730,70 @@ export class Map {
 
         if (r < 0.1) {
           // 10% chance of secret room
-          room.type = RoomType.SECRET;
+          this._makeSecretRoom(room, roomIdToEdge);
           continue;
         } else if (r < 1.3) {
           // 20% chance of treasure room
-          room.type = RoomType.TREASURE;
-          const { dir, x, y } = roomIdToEdge[id][0];
-          const [dx, dy] = DIRS[dir];
-          const newX = x + dx;
-          const newY = y + dy;
-          this._setTileEntity(newX, newY, lockedDoor(newX, newY));
+          this._makeTreasureRoom(room, roomIdToEdge);
           continue;
         }
       }
 
       if (room.radius < 15 && Math.random() < 0.75) {
-        room.name = getNameForCombat();
-        room.type = RoomType.COMBAT;
-        const endpoints = [
-          [this.points[id][0], this.points[id][1]],
-          [this.points[id][3], this.points[id][4]],
-          [this.points[id][6], this.points[id][7]],
-          [this.points[id][9], this.points[id][10]],
-        ];
-        for (let i = 0; i < endpoints.length; ++i) {
-          const [a, b] = endpoints[i];
-          const xMin = Math.min(a.x, b.x);
-          const xMax = Math.max(a.x, b.x);
-          const yMin = Math.min(a.y, b.y);
-          const yMax = Math.max(a.y, b.y);
-          for (let x = xMin; x <= xMax; ++x) {
-            for (let y = yMin; y <= yMax; ++y) {
-              const dx = -(i % 2) * (i - 2);
-              const dy = ((i + 1) % 2) * (i - 1);
-              const newX = x + dx;
-              const newY = y + dy;
-              if (this.getTile(newX, newY).isTraversable()) {
-                if (
-                  Math.random() < 0.5 &&
-                  this.getTile(newX + dx, newY + dy).isTraversable()
-                ) {
-                  this._setTileEntity(newX, newY, simpleDoor(newX, newY));
-                }
-                let prev = [undefined, undefined, { x: newX, y: newY }];
-                let curr = { x: newX + dx, y: newY + dy };
-                let dist = 0;
-
-                while (this.getTile(curr.x, curr.y).isTraversable()) {
-                  const neighbors = [];
-                  for (let i = 0; i < DIRS.length; ++i) {
-                    const nX = curr.x + DIRS[i][0];
-                    const nY = curr.y + DIRS[i][1];
-                    if (
-                      (nX !== prev[prev.length - 1].x || nY !== prev[prev.length - 1].y) &&
-                      this.getTile(nX, nY).isTraversable()
-                    ) {
-                      neighbors.push({ x: nX, y: nY });
-                    }
-                  }
-                  if (neighbors.length === 0) break;
-                  if (neighbors.length > 1) {
-                    if (dist > 5) {
-                      const dir = getDirIndex(prev[0].x - prev[1].x, prev[0].y - prev[1].y);
-                      this._setTileEntity(
-                        prev[1].x,
-                        prev[1].y,
-                        sign(
-                          {
-                            0: () =>
-                              `The sign says: "Go ${CARDINAL[dir]} to find ${room.name}."`,
-                          },
-                          dir,
-                        ),
-                      );
-                    }
-                    break;
-                  }
-
-                  for (let i = 1; i < prev.length; ++i) {
-                    prev[i - 1] = prev[i];
-                  }
-                  prev[prev.length - 1] = curr;
-                  curr = neighbors[0];
-                  ++dist;
-                }
-                continue;
-              }
-              if (Math.random() < 0.05) {
-                this._setTileEntity(newX, newY, ratSpawner(x, y, (i + 2) % 4));
-              }
-            }
-          }
-        }
+        this._makeCombatRoom(room);
         continue;
       }
     }
+    return maxDifficulty;
   }
 
   _coordsEqual(a, b) {
     return a.x === b.x && a.y === b.y;
+  }
+
+  _createSign(room, x, y, dx, dy) {
+    let prev = [undefined, undefined, { x, y }];
+    let curr = { x: x + dx, y: y + dy };
+    let dist = 0;
+
+    while (this.getTile(curr.x, curr.y).isTraversable()) {
+      const neighbors = [];
+      for (let i = 0; i < DIRS.length; ++i) {
+        const nX = curr.x + DIRS[i][0];
+        const nY = curr.y + DIRS[i][1];
+        if (
+          (nX !== prev[prev.length - 1].x || nY !== prev[prev.length - 1].y) &&
+          this.getTile(nX, nY).isTraversable()
+        ) {
+          neighbors.push({ x: nX, y: nY });
+        }
+      }
+      if (neighbors.length === 0) break;
+      if (neighbors.length > 1) {
+        if (dist > 5) {
+          const dir = getDirIndex(prev[0].x - prev[1].x, prev[0].y - prev[1].y);
+          this._setTileEntity(
+            prev[1].x,
+            prev[1].y,
+            sign(
+              {
+                0: () =>
+                  `The sign says: "Go ${CARDINAL[dir]} to find ${room.name}."`,
+              },
+              dir,
+            ),
+          );
+        }
+        break;
+      }
+
+      for (let i = 1; i < prev.length; ++i) {
+        prev[i - 1] = prev[i];
+      }
+      prev[prev.length - 1] = curr;
+      curr = neighbors[0];
+      ++dist;
+    }
   }
 
   _fillRect(a, b, tile, id) {
@@ -835,6 +809,81 @@ export class Map {
         }
       }
     }
+  }
+
+  _getDifficulty(id) {
+    return Math.round(
+      (this.origins[id].difficulty * MAX_DIFFICULTY) / this.maxDifficulty,
+    );
+  }
+
+  _iteratePerimeter(id, func) {
+    const endpoints = [
+      [this.points[id][0], this.points[id][1]],
+      [this.points[id][3], this.points[id][4]],
+      [this.points[id][6], this.points[id][7]],
+      [this.points[id][9], this.points[id][10]],
+    ];
+    for (let i = 0; i < endpoints.length; ++i) {
+      const [a, b] = endpoints[i];
+      const xMin = Math.min(a.x, b.x);
+      const xMax = Math.max(a.x, b.x);
+      const yMin = Math.min(a.y, b.y);
+      const yMax = Math.max(a.y, b.y);
+      for (let x = xMin; x <= xMax; ++x) {
+        for (let y = yMin; y <= yMax; ++y) {
+          const dx = -(i % 2) * (i - 2);
+          const dy = ((i + 1) % 2) * (i - 1);
+          const newX = x + dx;
+          const newY = y + dy;
+          func(newX, newY, dx, dy, i);
+        }
+      }
+    }
+  }
+
+  _makeCombatRoom(room) {
+    const { id } = room;
+    room.name = getNameForCombat();
+    room.type = RoomType.COMBAT;
+    this._iteratePerimeter(id, (x, y, dx, dy, i) => {
+      if (this.getTile(x, y).isTraversable()) {
+        if (
+          Math.random() < 0.5 &&
+          this.getTile(x + dx, y + dy).isTraversable()
+        ) {
+          this._setTileEntity(x, y, simpleDoor(x, y));
+        }
+        this._createSign(room, x, y, dx, dy);
+        return;
+      }
+      if (Math.random() < 0.05) {
+        this._setTileEntity(x, y, ratSpawner(x - dx, y - dy, (i + 2) % 4));
+      }
+    });
+  }
+
+  _makeSecretRoom(room, roomIdToEdge) {
+    const { id } = room;
+    room.name = getNameForSecret();
+    room.type = RoomType.SECRET;
+    const { dir, x, y } = roomIdToEdge[id][0];
+    const [dx, dy] = DIRS[dir];
+    const newX = x + dx;
+    const newY = y + dy;
+    this._setTile(newX, newY, Tile.secretWall);
+  }
+
+  _makeTreasureRoom(room, roomIdToEdge) {
+    const { id } = room;
+    room.name = getNameForTreasure();
+    room.type = RoomType.TREASURE;
+    const { dir, x, y } = roomIdToEdge[id][0];
+    const [dx, dy] = DIRS[dir];
+    const newX = x + dx;
+    const newY = y + dy;
+    this._setTileEntity(newX, newY, lockedDoor(newX, newY));
+    this._createSign(room, x, y, dx, dy);
   }
 
   _isTraversable(entity, tile, tileEntityData) {

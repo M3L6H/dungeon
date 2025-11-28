@@ -6,6 +6,7 @@ import {
   getMap,
   getSelectedItem,
   getTime,
+  interrupt,
   logDanger,
   logSafe,
   logWarn,
@@ -13,6 +14,7 @@ import {
 } from "../gameState.js";
 import { Item, spawnItem } from "../items/index.js";
 import { showStats } from "../stats.js";
+import { schedule } from "../time.js";
 import { showRoomNameEntering, showRoomNameLeaving } from "../title.js";
 import { getDrop, levelUp, xpRequiredForLevel } from "./data.js";
 
@@ -376,16 +378,19 @@ export class Entity {
     this._xp = val;
     const xpRequired = xpRequiredForLevel(this.level);
     if (this._xp >= xpRequired && this.level < MAX_LEVEL) {
-      if (this.isPlayer) {
-        showStats(this, true, 2);
-      } else {
-        levelUp(this);
-        logSafe(
-          this,
-          `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored. Statuses cleared.`,
-        );
-      }
-      this._xp -= xpRequired;
+      interrupt(this, this);
+      schedule(this, 1, () => {
+        if (this.isPlayer) {
+          showStats(this, true, 2);
+        } else {
+          levelUp(this);
+          logSafe(
+            this,
+            `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored. Statuses cleared.`,
+          );
+        }
+        this._xp -= xpRequired;
+      });
     }
   }
 }

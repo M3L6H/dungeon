@@ -124,7 +124,7 @@ export function flee(entity, afraid = () => true) {
     }
   }
 
-  if (options[x + y * w].heat === 0) return false;
+  if (options[x + y * w].heat <= 0) return false;
 
   const heap = new Heap((a, b) => {
     if (a.heat < b.heat) return -1;
