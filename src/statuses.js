@@ -54,6 +54,7 @@ export const poisonWeak = (id) => ({
   count: 5,
   effect: (entity) => {
     entity.health -= 1;
+    entity.stamina -= 1;
     logDanger(
       entity,
       `${entity.displayName} takes 1 damage from ${STATUS.poison}.`,

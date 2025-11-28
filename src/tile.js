@@ -13,7 +13,7 @@ export class Tile {
 
   static wall = new Tile({
     name: "Dungeon Wall",
-    url: "url('images/wall.png')",
+    url: "url('images/dungeon-wall.png')",
     description: {
       0: () =>
         Math.random() < 0.5
