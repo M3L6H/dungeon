@@ -103,6 +103,7 @@ section {
   top: 10vh;
   z-index: 15;
   transform: translateX(-50%);
+  pointer-events: none;
 }
 
 #viewport {
