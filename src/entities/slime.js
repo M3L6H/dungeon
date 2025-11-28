@@ -1,4 +1,5 @@
 import { getMap } from "../gameState.js";
+import { gold, goldPile } from "../items/gold.js";
 import { healthPotionMinor } from "../items/healthPotion.js";
 import { STATUS } from "../statuses.js";
 import {
@@ -52,6 +53,15 @@ export function createBlueSlimeSmall(x, y) {
 setDifficultyForEntityCreator(1, createBlueSlimeSmall);
 setBaseXp("blue-slime", 2);
 setLevelStrategy("blue-slime", [0, 0.3, 0.3, 0, 0.4, 0]);
+setDropTable("blue-slime", {
+  0.3: (entity) => ({
+    itemId: goldPile.id,
+    additionalProps: {
+      count: Math.floor(Math.random() * entity.level * 5),
+      pickup: gold,
+    },
+  }),
+});
 
 /**
  * Creates a small green slime.
@@ -96,5 +106,12 @@ setDifficultyForEntityCreator(3, createGreenSlimeSmall);
 setBaseXp("green-slime", 3);
 setLevelStrategy("green-slime", [0, 0.2, 0.2, 0.3, 0, 0.3]);
 setDropTable("green-slime", {
-  [healthPotionMinor.id]: 0.2,
+  0.2: () => ({ itemId: healthPotionMinor.id }),
+  0.2: (entity) => ({
+    itemId: goldPile.id,
+    additionalProps: {
+      count: Math.floor(Math.random() * entity.level * 5),
+      pickup: gold,
+    },
+  }),
 });

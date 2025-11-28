@@ -342,7 +342,12 @@ export class Entity {
       this.dead = true;
       const drop = getDrop(this);
       if (drop) {
-        const itemEntity = spawnItem(Item.idToItem[drop], this.x, this.y);
+        const itemEntity = spawnItem(
+          Item.idToItem[drop.itemId],
+          this.x,
+          this.y,
+          drop.additionalProps,
+        );
         logSafe(
           itemEntity,
           `${this.displayName} dropped a ${itemEntity.displayName}.`,

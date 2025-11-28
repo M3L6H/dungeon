@@ -80,11 +80,11 @@ export function getDrop(entity) {
   const table = dropTable[entity.name] ?? {};
   let r = Math.random();
 
-  for (const drop in table) {
-    if (r < table[drop]) {
-      return drop;
+  for (const chance in table) {
+    if (r < chance) {
+      return table[chance](entity);
     }
-    r -= table[drop];
+    r -= chance;
   }
 
   return undefined;

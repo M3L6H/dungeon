@@ -187,7 +187,7 @@ export function inRange(entity, action, data) {
     case "attack":
       const entities = getMap()
         .getEntities(x, y)
-        .filter((other) => other.id !== entity.id && !other.isItem);
+        .filter((other) => other.name !== entity.name && !other.isItem);
       return (
         dx + dy <= entity.attackRange &&
         entity.stamina > 0 &&
