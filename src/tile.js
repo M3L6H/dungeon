@@ -14,7 +14,7 @@ export class Tile {
     name: "Dungeon Wall",
     url: "url('images/dungeon-wall-secret.png')",
     description: {
-      0: ({ perception }) => {
+      0: (_, { perception }) => {
         if (perception >= 5) return "Something looks odd about this wall";
         return Math.random() < 0.5
           ? "The dungeon wall is made of solid dark stone."
@@ -61,7 +61,7 @@ export class Tile {
     const details = [];
     for (const threshold in this.description) {
       if (perception >= threshold) {
-        details.push(this.description[threshold](entity, this));
+        details.push(this.description[threshold](this, entity));
       }
     }
     return details.join("\r\n");

@@ -15,6 +15,11 @@ import {
   ratSpawner,
   sign,
   simpleDoor,
+  treasureChestCommon,
+  treasureChestEpic,
+  treasureChestLegendary,
+  treasureChestRare,
+  treasureChestUncommon,
 } from "./tileEntities/index.js";
 import { DIRS, Heap } from "./utils.js";
 
@@ -542,39 +547,53 @@ export class Map {
   }
 
   spawnEntities() {
+    const chests = [
+      treasureChestCommon,
+      treasureChestUncommon,
+      treasureChestRare,
+      treasureChestEpic,
+      treasureChestLegendary,
+    ];
     for (let id = 0; id < this.origins.length; ++id) {
-      const { radius, type } = this.origins[id];
+      const { radius, type, x, y } = this.origins[id];
       const difficulty = this._getDifficulty(id);
-      if (type !== RoomType.COMBAT) continue;
-      const count = Math.min(20, (radius - 1) * (radius - 1));
-      let budget = difficulty * count;
-      for (let i = 0; i < count && budget > 0; ++i) {
-        if (Math.random() < 0.5) continue;
-        const [creator, actualDifficulty] = getRandomEntityForDifficultyRange(
-          difficulty - 3,
-          difficulty + 3,
+
+      if (type === RoomType.TREASURE) {
+        const tier = Math.floor(
+          (difficulty * (chests.length - 1)) / MAX_DIFFICULTY,
         );
-        if (!creator) continue;
+        this._setTileEntity(x, y, chests[tier]());
+      } else if (type === RoomType.COMBAT) {
+        const count = Math.min(20, (radius - 1) * (radius - 1));
+        let budget = difficulty * count;
+        for (let i = 0; i < count && budget > 0; ++i) {
+          if (Math.random() < 0.5) continue;
+          const [creator, actualDifficulty] = getRandomEntityForDifficultyRange(
+            difficulty - 3,
+            difficulty + 3,
+          );
+          if (!creator) continue;
 
-        let a, b;
-        if (Math.random() < 0.5) {
-          a = this.points[id][0];
-          b = this.points[id][6];
-        } else {
-          a = this.points[id][10];
-          b = this.points[id][4];
-        }
+          let a, b;
+          if (Math.random() < 0.5) {
+            a = this.points[id][0];
+            b = this.points[id][6];
+          } else {
+            a = this.points[id][10];
+            b = this.points[id][4];
+          }
 
-        while (true) {
-          const x = randInRange(a.x, b.x);
-          const y = randInRange(a.y, b.y);
-          if (
-            this.getTile(x, y).name === Tile.floor.name &&
-            this.getTileEntity(x, y) === undefined
-          ) {
-            creator(x, y);
-            budget -= actualDifficulty;
-            break;
+          while (true) {
+            const x = randInRange(a.x, b.x);
+            const y = randInRange(a.y, b.y);
+            if (
+              this.getTile(x, y).name === Tile.floor.name &&
+              this.getTileEntity(x, y) === undefined
+            ) {
+              creator(x, y);
+              budget -= actualDifficulty;
+              break;
+            }
           }
         }
       }
