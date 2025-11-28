@@ -7,7 +7,7 @@ import {
 } from "./gameState.js";
 import { poisonWeak } from "./statuses.js";
 
-export const pickup = (entity, tX, tY) => {
+export const pickup = (entity, tX, tY, pickupItem, count) => {
   const filter = (other) => other.picksItems;
   return {
     x: tX,
@@ -24,8 +24,8 @@ export const pickup = (entity, tX, tY) => {
     skill: (other) => {
       if (entity.dead) return;
       entity.dead = true;
-      other.inventory[entity.item.id] =
-        (other.inventory[entity.item.id] ?? 0) + 1;
+      other.inventory[pickupItem.id] =
+        (other.inventory[pickupItem.id] ?? 0) + count;
       logSafe(
         other,
         `${other.displayName} has picked up ${entity.displayName}.`,

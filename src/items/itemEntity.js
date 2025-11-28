@@ -2,8 +2,8 @@ import { SKILL, act, addEntity, getMap, inRange } from "../gameState.js";
 import { pickup } from "../skills.js";
 import { renderViewport } from "../viewport.js";
 
-export function spawnItem(item, x, y) {
-  const entity = new ItemEntity({ item });
+export function spawnItem(item, x, y, additionalProps = {}) {
+  const entity = new ItemEntity({ item, ...additionalProps });
   getMap().moveEntity(entity, x, y);
   renderViewport();
   return entity;
@@ -12,6 +12,8 @@ export function spawnItem(item, x, y) {
 export class ItemEntity {
   constructor(props) {
     this._item = props.item;
+    this._pickup = props.pickup ?? props.item;
+    this._count = props.count ?? 1;
 
     this.x = 0;
     this.y = 0;
@@ -23,7 +25,7 @@ export class ItemEntity {
   get behaviors() {
     return [
       ({ x, y }) => {
-        const data = pickup(this, x, y);
+        const data = pickup(this, x, y, this._pickup, this._count);
         if (inRange(this, SKILL, data)) {
           return act(this, SKILL, data);
         }

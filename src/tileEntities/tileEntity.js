@@ -31,7 +31,12 @@ export class TileEntity {
     const details = [];
     for (const threshold in this.description) {
       if (perception >= threshold) {
-        details.push(this.description[threshold](this.state));
+        details.push(
+          this.description[threshold]({
+            displayName: this.displayName,
+            ...this.state,
+          }),
+        );
       }
     }
     return details.join("\r\n");
