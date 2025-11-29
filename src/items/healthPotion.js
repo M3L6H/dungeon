@@ -7,11 +7,11 @@ const description = {
   3: (self) => `The ${self.displayName} restores ${self.item.health} health.`,
 };
 
-const onInteract = (item, entity, other) => {
+const onInteract = async (item, entity, other) => {
   if (entity.id !== other.id) return false;
-  other.addStatus(item.status(entity.id));
+  await other.addStatus(item.status(entity.id));
   entity.removeItem(item);
-  logActionEnd(entity, `used ${item.name}`);
+  await logActionEnd(entity, `used ${item.name}`);
 };
 
 export const healthPotionMinor = new Item({

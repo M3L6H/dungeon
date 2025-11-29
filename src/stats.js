@@ -61,6 +61,7 @@ export function showStats(
     logSafe(
       entity,
       `${entity.displayName} leveled up to level ${entity.level}. Health, Mana, and Stamina restored. Statuses cleared.`,
+      false,
     );
     renderViewport();
   };

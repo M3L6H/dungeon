@@ -343,24 +343,6 @@ section {
   display: none !important;
 }
 
-.highlight::before {
-  content: " ";
-  position: absolute;
-  inset: 0;
-  opacity: 0.5;
-  background-color: red;
-  animation: highlight-anim 1s linear backwards;
-}
-
-@keyframes highlight-anim {
-  from {
-    opacity: 0.5;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
 .in-range {
   cursor: pointer;
   position: relative;
@@ -517,6 +499,19 @@ section {
   background-repeat: no-repeat;
   image-rendering: pixelated;
   position: relative;
+}
+
+.tile::before {
+  content: " ";
+  background-color: red;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tile.highlight::before {
+  opacity: 0.5;
 }
 
 .top-bar {

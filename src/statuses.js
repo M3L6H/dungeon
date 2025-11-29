@@ -5,59 +5,63 @@ export const STATUS = {
   poison: "poison",
 };
 
+const healingMinorEffect = 2;
 export const healingMinor = (id) => ({
   id,
   type: STATUS.healing,
   freq: 4,
   count: 5,
-  effect: (entity) => {
-    entity.health += 2;
-    logSafe(
+  effect: async (entity) => {
+    entity.health += healingMinorEffect;
+    await logSafe(
       entity,
-      `${entity.displayName} recovers 2 health from ${STATUS.healing}.`,
+      `${entity.displayName} recovers ${healingMinorEffect} health from ${STATUS.healing}.`,
     );
   },
 });
 
+const healingImprovedEffect = healingMinorEffect * 2;
 export const healingImproved = (id) => ({
   id,
   type: STATUS.healing,
   freq: 4,
   count: 5,
-  effect: (entity) => {
-    entity.health += 4;
-    logSafe(
+  effect: async (entity) => {
+    entity.health += healingImprovedEffect;
+    await logSafe(
       entity,
-      `${entity.displayName} recovers 4 health from ${STATUS.healing}.`,
+      `${entity.displayName} recovers ${healingImprovedEffect} health from ${STATUS.healing}.`,
     );
   },
 });
 
+const healingMajorEffect = healingImprovedEffect * 2;
 export const healingMajor = (id) => ({
   id,
   type: STATUS.healing,
   freq: 4,
   count: 5,
-  effect: (entity) => {
-    entity.health += 8;
-    logSafe(
+  effect: async (entity) => {
+    entity.health += healingMajorEffect;
+    await logSafe(
       entity,
-      `${entity.displayName} recovers 8 health from ${STATUS.healing}.`,
+      `${entity.displayName} recovers ${healingMajorEffect} health from ${STATUS.healing}.`,
     );
   },
 });
 
+const poisonWeakEffect = 1;
 export const poisonWeak = (id) => ({
   id,
   type: STATUS.poison,
   freq: 4,
   count: 5,
-  effect: (entity) => {
-    entity.health -= 1;
-    entity.stamina -= 1;
-    logDanger(
+  effect: async (entity) => {
+    entity.health -= poisonWeakEffect;
+    entity.stamina -= poisonWeakEffect;
+    await logDanger(
       entity,
-      `${entity.displayName} takes 1 damage from ${STATUS.poison}.`,
+      `${entity.displayName} loses ${poisonWeakEffect} health & stamina from ${STATUS.poison}.`,
     );
   },
 });

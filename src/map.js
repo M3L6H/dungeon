@@ -546,7 +546,7 @@ export class Map {
     return [];
   }
 
-  spawnEntities() {
+  async spawnEntities() {
     const chests = [
       treasureChestCommon,
       treasureChestUncommon,
@@ -590,7 +590,7 @@ export class Map {
               this.getTile(x, y).name === Tile.floor.name &&
               this.getTileEntity(x, y) === undefined
             ) {
-              creator(x, y);
+              await creator(x, y);
               budget -= actualDifficulty;
               break;
             }

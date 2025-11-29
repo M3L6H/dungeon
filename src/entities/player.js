@@ -3,13 +3,13 @@ import { healthPotionMinor } from "../items/healthPotion.js";
 import { key } from "../items/key.js";
 import { Entity, startEntity } from "./entity.js";
 
-export function createPlayer() {
+export async function createPlayer() {
   const {
     w,
     h,
     start: { x, y },
   } = getMap();
-  return startEntity(
+  return await startEntity(
     new Entity({
       name: "player",
       variant: "female",
@@ -28,7 +28,7 @@ export function createPlayer() {
       additionalProps: {
         picksItems: true,
       },
-      canInteract: (self, other, item) => {
+      canInteract: (self, _, item) => {
         return item.isHealthPotion && self.health < self.maxHealth;
       },
     }),

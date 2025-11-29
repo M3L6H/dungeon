@@ -5,14 +5,15 @@ import { Entity, startEntity } from "./entity.js";
 
 /**
  * Creates a rat.
- * @returns {Entity} A rat entity
+ * @returns {Promise<Entity>} A rat entity
  */
-export function createRat(x, y, props) {
+const name = "rat";
+export async function createRat(x, y, props) {
   const { w, h } = getMap();
-  return startEntity(
+  return await startEntity(
     new Entity({
       displayName: "Rat",
-      name: "rat",
+      name,
       description: {
         0: (self) =>
           `${self.displayName} is small and whiskered. It sniffs the air nervously.`,
@@ -33,8 +34,8 @@ export function createRat(x, y, props) {
     y,
   );
 }
-setBaseXp("rat", 1);
-setLevelStrategy("rat", [0.5, 0.25, 0.25, 0, 0, 0]);
+setBaseXp(name, 1);
+setLevelStrategy(name, [0.5, 0.25, 0.25, 0, 0, 0]);
 
 export function resetRat(rat, props) {
   rat.nextActionTime = getTime();

@@ -35,14 +35,14 @@ export function lockedDoor(x, y, locked = true) {
         getMap().moveEntity(entity, x - dx, y - dy);
       }
     },
-    onInteract: (state, entity, item) => {
+    onInteract: async (state, entity, item) => {
       if (state.locked && item.name !== key.name) {
-        logActionEnd(entity, `cannot unlock the door with ${item.name}`);
+        await logActionEnd(entity, `cannot unlock the door with ${item.name}`);
         return false;
       } else if (state.locked) {
         entity.removeItem(item);
         state.locked = false;
-        logActionEnd(entity, `used ${item.name} to unlock the door`);
+        await logActionEnd(entity, `used ${item.name} to unlock the door`);
         return true;
       }
 
@@ -52,9 +52,9 @@ export function lockedDoor(x, y, locked = true) {
       ) {
         state.open = !state.open;
         if (state.open) {
-          logActionEnd(entity, "opened the door");
+          await logActionEnd(entity, "opened the door");
         } else {
-          logActionEnd(entity, "closed the door");
+          await logActionEnd(entity, "closed the door");
         }
         return true;
       }

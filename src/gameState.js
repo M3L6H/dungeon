@@ -14,9 +14,11 @@ import {
   addSafeLog,
   addStartLog,
   addWarnLog,
+  waitForReading,
 } from "./logs.js";
 import { Map, generateMap } from "./map.js";
 import { schedule } from "./time.js";
+import { renderViewport } from "./viewport.js";
 
 export const NONE = "none";
 export const ATTACK = "attack";
@@ -48,6 +50,9 @@ class GameState {
     this.entityLabels = {};
     this.logs = [];
     this.selected = 0;
+    this.settings = {
+      gameSpeed: 250,
+    };
     this.time = 0;
     this.timeline = {};
   }
@@ -60,8 +65,8 @@ let gameState = {
 export async function newGame() {
   gameState = new GameState();
   gameState.map = await generateMap();
-  gameState.player = createPlayer();
-  gameState.map.spawnEntities();
+  gameState.player = await createPlayer();
+  await gameState.map.spawnEntities();
 }
 
 export function addEntity(entity) {
@@ -86,15 +91,15 @@ export function getEntityLabels() {
   return gameState.entityLabels;
 }
 
-export function getInput(entity) {
+export async function getInput(entity) {
   if (entity.dead) return;
   getMap().updateMemory(entity);
   if (entity.stamina === 0) {
-    rest(entity, true);
+    await rest(entity, true);
     return;
   }
   for (const behavior of entity.behaviors) {
-    if (behavior(entity)) {
+    if (await behavior(entity)) {
       return;
     }
   }
@@ -137,6 +142,10 @@ export function getSelectedItem() {
   return Item.idToItem[gameState.selectedItem];
 }
 
+export function getSettings() {
+  return gameState.settings;
+}
+
 export function getTileEntities() {
   return gameState.tileEntities;
 }
@@ -158,22 +167,22 @@ export function setSelectedItem(itemId) {
   renderActions();
 }
 
-export function act(entity, action, data) {
+export async function act(entity, action, data) {
   if (!inRange(entity, action, data)) return false;
 
   switch (action) {
     case "attack":
-      return attack(entity, data);
+      return await attack(entity, data);
     case "examine":
-      return examine(entity, data);
+      return await examine(entity, data);
     case "interact":
       return interact(entity, data);
     case "move":
-      return move(entity, data);
+      return await move(entity, data);
     case "skill":
-      return skill(entity, data);
+      return await skill(entity, data);
     default:
-      addLog(`${entity.name} cannot ${action}.`);
+      await addLog(`${entity.name} cannot ${action}.`);
   }
 
   return false;
@@ -232,7 +241,10 @@ export function incrementTime() {
   return ++gameState.time;
 }
 
-export function interrupt(entity, interrupter) {
+/**
+ * @returns {Promise<undefined>|undefined} A Promise if log is true, undefined otherwise.
+ */
+export function interrupt(entity, interrupter, log = true) {
   turnToFaceTarget(entity, interrupter);
   if (entityInControl(entity)) return;
   const events = getTimeline()[entity.nextActionTime];
@@ -244,24 +256,31 @@ export function interrupt(entity, interrupter) {
       break;
     }
   }
-  logCombatWarn(
-    entity,
-    interrupter,
-    `${entity.displayName} has been interrupted.`,
-  )?.classList.add("bold");
   entity.nextActionTime = getTime();
+  if (log) {
+    return new Promise((resolve) => {
+      logCombatWarn(
+        entity,
+        interrupter,
+        `${entity.displayName} has been interrupted.`,
+      ).then((logElt) => {
+        logElt?.classList.add("bold");
+        resolve();
+      });
+    });
+  }
   return;
 }
 
 const DIRS = ["North", "East", "South", "West"];
 
-function attack(entity, target) {
+async function attack(entity, target) {
   const { accuracy, damage, displayName } = entity;
   const { x, y } = target;
   turnToFaceTarget(entity, target);
 
   const timeToAttack = 1 + entity.attackDelayMod;
-  schedule(entity, timeToAttack, () => {
+  schedule(entity, timeToAttack, async () => {
     const entities = getMap()
       .getEntities(x, y)
       .filter(
@@ -270,7 +289,7 @@ function attack(entity, target) {
           other.name !== entity.name &&
           other.dir !== undefined,
       ); // Don't attack self or same type
-    entities.forEach((other) => {
+    for (const other of entities) {
       if (entity.stamina === 0) return; // Can't attack with no stamina
       --entity.stamina;
       other.tSet.add(entity.name.toLowerCase());
@@ -278,7 +297,7 @@ function attack(entity, target) {
       const attack = roll(accuracy);
       const dodge = roll(other.dodge);
       if (attack <= dodge) {
-        logCombatWarn(
+        await logCombatWarn(
           entity,
           other,
           `${other.displayName} dodged (${dodge}) an attack (${attack}) from ${displayName}.`,
@@ -286,9 +305,9 @@ function attack(entity, target) {
         return;
       }
       const defense = roll(other.defense);
-      interrupt(other, entity);
+      await interrupt(other, entity);
       if (attack <= defense) {
-        logCombatWarn(
+        await logCombatWarn(
           entity,
           other,
           `${other.displayName} defended (${defense}) an attack (${attack}) from ${displayName}.`,
@@ -296,7 +315,7 @@ function attack(entity, target) {
         return;
       }
       const damageDealt = roll(damage);
-      logCombatDanger(
+      await logCombatDanger(
         entity,
         other,
         `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
@@ -304,32 +323,31 @@ function attack(entity, target) {
       other.health -= damageDealt;
       if (other.dead) {
         const xp = getXpValue(other);
-        logSafe(
+        await logSafe(
           entity,
           `${entity.displayName} earned ${xp} xp from defeating ${other.displayName}.`,
         );
         entity.xp += xp;
       }
-    });
+    }
     const suffix = entities.length === 0 ? " and hit nothing" : "";
-    logActionEnd(entity, `attacked${suffix}`);
+    await logActionEnd(entity, `attacked${suffix}`);
   });
-  logActionStart(entity, "attacking");
+  await logActionStart(entity, "attacking");
   return true;
 }
 
-function examine(entity, target) {
+async function examine(entity, target) {
   const { x, y } = target;
   turnToFaceTarget(entity, target);
-  schedule(entity, 1, () => {
+  schedule(entity, 1, async () => {
     const result = getMap().examine(entity, x, y);
     if (entity.isPlayer) {
-      addLog(result);
-      logActionEnd(entity, `examined`);
+      await addLog(result);
     }
   });
   if (entity.isPlayer) {
-    logActionStart(entity, `examining`);
+    await logActionStart(entity, `examining`);
   }
   return true;
 }
@@ -337,19 +355,22 @@ function examine(entity, target) {
 function interact(entity, target) {
   const { x, y } = target;
   turnToFaceTarget(entity, target);
-  schedule(entity, 1, () => {
+  schedule(entity, 1, async () => {
     const tileEntity = getMap().getTileEntity(x, y);
-    if (!!tileEntity && entityInteract(entity, tileEntity, getSelectedItem())) {
+    if (
+      !!tileEntity &&
+      (await entityInteract(entity, tileEntity, getSelectedItem()))
+    ) {
       return;
     }
     for (const other of getMap().getEntities(x, y)) {
-      if (entityInteract(entity, other, getSelectedItem())) return;
+      if (await entityInteract(entity, other, getSelectedItem())) return;
     }
   });
   return true;
 }
 
-function move(entity, target) {
+async function move(entity, target) {
   const { x, y } = target;
   if (x === entity.x && y === entity.y) {
     return rest(entity);
@@ -360,49 +381,59 @@ function move(entity, target) {
   const dir = Math.abs(dx) * (-dx + 2) + Math.abs(dy) * (dy + 1);
   entity.dir = dir;
   const time = getTimeToMove(entity);
-  schedule(entity, time, () => {
+  schedule(entity, time, async () => {
     getMap().moveEntity(entity, x, y);
     --entity.stamina;
-    logActionEnd(entity, `moved ${DIRS[dir]}`);
+    const action = `moved ${DIRS[dir]}`;
+    if (entity.isPlayer) {
+      logActionEnd(entity, action, false);
+    } else {
+      await logActionEnd(entity, `moved ${DIRS[dir]}`);
+    }
   });
-  logActionStart(entity, `moving ${DIRS[dir]}`);
+  const action = `moving ${DIRS[dir]}`;
+  if (entity.isPlayer) {
+    await logActionStart(entity, action, false);
+  } else {
+    await logActionStart(entity, action);
+  }
   return true;
 }
 
-export function rest(entity, full = false) {
+export async function rest(entity, full = false) {
   const time = full
     ? Math.ceil(entity.maxStamina / entity.constitution) + 1
     : 1;
-  schedule(entity, time, () => {
+  schedule(entity, time, async () => {
     entity.stamina += full ? entity.maxStamina : entity.constitution;
-    logActionEnd(entity, "rested");
+    await logActionEnd(entity, "rested");
   });
-  logActionStart(entity, "resting");
+  await logActionStart(entity, "resting");
   return true;
 }
 
-function skill(entity, data) {
+async function skill(entity, data) {
   const { x, y, filter, manaCost, skill, staminaCost, timeTaken } = data;
   turnToFaceTarget(entity, data);
 
-  schedule(entity, timeTaken, () => {
+  schedule(entity, timeTaken, async () => {
     const entities = getMap()
       .getEntities(x, y)
       .filter((entity) => filter(entity) && entity.dir !== undefined);
-    entities.forEach((other) => {
+    for (const other of entities) {
       if (entity.stamina < staminaCost || entity.mana < manaCost) return;
       entity.mana -= manaCost;
       entity.stamina -= staminaCost;
       if (!entity.isItem && entity.name !== other.name) {
-        other.tSet.add(entity.name.toLowerCase());
+        other.tSet.add(entity.name);
       }
-      skill(other);
-    });
+      await skill(other);
+    }
     const suffix = entities.length === 0 ? " and hit nothing" : "";
-    logActionEnd(entity, `used ${data.name}${suffix}`);
+    await logActionEnd(entity, `used ${data.name}${suffix}`);
   });
 
-  logActionStart(entity, `using ${data.name}`);
+  await logActionStart(entity, `using ${data.name}`);
   return true;
 }
 
@@ -410,70 +441,88 @@ function getTimeToMove(entity) {
   return Math.max(1, 6 - Math.floor(Math.sqrt(entity.speed)));
 }
 
-function logActionStart(entity, action) {
+/**
+ * @returns {Promise<HTMLParagraphElement|undefined>|HTMLParagraphElement|undefined}
+ */
+function logActionStart(entity, action, wait = true) {
   const { displayName, isPlayer, x, y } = entity;
   const msg = `${displayName} is ${action}.`;
   if (!entity.isItem && getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addStartLog(msg);
+    const logElt = addStartLog(msg, false);
     if (isPlayer) logElt.classList.add("player");
+    if (wait) {
+      renderViewport();
+      return waitForReading(logElt, msg);
+    }
+    return logElt;
   }
+  if (wait) return new Promise((resolve) => resolve());
 }
 
-export function logActionEnd(entity, action) {
+/**
+ * @returns {Promise<HTMLParagraphElement|undefined>|HTMLParagraphElement|undefined}
+ */
+export function logActionEnd(entity, action, wait = true) {
   const { displayName, isPlayer, x, y } = entity;
   const msg = `${displayName} ${action}.`;
   if (!entity.isItem && getMap().canEntitySeeTile(getPlayer(), x, y)) {
-    const logElt = addEndLog(msg);
+    const logElt = addEndLog(msg, false);
     if (isPlayer) logElt.classList.add("player");
+    if (wait) {
+      renderViewport();
+      return waitForReading(logElt, msg);
+    }
+    return logElt;
   }
+  if (wait) return new Promise((resolve) => resolve());
 }
 
-export function logCombatDanger(a, b, msg) {
+export function logCombatDanger(a, b, msg, wait = true) {
+  return logIfCanSee(a, b, msg, addDangerLog, wait);
+}
+
+export function logCombatWarn(a, b, msg, wait = true) {
+  return logIfCanSee(a, b, msg, addWarnLog, wait);
+}
+
+export function logDanger(entity, msg, wait = true) {
+  return logIfCanSee(entity, entity, msg, addDangerLog, wait);
+}
+
+export function logSafe(entity, msg, wait = true) {
+  return logIfCanSee(entity, entity, msg, addSafeLog, wait);
+}
+
+export function logWarn(entity, msg, wait = true) {
+  return logIfCanSee(entity, entity, msg, addWarnLog, wait);
+}
+
+/**
+ * @returns {Promise<HTMLParagraphElement|undefined>|HTMLParagraphElement|undefined}
+ */
+function logIfCanSee(a, b, msg, logFunc, wait) {
+  if (wait) {
+    return new Promise((resolve) => {
+      if (
+        a.isPlayer ||
+        b.isPlayer ||
+        getMap().canEntitySeeTile(getPlayer(), a.x, a.y) ||
+        getMap().canEntitySeeTile(getPlayer(), b.x, b.y)
+      ) {
+        logFunc(msg).then((logElt) => {
+          resolve(logElt);
+        });
+      }
+      resolve();
+    });
+  }
   if (
     a.isPlayer ||
     b.isPlayer ||
     getMap().canEntitySeeTile(getPlayer(), a.x, a.y) ||
     getMap().canEntitySeeTile(getPlayer(), b.x, b.y)
   ) {
-    return addDangerLog(msg);
-  }
-}
-
-export function logCombatWarn(a, b, msg) {
-  if (
-    a.isPlayer ||
-    b.isPlayer ||
-    getMap().canEntitySeeTile(getPlayer(), a.x, a.y) ||
-    getMap().canEntitySeeTile(getPlayer(), b.x, b.y)
-  ) {
-    return addWarnLog(msg);
-  }
-}
-
-export function logDanger(entity, msg) {
-  if (
-    entity.isPlayer ||
-    getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)
-  ) {
-    return addDangerLog(msg);
-  }
-}
-
-export function logSafe(entity, msg) {
-  if (
-    entity.isPlayer ||
-    getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)
-  ) {
-    return addSafeLog(msg);
-  }
-}
-
-export function logWarn(entity, msg) {
-  if (
-    entity.isPlayer ||
-    getMap().canEntitySeeTile(getPlayer(), entity.x, entity.y)
-  ) {
-    return addWarnLog(msg);
+    return logFunc(msg, false);
   }
 }
 

@@ -20,11 +20,20 @@ const viewportElt = document.getElementById("viewport");
 const xpElt = document.getElementById("xp-bar");
 
 export function highlight(id) {
+  toggleHighlightOn(id);
+  setTimeout(() => {
+    toggleHighlightOff(id);
+  }, 1000);
+}
+
+export function toggleHighlightOn(id) {
   const elt = viewportElt.querySelector(`div[data-id="${id}"]`)?.parentElement;
   elt?.classList.add("highlight");
-  setTimeout(() => {
-    elt?.classList.remove("highlight");
-  }, 1000);
+}
+
+export function toggleHighlightOff(id) {
+  const elt = viewportElt.querySelector(`div[data-id="${id}"]`)?.parentElement;
+  elt?.classList.remove("highlight");
 }
 
 function renderBar(elt, curr, max) {
@@ -71,10 +80,10 @@ function renderRange(tX, tY, tileElt) {
     tileElt.classList.remove("in-range");
   }
 
-  tileElt.onclick = () => {
+  tileElt.onclick = async () => {
     if (!entityInControl(getPlayer()) || getPlayer().dead) return;
-    if (act(getPlayer(), getSelectedAction(), target)) {
-      advance();
+    if (await act(getPlayer(), getSelectedAction(), target)) {
+      await advance();
     }
   };
 }

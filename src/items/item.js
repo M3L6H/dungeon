@@ -22,9 +22,9 @@ export class Item {
     return this._canInteract(this, entity, other);
   }
 
-  interact(entity, other) {
+  async interact(entity, other) {
     if (!this.onInteract) return false;
-    return this.onInteract(this, entity, other);
+    return await this.onInteract(this, entity, other);
   }
 
   get description() {

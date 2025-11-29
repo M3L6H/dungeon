@@ -41,15 +41,15 @@ export function entityInControl(entity) {
   return entity.nextActionTime <= getTime();
 }
 
-export function entityInteract(entity, other, item) {
+export async function entityInteract(entity, other, item) {
   const interactWithOther = !!other.interact
-    ? other.interact(entity, item)
+    ? await other.interact(entity, item)
     : undefined;
   if (interactWithOther !== undefined) {
     return interactWithOther;
   }
 
-  return item.interact(entity, other) ?? false;
+  return (await item.interact(entity, other)) ?? false;
 }
 
 export function examineEntity(entity, examiner) {
@@ -75,8 +75,31 @@ export function examineEntity(entity, examiner) {
   return details.join("\r\n");
 }
 
+export function getEntityById(id) {
+  return getEntities()[id];
+}
+
 export function releaseControl(entity, time) {
   entity.nextActionTime = time;
+}
+
+export async function startEntity(entity, x, y) {
+  const labels = getEntityLabels();
+
+  if (labels[entity.name] === undefined) {
+    labels[entity.name] = 0;
+
+    if (!entity.unique) entity.label = 0;
+  } else if (entity.unique) {
+    console.error("Failed to create duplicate of unique entity", entity);
+    return null;
+  } else {
+    entity.label = ++labels[entity.name];
+  }
+
+  getMap().moveEntity(entity, x, y);
+  await getInput(entity);
+  return entity;
 }
 
 export class Entity {
@@ -142,9 +165,9 @@ export class Entity {
     addEntity(this);
   }
 
-  addStatus(status) {
+  async addStatus(status) {
     if (this.immunities.has(status.type)) {
-      logWarn(this, `${this.displayName} is immune to ${status.type}.`);
+      await logWarn(this, `${this.displayName} is immune to ${status.type}.`);
       return false;
     }
 
@@ -188,9 +211,9 @@ export class Entity {
       : undefined;
   }
 
-  interact(entity, item) {
+  async interact(entity, item) {
     if (this.onInteract !== undefined) {
-      return this.onInteract(this, entity, item);
+      return await this.onInteract(this, entity, item);
     }
     return undefined;
   }
@@ -351,9 +374,12 @@ export class Entity {
         logSafe(
           itemEntity,
           `${this.displayName} dropped a ${itemEntity.displayName}.`,
+          false,
         );
       }
-      logDanger(this, `${this.displayName} died.`)?.classList.add("bold");
+      logDanger(this, `${this.displayName} died.`, false)?.classList.add(
+        "bold",
+      );
     }
   }
 
@@ -383,13 +409,13 @@ export class Entity {
     this._xp = val;
     const xpRequired = xpRequiredForLevel(this.level);
     if (this._xp >= xpRequired && this.level < MAX_LEVEL) {
-      interrupt(this, this);
-      schedule(this, 1, () => {
+      interrupt(this, this, false);
+      schedule(this, 1, async () => {
         if (this.isPlayer) {
           showStats(this, true, 2);
         } else {
           levelUp(this);
-          logSafe(
+          await logSafe(
             this,
             `${this.displayName} leveled up to level ${this.level}. Health, Mana, and Stamina restored. Statuses cleared.`,
           );
@@ -402,27 +428,4 @@ export class Entity {
 
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
-}
-
-export function startEntity(entity, x, y) {
-  const labels = getEntityLabels();
-
-  if (labels[entity.name] === undefined) {
-    labels[entity.name] = 0;
-
-    if (!entity.unique) entity.label = 0;
-  } else if (entity.unique) {
-    console.error("Failed to create duplicate of unique entity", entity);
-    return null;
-  } else {
-    entity.label = ++labels[entity.name];
-  }
-
-  getMap().moveEntity(entity, x, y);
-  getInput(entity);
-  return entity;
-}
-
-export function getEntityById(id) {
-  return getEntities()[id];
 }

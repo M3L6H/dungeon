@@ -14,15 +14,15 @@ export function ratSpawner(spawnX, spawnY, spawnDir) {
     canInteract: () => false,
     isOpaque: () => true,
     isTraversable: () => false,
-    onTick: (state, time) => {
+    onTick: async (state, time) => {
       const { offset, rat, spawnDir, spawnX, spawnY } = state;
       if ((time + offset) % DIV !== 0) return;
       if (rat !== undefined && !rat.dead) return;
       if (rat === undefined) {
-        state.rat = createRat(spawnX, spawnY, { dir: spawnDir });
+        state.rat = await createRat(spawnX, spawnY, { dir: spawnDir });
       } else {
         resetRat(state.rat, { dir: spawnDir });
-        startEntity(state.rat, spawnX, spawnY);
+        await startEntity(state.rat, spawnX, spawnY);
       }
     },
     initialState: {

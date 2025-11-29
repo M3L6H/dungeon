@@ -22,9 +22,9 @@ import { Entity, startEntity } from "./entity.js";
  * Creates a small blue slime.
  * @returns {Entity} A small blue slime entity
  */
-export function createBlueSlimeSmall(x, y) {
+export async function createBlueSlimeSmall(x, y) {
   const { w, h } = getMap();
-  return startEntity(
+  return await startEntity(
     new Entity({
       displayName: "Slime",
       name: "blue-slime",
@@ -67,9 +67,9 @@ setDropTable("blue-slime", {
  * Creates a small green slime.
  * @returns {Entity} A small green slime entity
  */
-export function createGreenSlimeSmall(x, y) {
+export async function createGreenSlimeSmall(x, y) {
   const { w, h } = getMap();
-  return startEntity(
+  return await startEntity(
     new Entity({
       displayName: "Poison Slime",
       name: "green-slime",

@@ -49,9 +49,9 @@ export class TileEntity {
     return false;
   }
 
-  interact(entity, item) {
+  async interact(entity, item) {
     if (this.onInteract !== undefined) {
-      return this.onInteract(this.state, entity, item);
+      return await this.onInteract(this.state, entity, item);
     }
     return undefined;
   }
@@ -64,9 +64,9 @@ export class TileEntity {
     return this._isTraversable(this.state, entity);
   }
 
-  tick(time) {
+  async tick(time) {
     if (this.onTick !== undefined) {
-      this.onTick(this.state, time);
+      await this.onTick(this.state, time);
     }
   }
 

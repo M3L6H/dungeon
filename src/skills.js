@@ -21,12 +21,12 @@ export const pickup = (entity, tX, tY, pickupItem, count) => {
       const entities = getMap().getEntities(tX, tY).filter(filter);
       return tX === entity.x && tY === entity.y && entities.length > 0;
     },
-    skill: (other) => {
+    skill: async (other) => {
       if (entity.dead) return;
       entity.dead = true;
       other.inventory[pickupItem.id] =
         (other.inventory[pickupItem.id] ?? 0) + count;
-      logSafe(
+      await logSafe(
         other,
         `${other.displayName} has picked up ${entity.displayName}.`,
       );
@@ -58,20 +58,20 @@ export const poisonTouch = (entity, tX, tY) => {
         entity.mana >= manaCost
       );
     },
-    skill: (other) => {
+    skill: async (other) => {
       const attack = roll(entity.accuracy);
       const dodge = roll(other.dodge);
       if (attack <= dodge) {
-        logCombatWarn(
+        await logCombatWarn(
           entity,
           other,
           `${other.displayName} dodged (${dodge}) a skill (${attack}) from ${entity.displayName}.`,
         );
         return;
       }
-      const success = other.addStatus(poisonWeak(entity.id));
+      const success = await other.addStatus(poisonWeak(entity.id));
       if (success) {
-        logCombatDanger(
+        await logCombatDanger(
           entity,
           other,
           `${entity.displayName} has poisoned ${other.displayName}.`,

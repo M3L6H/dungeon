@@ -55,7 +55,7 @@ function createAction() {
       showInventory((selectedItem) => {
         setSelectedItem(selectedItem);
         hideInventory();
-        addLog(`Selected ${getSelectedItem().name} for interaction.`);
+        addLog(`Selected ${getSelectedItem().name} for interaction.`, false);
         renderViewport();
       }, true);
     }
@@ -63,7 +63,7 @@ function createAction() {
     setSelectedIndex(getActions().indexOf(action));
     renderActions();
     renderViewport();
-    addLog(`Changed selected action to '${action}'`);
+    addLog(`Changed selected action to '${action}'`, false);
   });
   return actionElt;
 }

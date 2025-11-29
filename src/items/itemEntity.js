@@ -24,10 +24,10 @@ export class ItemEntity {
 
   get behaviors() {
     return [
-      ({ x, y }) => {
+      async ({ x, y }) => {
         const data = pickup(this, x, y, this._pickup, this._count);
         if (inRange(this, SKILL, data)) {
-          return act(this, SKILL, data);
+          return await act(this, SKILL, data);
         }
         return false;
       },

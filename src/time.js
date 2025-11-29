@@ -16,9 +16,9 @@ import {
 } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
-export function advance() {
+export async function advance() {
   while (!getPlayer().dead && !entityInControl(getPlayer())) {
-    tick();
+    await tick();
   }
 }
 
@@ -26,52 +26,52 @@ export function schedule(entity, timeOffset, effect) {
   const timeline = getTimeline();
   const time = getTime();
   const events = timeline[time + timeOffset] ?? [];
-  events.push([
-    entity.id,
-    () => {
-      effect();
-    },
-  ]);
+  events.push([entity.id, effect]);
   const nextActionTime = time + timeOffset;
   timeline[nextActionTime] = events;
   releaseControl(entity, nextActionTime);
 }
 
-export function tick() {
+export async function tick() {
   const timeline = getTimeline();
   const time = incrementTime();
   const events = timeline[time] ?? [];
-  events.forEach(([_, event]) => {
-    event();
-  });
-  getEntities().forEach((entity) => {
+  for (const [_, event] of events) {
+    await event();
+  }
+  for (const entity of getEntities()) {
     if (entity.dead || entity.isItem) return;
     entity.mana = Math.min(entity.mana + 1, entity.maxMana);
     for (let i = entity.statuses.length - 1; i >= 0; --i) {
       const { count, effect, freq, id, offset, type } = entity.statuses[i];
       if ((time + offset) % freq !== 0) continue;
-      effect(entity);
+      await effect(entity);
       --entity.statuses[i].count;
       if (count <= 0) {
-        logSafe(entity, `${entity.displayName}'s ${type} status has expired.`);
+        await logSafe(
+          entity,
+          `${entity.displayName}'s ${type} status has expired.`,
+        );
         entity.statuses.splice(i, 1);
       }
       if (entity.dead) {
         const owner = getEntityById(id);
         const xp = getXpValue(entity);
-        logSafe(
+        await logSafe(
           owner,
           `${owner.displayName} earned ${xp} xp from defeating ${entity.displayName} with ${type}.`,
         );
         owner.xp += xp;
       }
     }
-  });
-  getEntities().forEach((entity) => {
+  }
+  for (const entity of getEntities()) {
     if (entity.dead) return;
-    if (entityInControl(entity)) getInput(entity);
-  });
-  getTileEntities().forEach((tileEntity) => tileEntity.tick(time));
+    if (entityInControl(entity)) await getInput(entity);
+  }
+  for (const tileEntity of getTileEntities()) {
+    await tileEntity.tick(time);
+  }
   renderViewport();
   delete timeline[time];
 }
