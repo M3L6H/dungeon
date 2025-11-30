@@ -27,12 +27,12 @@ export function highlight(id) {
 }
 
 export function toggleHighlightOn(id) {
-  const elt = viewportElt.querySelector(`div[data-id="${id}"]`)?.parentElement;
+  const elt = viewportElt.querySelector(`div[data-id="${id}"]`);
   elt?.classList.add("highlight");
 }
 
 export function toggleHighlightOff(id) {
-  const elt = viewportElt.querySelector(`div[data-id="${id}"]`)?.parentElement;
+  const elt = viewportElt.querySelector(`div[data-id="${id}"]`);
   elt?.classList.remove("highlight");
 }
 

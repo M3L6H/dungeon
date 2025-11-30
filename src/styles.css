@@ -510,7 +510,7 @@ section {
   transition: opacity 0.2s ease;
 }
 
-.tile.highlight::before {
+.tile:has(.entity.highlight)::before {
   opacity: 0.5;
 }
 
