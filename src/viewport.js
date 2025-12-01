@@ -112,6 +112,7 @@ function renderEntities(entities, tileElt) {
   for (let i = 0; i < entityMaxIdx; ++i) {
     if (i >= entities.length) {
       const entityElt = tileElt.children[i];
+      entityElt.classList.remove("highlight");
       delete entityElt.dataset.id;
       entityElt.style.backgroundImage = "none";
       entityElt.getAnimations().forEach((a) => a.cancel());
