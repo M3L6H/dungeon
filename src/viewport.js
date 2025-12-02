@@ -74,12 +74,12 @@ function renderMemoryTile(tile, tileEntitySprite, tileElt) {
 
 function renderRange(tX, tY, tileElt) {
   const target = { x: tX, y: tY };
-  if (inRange(getPlayer(), getSelectedAction(), target)) {
-    tileElt.classList.add("in-range");
-  } else {
+  if (!entityInControl(getPlayer()) || && !inRange(getPlayer(), getSelectedAction(), target)) {
     tileElt.classList.remove("in-range");
+    return;
   }
-
+ 
+  tileElt.classList.add("in-range");
   tileElt.onclick = async () => {
     if (!entityInControl(getPlayer()) || getPlayer().dead) return;
     if (await act(getPlayer(), getSelectedAction(), target)) {
