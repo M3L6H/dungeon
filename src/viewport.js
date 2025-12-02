@@ -74,7 +74,7 @@ function renderMemoryTile(tile, tileEntitySprite, tileElt) {
 
 function renderRange(tX, tY, tileElt) {
   const target = { x: tX, y: tY };
-  if (!entityInControl(getPlayer()) || && !inRange(getPlayer(), getSelectedAction(), target)) {
+  if (!entityInControl(getPlayer()) || !inRange(getPlayer(), getSelectedAction(), target)) {
     tileElt.classList.remove("in-range");
     return;
   }
