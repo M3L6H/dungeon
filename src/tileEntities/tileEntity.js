@@ -3,7 +3,7 @@ import { addTileEntity } from "../gameState.js";
 export class TileEntity {
   constructor(props) {
     this.name = props.name ?? "Unknown";
-    this._displayName = this.displayName ?? this.name;
+    this._displayName = props.displayName ?? this.name;
     this.getSprite = props.getSprite;
     this._sprite = props.sprite ?? "none";
 
@@ -71,8 +71,7 @@ export class TileEntity {
   }
 
   get displayName() {
-    const suffix = this.label === undefined ? "" : ` ${this.label}`;
-    return `<a data-id="${this.id}">${this._displayName}${suffix}</a>`;
+    return `<a data-id="${this.id}">${this._displayName}</a>`;
   }
 
   get sprite() {
