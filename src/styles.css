@@ -295,6 +295,10 @@ section {
   z-index: 1;
 }
 
+.entity.highlight {
+  display: block !important;
+}
+
 .entity span {
   color: white;
   font-family: sans-serif;
@@ -512,6 +516,10 @@ section {
 
 .tile:has(.entity.highlight)::before {
   opacity: 0.5;
+}
+
+.tile:has(.entity.highlight) > .entity:not(.highlight) {
+  display: none !important;
 }
 
 .top-bar {
