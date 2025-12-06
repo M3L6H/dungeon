@@ -24,7 +24,7 @@ export class TileEntity {
 
   canInteract(entity, item) {
     if (!this._canInteract) return undefined;
-    return this._canInteract(this, entity, item);
+    return this._canInteract(this.state, entity, item);
   }
 
   examine({ perception }) {

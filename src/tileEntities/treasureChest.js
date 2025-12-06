@@ -1,3 +1,4 @@
+import { emptyHand, key } from "../items/index.js";
 import { TileEntity } from "./tileEntity.js";
 
 export function treasureChestCommon() {
@@ -44,11 +45,19 @@ function createTreasureChest(variant, description) {
     getSprite: ({ open }) =>
       `url('images/treasure-chest-${variant.toLowerCase()}-${open ? "open" : "closed"}.png')`,
     description,
-    canInteract: () => false,
+    canInteract: ({ open }, _, item) =>
+      !open &&
+      (entity.hands ?? true) &&
+      (item.id === emptyHand.id || item.id === key.id),
     isOpaque: () => false,
     isTraversable: () => false,
     initialState: {
       open: false,
+    },
+    onInteract: async (state, entity) => {
+      await logActionEnd(entity, `opened the ${variant} Treasure Chest`);
+      state.open = true;
+      return true;
     },
   });
 }
