@@ -257,6 +257,7 @@ export function interrupt(entity, interrupter, log = true) {
     }
   }
   entity.nextActionTime = getTime();
+  delete entity.dataset.action;
   if (log) {
     return new Promise((resolve) => {
       logCombatWarn(
@@ -408,6 +409,7 @@ export async function rest(entity, full = false) {
     entity.stamina += full ? entity.maxStamina : entity.constitution;
     await logActionEnd(entity, "rested");
   });
+  entity.dataset.action = "rest";
   await logActionStart(entity, "resting");
   return true;
 }
@@ -464,6 +466,7 @@ function logActionStart(entity, action, wait = true) {
  */
 export function logActionEnd(entity, action, wait = true) {
   const { displayName, isPlayer, x, y } = entity;
+  delete entity.dataset.action;
   const msg = `${displayName} ${action}.`;
   if (!entity.isItem && getMap().canEntitySeeTile(getPlayer(), x, y)) {
     const logElt = addEndLog(msg, false);

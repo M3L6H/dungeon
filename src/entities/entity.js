@@ -161,6 +161,8 @@ export class Entity {
 
     this._canInteract = props.canInteract;
     this.onInteract = props.onInteract;
+    
+    this.dataset = {};
 
     addEntity(this);
   }

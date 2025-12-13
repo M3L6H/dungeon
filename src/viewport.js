@@ -121,6 +121,7 @@ function renderEntities(entities, tileElt) {
 
     if (i >= tileElt.children.length) createEntityElt(tileElt);
     const entityElt = tileElt.children[i];
+    entityElt.dataset = entity[i].dataset;
     entityElt.dataset.id = entities[i].id;
     entityElt.style.backgroundImage = entities[i].sprite;
     entityElt.querySelector(".se").textContent = entities[i].label ?? "";

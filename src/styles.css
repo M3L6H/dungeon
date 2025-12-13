@@ -304,11 +304,18 @@ section {
   font-family: sans-serif;
   font-size: 10px;
   position: absolute;
+  height: 16px;
+  width: 16px;
 }
 
 .entity .ne {
   top: -0.7em;
   right: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 .entity .nw {
@@ -324,6 +331,10 @@ section {
 .entity .sw {
   bottom: -0.7em;
   left: 0;
+}
+
+.entity[data-action="rest"] .ne {
+  background-image: url("images/sleeping.png");
 }
 
 .fade {
