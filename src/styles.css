@@ -518,7 +518,7 @@ section {
 
 .tile::before {
   content: " ";
-  background-color: red;
+  background-color: cyan;
   position: absolute;
   inset: 0;
   opacity: 0;

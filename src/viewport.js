@@ -6,7 +6,7 @@ import {
   getSelectedAction,
   inRange,
 } from "./gameState.js";
-import { advance } from "./time.js";
+import { advance, isTicking } from "./time.js";
 
 const W = 11;
 const HW = Math.floor(W / 2);
@@ -74,11 +74,15 @@ function renderMemoryTile(tile, tileEntitySprite, tileElt) {
 
 function renderRange(tX, tY, tileElt) {
   const target = { x: tX, y: tY };
-  if (!entityInControl(getPlayer()) || !inRange(getPlayer(), getSelectedAction(), target)) {
+  if (
+    isTicking() ||
+    !entityInControl(getPlayer()) ||
+    !inRange(getPlayer(), getSelectedAction(), target)
+  ) {
     tileElt.classList.remove("in-range");
     return;
   }
- 
+
   tileElt.classList.add("in-range");
   tileElt.onclick = async () => {
     if (!entityInControl(getPlayer()) || getPlayer().dead) return;
@@ -121,7 +125,12 @@ function renderEntities(entities, tileElt) {
 
     if (i >= tileElt.children.length) createEntityElt(tileElt);
     const entityElt = tileElt.children[i];
-    entityElt.dataset = entity[i].dataset;
+    for (const k in entities[i].dataset ?? {}) {
+      entityElt.dataset[k] = entities[i].dataset[k];
+    }
+    for (const k in entityElt.dataset) {
+      if (entities[i].dataset[k] === undefined) delete entityElt.dataset[k];
+    }
     entityElt.dataset.id = entities[i].id;
     entityElt.style.backgroundImage = entities[i].sprite;
     entityElt.querySelector(".se").textContent = entities[i].label ?? "";

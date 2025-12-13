@@ -16,10 +16,19 @@ import {
 } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
+let ticking = false;
+
 export async function advance() {
   while (!getPlayer().dead && !entityInControl(getPlayer())) {
+    ticking = true;
     await tick();
+    ticking = false;
   }
+  renderViewport();
+}
+
+export function isTicking() {
+  return ticking;
 }
 
 export function schedule(entity, timeOffset, effect) {
