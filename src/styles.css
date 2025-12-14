@@ -310,7 +310,7 @@ section {
 
 .entity .ne {
   top: -0.7em;
-  right: 0;
+  right: -8px;
   background-size: cover;
   background-repeat: no-repeat;
   image-rendering: pixelated;
@@ -320,17 +320,17 @@ section {
 
 .entity .nw {
   top: -0.7em;
-  left: 0;
+  left: -8px;
 }
 
 .entity .se {
   bottom: -0.7em;
-  right: 0;
+  right: -8px;
 }
 
 .entity .sw {
   bottom: -0.7em;
-  left: 0;
+  left: -8px;
 }
 
 .entity[data-action="rest"] .ne {
