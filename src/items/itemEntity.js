@@ -19,6 +19,8 @@ export class ItemEntity {
     this.y = 0;
     this.nextActionTime = 0;
 
+    this.dataset = {};
+
     addEntity(this);
   }
 
