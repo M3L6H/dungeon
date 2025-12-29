@@ -1,4 +1,13 @@
-import { Item, emptyHand, key, spawnItem } from "../items/index.js";
+import { logActionEnd } from "../gameState.js";
+import {
+  Item,
+  emptyHand,
+  gold,
+  goldPile,
+  healthPotionMinor,
+  key,
+  spawnItem,
+} from "../items/index.js";
 import { permuteArr, randInRange } from "../utils.js";
 import { TileEntity } from "./tileEntity.js";
 
@@ -39,8 +48,9 @@ export function treasureChestLegendary(x, y) {
 
 const LOOT_TABLES = [
   {
+    0.1: () => ({ itemId: key.id }),
     0.4: () => ({ itemId: healthPotionMinor.id }),
-    0.6: () => ({
+    0.5: () => ({
       itemId: goldPile.id,
       additionalProps: {
         count: Math.floor(Math.random() * 10),
@@ -102,7 +112,7 @@ function getLoot(lootTable) {
 
   for (const chance in lootTable) {
     if (r < chance) {
-      return lootTable[chance](entity);
+      return lootTable[chance]();
     }
     r -= chance;
   }
