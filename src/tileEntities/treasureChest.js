@@ -37,7 +37,7 @@ export function treasureChestLegendary(x, y) {
   });
 }
 
-const DROP_TABLES = [
+const LOOT_TABLES = [
   {
     0.4: () => ({ itemId: healthPotionMinor.id }),
     0.6: () => ({
@@ -47,7 +47,43 @@ const DROP_TABLES = [
         pickup: gold,
       },
     }),
-  }, 
+  },
+  {
+    1: () => ({
+      itemId: goldPile.id,
+      additionalProps: {
+        count: Math.floor(Math.random() * 20 + 10),
+        pickup: gold,
+      },
+    }),
+  },
+  {
+    1: () => ({
+      itemId: goldPile.id,
+      additionalProps: {
+        count: Math.floor(Math.random() * 30 + 20),
+        pickup: gold,
+      },
+    }),
+  },
+  {
+    1: () => ({
+      itemId: goldPile.id,
+      additionalProps: {
+        count: Math.floor(Math.random() * 40 + 35),
+        pickup: gold,
+      },
+    }),
+  },
+  {
+    1: () => ({
+      itemId: goldPile.id,
+      additionalProps: {
+        count: Math.floor(Math.random() * 50 + 50),
+        pickup: gold,
+      },
+    }),
+  },
 ];
 const SURROUNDING_OFFSETS = [
   [-1, -1],
@@ -59,20 +95,14 @@ const SURROUNDING_OFFSETS = [
   [-1, 1],
   [-1, 0],
 ];
-const VARIANTS = [
-  "Common",
-  "Uncommon",
-  "Rare",
-  "Epic",
-  "Legendary", 
-];
+const VARIANTS = ["Common", "Uncommon", "Rare", "Epic", "Legendary"];
 
-function getLoot(table) {
+function getLoot(lootTable) {
   let r = Math.random();
 
-  for (const chance in table) {
+  for (const chance in lootTable) {
     if (r < chance) {
-      return table[chance](entity);
+      return lootTable[chance](entity);
     }
     r -= chance;
   }
@@ -80,14 +110,9 @@ function getLoot(table) {
   return undefined;
 }
 
-function dropLoot(table, x, y) {
-  const loot = getLoot(table);
-  spawnItem(
-    Item.idToItem[loot.itemId],
-    x,
-    y,
-    loot.additionalProps,
-  );
+function dropLoot(lootTable, x, y) {
+  const loot = getLoot(lootTable);
+  spawnItem(Item.idToItem[loot.itemId], x, y, loot.additionalProps);
 }
 
 /**
@@ -100,7 +125,7 @@ function createTreasureChest(index, x, y, description) {
     getSprite: ({ open }) =>
       `url('images/treasure-chest-${variant.toLowerCase()}-${open ? "open" : "closed"}.png')`,
     description,
-    canInteract: ({ open }, _, item) =>
+    canInteract: ({ open }, entity, item) =>
       !open &&
       (entity.hands ?? true) &&
       (item.id === emptyHand.id || item.id === key.id),
@@ -113,13 +138,13 @@ function createTreasureChest(index, x, y, description) {
     },
     onInteract: async (state, entity) => {
       state.open = true;
-      const dropTable = DROP_TABLES[index];
+      const lootTable = LOOT_TABLES[index];
       const count = randInRange(index + 1, index + 3);
       const pOffsets = permuteArr([...SURROUNDING_OFFSETS]);
       const { x, y } = state;
       for (let i = 0; i < count; ++i) {
         const [dx, dy] = pOffsets[i];
-        dropLoot(dropTable, x + dx, y + dy);
+        dropLoot(lootTable, x + dx, y + dy);
       }
       await logActionEnd(entity, `opened the ${variant} Treasure Chest`);
       return true;
