@@ -161,7 +161,7 @@ export class Entity {
 
     this._canInteract = props.canInteract;
     this.onInteract = props.onInteract;
-    
+
     this.dataset = {};
 
     addEntity(this);
@@ -188,13 +188,14 @@ export class Entity {
     return (
       this.entityMemory[x + y * getMap().w]?.map(({ dir, id, sprite }) => {
         if (dir === undefined) return { id, sprite };
-        const { displayName, name } = getEntityById(id);
+        const entity = getEntityById(id);
+        const { displayName, name } = entity;
         return {
           id,
-          dir,
+          dir: dir ?? entity.dir,
           displayName,
           name,
-          sprite,
+          sprite: sprite ?? entity.sprite,
         };
       }) ?? []
     );
@@ -254,7 +255,7 @@ export class Entity {
           delete this.entityMemory[oldIdx];
       }
       this.idToLoc[id] = { x, y };
-      myEntities.push({ dir, id, sprite });
+      myEntities.push(this.isPlayer ? { dir, id, sprite } : { id });
     }
 
     for (let i = myEntities.length - 1; i >= 0; --i) {

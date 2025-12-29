@@ -129,7 +129,9 @@ function renderEntities(entities, tileElt) {
       entityElt.dataset[k] = entities[i].dataset[k];
     }
     for (const k in entityElt.dataset) {
-      if (entities[i].dataset[k] === undefined) delete entityElt.dataset[k];
+      if (!entities[i].dataset || entities[i].dataset[k] === undefined) {
+        delete entityElt.dataset[k];
+      }
     }
     entityElt.dataset.id = entities[i].id;
     entityElt.style.backgroundImage = entities[i].sprite;
