@@ -71,9 +71,10 @@ export function permuteArr(arr) {
   return arr;
 }
 
-function randInRange(a, b) {
+export function randInRange(a, b) {
   const isAMax = b === undefined;
   const min = isAMax ? 0 : Math.ceil(a);
   const max = Math.floor(isAMax ? a : b);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
