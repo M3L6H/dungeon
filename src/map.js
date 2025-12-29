@@ -21,7 +21,7 @@ import {
   treasureChestRare,
   treasureChestUncommon,
 } from "./tileEntities/index.js";
-import { DIRS, Heap } from "./utils.js";
+import { DIRS, Heap, randInRange } from "./utils.js";
 
 const ROWS = 384;
 const COLS = 384;
@@ -47,12 +47,6 @@ const heat = new Array(ROWS * COLS).fill(0);
 
 export function getHeat() {
   return heat;
-}
-
-function randInRange(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function randRadius(radius) {
@@ -562,7 +556,7 @@ export class Map {
         const tier = Math.floor(
           (difficulty * (chests.length - 1)) / MAX_DIFFICULTY,
         );
-        this._setTileEntity(x, y, chests[tier]());
+        this._setTileEntity(x, y, chests[tier](x, y));
       } else if (type === RoomType.COMBAT) {
         const count = Math.min(20, (radius - 1) * (radius - 1));
         let budget = difficulty * count;

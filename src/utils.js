@@ -62,3 +62,18 @@ export class Heap {
     return this.comparator(a, b) < 0;
   }
 }
+
+export function permuteArr(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = randInRange(i);
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function randInRange(a, b) {
+  const isAMax = b === undefined;
+  const min = isAMax ? 0 : Math.ceil(a);
+  const max = Math.floor(isAMax ? a : b);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

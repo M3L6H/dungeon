@@ -11,7 +11,7 @@ import {
 import { addLog } from "../logs.js";
 import { getHeat } from "../map.js";
 import { poisonTouch } from "../skills.js";
-import { DIRS, Heap } from "../utils.js";
+import { DIRS, Heap, permuteArr } from "../utils.js";
 import { Entity, getEntityById } from "./entity.js";
 
 /**
@@ -228,13 +228,7 @@ export async function wander(entity) {
   let target = { x: x + dx, y: y + dy };
 
   if (Math.random() >= 0.75 || !inRange(entity, MOVE, target)) {
-    const dirsCopy = [...DIRS];
-    const pDirs = [];
-    while (dirsCopy.length > 0) {
-      pDirs.push(
-        dirsCopy.splice(Math.floor(Math.random(dirsCopy.length)), 1)[0],
-      );
-    }
+    const pDirs = permuteArr([...DIRS]);
     for (const dir of pDirs) {
       const [dx, dy] = dir;
       target = { x: x + dx, y: y + dy };
