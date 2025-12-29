@@ -1,5 +1,5 @@
 import { Item, emptyHand, key, spawnItem } from "../items/index.js";
-import { permuteArr } from "../utils.js";
+import { permuteArr, randInRange } from "../utils.js";
 import { TileEntity } from "./tileEntity.js";
 
 export function treasureChestCommon(x, y) {
