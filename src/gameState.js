@@ -372,7 +372,7 @@ function interact(entity, target) {
 }
 
 async function move(entity, target) {
-  const { x, y } = target;
+  const { x, y, silent } = target;
   if (x === entity.x && y === entity.y) {
     return rest(entity);
   }
@@ -385,6 +385,7 @@ async function move(entity, target) {
   schedule(entity, time, async () => {
     getMap().moveEntity(entity, x, y);
     --entity.stamina;
+    if (silent) return;
     const action = `moved ${DIRS[dir]}`;
     if (entity.isPlayer) {
       logActionEnd(entity, action, false);
@@ -392,6 +393,7 @@ async function move(entity, target) {
       await logActionEnd(entity, `moved ${DIRS[dir]}`);
     }
   });
+  if (silent) return true;
   const action = `moving ${DIRS[dir]}`;
   if (entity.isPlayer) {
     await logActionStart(entity, action, false);

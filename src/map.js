@@ -11,6 +11,7 @@ import {
 } from "./name.js";
 import { Tile } from "./tile.js";
 import {
+  dartShooter,
   lockedDoor,
   ratSpawner,
   sign,
@@ -872,6 +873,8 @@ export class Map {
       }
       if (Math.random() < 0.05) {
         this._setTileEntity(x, y, ratSpawner(x - dx, y - dy, (i + 2) % 4));
+      } else if (Math.random() < 0.05) {
+        this._setTileEntity(x, y, dartShooter(x - dx, y - dy, (i + 2) % 4));
       }
     });
   }

@@ -1,5 +1,4 @@
-import { startEntity } from "../entities/entity.js";
-import { createRat, resetRat } from "../entities/index.js";
+import { createRat, resetRat, startEntity } from "../entities/index.js";
 import { TileEntity } from "./tileEntity.js";
 
 const DIV = 403;
