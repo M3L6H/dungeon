@@ -286,9 +286,7 @@ async function attack(entity, target) {
       .getEntities(x, y)
       .filter(
         (other) =>
-          other.id !== entity.id &&
-          other.name !== entity.name &&
-          !other.isItem,
+          other.id !== entity.id && other.name !== entity.name && !other.isItem,
       ); // Don't attack self or same type
     for (const other of entities) {
       if (entity.stamina === 0) return; // Can't attack with no stamina
@@ -297,7 +295,7 @@ async function attack(entity, target) {
       other.targetId = entity.id;
       const attack = roll(accuracy);
       const dodge = roll(other.dodge);
-      if (attack <= dodge) {
+      if (attack < dodge) {
         await logCombatWarn(
           entity,
           other,
@@ -307,7 +305,7 @@ async function attack(entity, target) {
       }
       const defense = roll(other.defense);
       await interrupt(other, entity);
-      if (attack <= defense) {
+      if (attack < defense) {
         await logCombatWarn(
           entity,
           other,

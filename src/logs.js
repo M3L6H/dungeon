@@ -31,12 +31,6 @@ export function addLog(msg, wait = true) {
   return waitForReading(logElt, msg);
 }
 
-function pruneLogs() {
-  // Prune logs
-  const ends = {};
-  for (let i = logsElt.children.length - 1; i >= 0; --i) {}
-}
-
 export function addDangerLog(msg, wait = true) {
   return addStyledLog(msg, "danger", wait);
 }
@@ -63,15 +57,12 @@ export async function waitForReading(logElt, msg) {
     if (elts.length > 0) {
       elts.forEach((elt) => toggleHighlightOn(elt.dataset.id));
     }
-    setTimeout(
-      () => {
-        resolve(logElt);
-        if (elts.length > 0) {
-          elts.forEach((elt) => toggleHighlightOff(elt.dataset.id));
-        }
-      },
-      getSettings().gameSpeed * msg.split(" ").length,
-    );
+    setTimeout(() => {
+      resolve(logElt);
+      if (elts.length > 0) {
+        elts.forEach((elt) => toggleHighlightOff(elt.dataset.id));
+      }
+    }, getSettings().gameSpeed * 5);
   });
 }
 

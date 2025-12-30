@@ -61,7 +61,7 @@ export const poisonTouch = (entity, tX, tY) => {
     skill: async (other) => {
       const attack = roll(entity.accuracy);
       const dodge = roll(other.dodge);
-      if (attack <= dodge) {
+      if (attack < dodge) {
         await logCombatWarn(
           entity,
           other,

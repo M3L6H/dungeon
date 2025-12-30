@@ -21,9 +21,11 @@ export async function createDart(x, y, props) {
       agility: 0,
       endurance: 99,
       strength: 0,
+      wisdom: 0,
       damageMod: 2,
-      speedMod: 16, 
+      speedMod: 16,
       behaviors: [projectile],
+      unique: true,
       additionalProps: {
         hands: false,
         isProjectile: true,

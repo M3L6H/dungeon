@@ -90,10 +90,7 @@ export async function startEntity(entity, x, y) {
     labels[entity.name] = 0;
 
     if (!entity.unique) entity.label = 0;
-  } else if (entity.unique) {
-    console.error("Failed to create duplicate of unique entity", entity);
-    return null;
-  } else {
+  } else if (!entity.unique) {
     entity.label = ++labels[entity.name];
   }
 
@@ -131,10 +128,10 @@ export class Entity {
 
     this.attackRange = 1;
     this.attackDelayMod = props.attackDelayMod ?? 0;
-    this.accuracyMod = 0;
-    this.damageMod = 0;
-    this.defenseMod = 0;
-    this.dodgeMod = 0;
+    this.accuracyMod = props.accuracyMod ?? 0;
+    this.damageMod = props.damageMod ?? 0;
+    this.defenseMod = props.defenseMod ?? 0;
+    this.dodgeMod = props.dodgeMod ?? 0;
     this.speedMod = props.speedMod ?? 0;
 
     this._health = this.maxHealth;

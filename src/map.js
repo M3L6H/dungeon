@@ -456,6 +456,9 @@ export class Map {
    */
   moveEntity(entityToMove, tX, tY) {
     const { id, x, y } = entityToMove;
+
+    this.updateMemory(entityToMove);
+
     const entities = this.getEntities(x, y);
     if (entities.length === 1 && entities[0].id === id) {
       entities.pop();

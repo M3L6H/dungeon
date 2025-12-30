@@ -12,7 +12,7 @@ import {
 import { addLog } from "../logs.js";
 import { getHeat } from "../map.js";
 import { poisonTouch } from "../skills.js";
-import { DIRS, Heap, permuteArr } from "../utils.js";
+import { CARDINAL_DIRS, DIRS, Heap, permuteArr } from "../utils.js";
 import { Entity, getEntityById } from "./entity.js";
 
 /**
@@ -69,9 +69,9 @@ export async function findTarget(entity) {
   if (entity.targetId !== null) return false;
   for (const k in entityMemory) {
     const entities = entityMemory[k];
-    for (const { dir, id } of entities) {
-      const other = getEntityById(id); 
-      if (!other.dead && tSet.has(other.name.toLowerCase())) {
+    for (const { id } of entities) {
+      const other = getEntityById(id);
+      if (!other.isItem && !other.dead && tSet.has(other.name.toLowerCase())) {
         entity.targetId = id;
         return false;
       }
@@ -208,28 +208,20 @@ export async function hunt(entity) {
  * @param entity {Entity} - The entity this behavior is for
  */
 export async function projectile(entity) {
-  const { displayName, x, y } = entity;
-  const [dx, dy] = DIRS[entity.dir];
+  const { dir, displayName, x, y } = entity;
+  const [dx, dy] = DIRS[dir];
   const target = { x: x + dx, y: y + dy };
 
   for (const other of getMap().getEntities(x, y)) {
     if (!other.isProjectile && !other.isItem) {
+      await logCombatDanger(
+        entity,
+        other,
+        `${other.displayName} was hit by a ${displayName} and took ${entity.damage} damage!`,
+      );
+
       other.health -= entity.damage;
       entity.dead = true;
-
-      if (other.dead) {
-        await logCombatDanger(
-          entity,
-          other,
-          `${other.displayName} was hit by a ${displayName} and died!`,
-        );
-      } else {
-        await logCombatDanger(
-          entity,
-          other,
-          `${other.displayName} was hit by a ${displayName} and took ${entity.damage} damage!`,
-        );
-      }
 
       return true;
     }
@@ -240,7 +232,9 @@ export async function projectile(entity) {
     return true;
   }
 
-  return await act(entity, MOVE, { ...target, silent: true });
+  await act(entity, MOVE, { ...target, silent: true });
+  await logBehavior(entity, `flying ${CARDINAL_DIRS[dir]}`);
+  return true;
 }
 
 /**

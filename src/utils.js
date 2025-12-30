@@ -1,3 +1,4 @@
+export const CARDINAL_DIRS = ["North", "East", "South", "West"];
 export const DIRS = [
   [0, -1],
   [1, 0],
@@ -77,4 +78,3 @@ export function randInRange(a, b) {
   const max = Math.floor(isAMax ? a : b);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
