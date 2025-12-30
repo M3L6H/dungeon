@@ -14,16 +14,16 @@ export async function createDart(x, y, props) {
       displayName: "Dart",
       name,
       description: {
-        0: () =>
-          `The dart whizzes through the air with hair-raising velocity.`,
+        0: () => `The dart whizzes through the air with hair-raising velocity.`,
       },
       w,
       h,
       agility: 0,
+      damageMod: 2,
       speedMod: 16,
+      strength: 0,
       behaviors: [projectile],
       additionalProps: {
-        damage: 2,
         hands: false,
         isProjectile: true,
       },

@@ -217,7 +217,7 @@ export async function projectile(entity) {
     if (!other.isProjectile && !other.isItem) {
       other.health -= entity.damage;
       entity.dead = true;
-      
+
       if (other.dead) {
         await logCombatDanger(
           entity,
@@ -228,14 +228,14 @@ export async function projectile(entity) {
         await logCombatDanger(
           entity,
           other,
-          `${other.displayName} was hit by a ${displayName} and took ${damageDealt} damage!`,
+          `${other.displayName} was hit by a ${displayName} and took ${entity.damage} damage!`,
         );
       }
-  
+
       return true;
     }
   }
- 
+
   if (!inRange(entity, MOVE, target)) {
     entity.health = 0;
     return true;
