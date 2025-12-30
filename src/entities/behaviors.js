@@ -236,7 +236,7 @@ export async function projectile(entity) {
   }
 
   if (!inRange(entity, MOVE, target)) {
-    entity.health = 0;
+    entity.dead = true;
     return true;
   }
 

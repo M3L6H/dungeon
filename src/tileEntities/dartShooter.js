@@ -1,7 +1,7 @@
 import { createDart, resetDart, startEntity } from "../entities/index.js";
 import { TileEntity } from "./tileEntity.js";
 
-const DIV = 137;
+const DIV = 47;
 
 export function dartShooter(spawnX, spawnY, spawnDir) {
   return new TileEntity({
