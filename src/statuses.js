@@ -57,11 +57,11 @@ export const poisonWeak = (id) => ({
   freq: 4,
   count: 5,
   effect: async (entity) => {
-    entity.health -= poisonWeakEffect;
-    entity.stamina -= poisonWeakEffect;
     await logDanger(
       entity,
       `${entity.displayName} loses ${poisonWeakEffect} health & stamina from ${STATUS.poison}.`,
     );
+    entity.health -= poisonWeakEffect;
+    entity.stamina -= poisonWeakEffect;
   },
 });
