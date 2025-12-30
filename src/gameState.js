@@ -288,7 +288,7 @@ async function attack(entity, target) {
         (other) =>
           other.id !== entity.id &&
           other.name !== entity.name &&
-          other.dir !== undefined,
+          !other.isItem,
       ); // Don't attack self or same type
     for (const other of entities) {
       if (entity.stamina === 0) return; // Can't attack with no stamina
@@ -423,7 +423,7 @@ async function skill(entity, data) {
   schedule(entity, timeTaken, async () => {
     const entities = getMap()
       .getEntities(x, y)
-      .filter((entity) => filter(entity) && entity.dir !== undefined);
+      .filter((entity) => filter(entity) && !entity.isItem);
     for (const other of entities) {
       if (entity.stamina < staminaCost || entity.mana < manaCost) return;
       entity.mana -= manaCost;

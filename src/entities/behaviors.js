@@ -70,8 +70,7 @@ export async function findTarget(entity) {
   for (const k in entityMemory) {
     const entities = entityMemory[k];
     for (const { dir, id } of entities) {
-      if (dir === undefined) continue;
-      const other = getEntityById(id);
+      const other = getEntityById(id); 
       if (!other.dead && tSet.has(other.name.toLowerCase())) {
         entity.targetId = id;
         return false;
