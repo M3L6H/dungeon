@@ -109,6 +109,17 @@ export async function startEntity(entity, x, y) {
 }
 
 export class Entity {
+  static fromData(data) {
+    const entity = new Entity({
+      ...data.props,
+      additionalProps: data.additionalProps,
+    });
+    for (const k in data.setAfter) {
+      entity[k] = data.setAfter[k];
+    }
+    return entity;
+  }
+
   constructor(props) {
     this._displayName = props.displayName ?? props.name;
     this.name = props.name;
@@ -131,7 +142,7 @@ export class Entity {
     for (let i = 1; i < this.level; ++i) levelUp(this);
     this._xp = 0;
 
-    this.attackRange = 1;
+    this.attackRange = props.attackRange ?? 1;
     this.attackDelayMod = props.attackDelayMod ?? 0;
     this.accuracyMod = props.accuracyMod ?? 0;
     this.damageMod = props.damageMod ?? 0;
@@ -140,7 +151,7 @@ export class Entity {
     this.speedMod = props.speedMod ?? 0;
 
     this._health = this.maxHealth;
-    this.mana = this.maxMana;
+    this._mana = this.maxMana;
     this._stamina = this.maxStamina;
 
     this.behaviors = props.behaviors ?? [];
@@ -282,6 +293,71 @@ export class Entity {
     if (tileEntity !== undefined) this.tileEntityMemory[idx] = tileEntity;
   }
 
+  toData() {
+    const propsKeys = [
+      "accuracyMod",
+      "agility",
+      "attackDelayMod",
+      "attackRange",
+      "behaviors",
+      "constitution",
+      "damageMod",
+      "defenseMod",
+      "dir",
+      "dodgeMod",
+      "endurance",
+      "immunities",
+      "intelligence",
+      "inventory",
+      "level",
+      "name",
+      "onInteract",
+      "speedMod",
+      "strength",
+      "tSet",
+      "variant",
+      "wisdom",
+      "x",
+      "y",
+    ];
+    const setAfterKeys = [
+      "_canInteract",
+      "_displayName",
+      "_health",
+      "_mana",
+      "_stamina",
+      "_unique",
+      "_xp",
+      "dataset",
+      "dead",
+      "entityMemory",
+      "idToLoc",
+      "memory",
+      "nextActionTime",
+      "statuses",
+      "targetId",
+      "tileEntityMemory",
+    ];
+    const allKeys = new Set(Object.keys(this));
+    const data = { additionalProps: {}, props: {}, setAfter: {} };
+
+    for (const key of propsKeys) {
+      data.props[key] = this[key];
+      allKeys.delete(key);
+    }
+
+    for (const key of setAfterKeys) {
+      data.setAfter[key] = this[key];
+      allKeys.delete(key);
+    }
+
+    allKeys.forEach((key) => {
+      data.additionalProps[key] = this[key];
+    });
+
+    return data;
+  }
+
   get accuracy() {
     return Math.max(this.strength + this.wisdom + this.accuracyMod, 1);
   }
@@ -315,6 +391,10 @@ export class Entity {
     return this._label === undefined
       ? undefined
       : String.fromCharCode("A".charCodeAt(0) + (this._label % 26));
+  }
+
+  get mana() {
+    return this._mana;
   }
 
   get maxHealth() {
@@ -390,6 +470,10 @@ export class Entity {
 
   set label(val) {
     this._label = val;
+  }
+
+  set mana(val) {
+    this._mana = clamp(val, 0, this.maxMana);
   }
 
   /**

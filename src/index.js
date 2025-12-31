@@ -1,5 +1,4 @@
 import { setUpActions } from "./actions.js";
-import { createGreenSlimeSmall } from "./entities/slime.js";
 import { getPlayer, newGame } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpStats, showStats } from "./stats.js";
