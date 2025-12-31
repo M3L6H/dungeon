@@ -9,6 +9,17 @@ const defaultIsOpaque = registerFn(NAMESPACE, "canInteract", () => false);
 const defaultIsTraversable = registerFn(NAMESPACE, "canInteract", () => true);
 
 export class TileEntity {
+  static fromData(data) {
+    const tileEntity = new TileEntity({
+      ...data.props,
+      initialState: data.initialState,
+    });
+    for (const k in data.setAfter) {
+      tileEntity[k] = data.setAfter[k];
+    }
+    return tileEntity;
+  }
+
   constructor(props) {
     this.name = props.name;
     this._displayName = props.displayName ?? this.name;
@@ -76,6 +87,30 @@ export class TileEntity {
     if (this.onTick !== undefined) {
       await call(this.onTick, this.state, time);
     }
+  }
+
+  toData() {
+    const propsKeys = ["getSprite", "name", "onEnter", "onInteract", "onTick"];
+    const setAfterKeys = [
+      "_canInteract",
+      "_displayName",
+      "_isOpaque",
+      "_isTraversable",
+      "_sprite",
+    ];
+    const data = { props: {}, setAfter: {} };
+
+    for (const key of propsKeys) {
+      data.props[key] = this[key];
+    }
+
+    for (const key of setAfterKeys) {
+      data.setAfter[key] = this[key];
+    }
+
+    data.initialState = this.state;
+
+    return data;
   }
 
   get displayName() {

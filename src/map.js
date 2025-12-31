@@ -2,7 +2,6 @@ import {
   getRandomEntityForDifficultyRange,
   examineEntity,
 } from "./entities/index.js";
-import { call } from "./functions.js";
 import { getTileEntities } from "./gameState.js";
 import {
   getNameForCombat,
@@ -23,6 +22,7 @@ import {
   treasureChestRare,
   treasureChestUncommon,
 } from "./tileEntities/index.js";
+import { TileEntity } from "./tileEntities/tileEntity.js";
 import { DIRS, Heap, randInRange } from "./utils.js";
 
 const ROWS = 384;
