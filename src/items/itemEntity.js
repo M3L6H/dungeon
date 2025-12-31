@@ -22,6 +22,14 @@ export function spawnItem(item, x, y, additionalProps = {}) {
 }
 
 export class ItemEntity {
+  static fromData(data) {
+    const itemEntity = new ItemEntity(data.props);
+    for (const k in data.setAfter) {
+      itemEntity[k] = data.setAfter[k];
+    }
+    return itemEntity;
+  }
+
   constructor(props) {
     this._item = props.item;
     this._pickup = props.pickup ?? props.item;
@@ -34,6 +42,22 @@ export class ItemEntity {
     this.dataset = {};
 
     addEntity(this);
+  }
+
+  toData() {
+    return {
+      props: {
+        count: this._count,
+        item: this._item,
+        pickup: this._pickup,
+      },
+      setAfter: {
+        x: this.x,
+        y: this.y,
+        nextActionTime: this.nextActionTime,
+        dataset: this.dataset,
+      },
+    };
   }
 
   get behaviors() {
