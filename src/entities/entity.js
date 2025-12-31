@@ -16,7 +16,12 @@ import { Item, spawnItem } from "../items/index.js";
 import { showStats } from "../stats.js";
 import { schedule } from "../time.js";
 import { showRoomNameEntering, showRoomNameLeaving } from "../title.js";
-import { getDrop, levelUp, xpRequiredForLevel } from "./data.js";
+import {
+  getDescription,
+  getDrop,
+  levelUp,
+  xpRequiredForLevel,
+} from "./data.js";
 
 const HITPOINTS_PER_CONSTITUTION = 4;
 const MANA_PER_INTELLIGENCE = 5;
@@ -66,9 +71,13 @@ export function examineEntity(entity, examiner) {
     );
   }
 
-  for (const threshold in entity.description) {
+  const description = getDescription(entity) ?? {
+    0: () => `You see nothing interesting about ${entity.displayName}`,
+  };
+
+  for (const threshold in description) {
     if (perception >= threshold) {
-      details.push(entity.description[threshold](entity));
+      details.push(description[threshold](entity));
     }
   }
 
@@ -104,10 +113,6 @@ export class Entity {
     this._displayName = props.displayName ?? props.name;
     this.name = props.name;
     this.variant = props.variant;
-
-    this.description = props.description ?? {
-      0: () => `You see nothing interesting about ${this.displayName}`,
-    };
 
     this.x = props.x ?? 0;
     this.y = props.y ?? 0;

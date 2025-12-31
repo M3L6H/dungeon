@@ -74,6 +74,16 @@ export function setLevelStrategy(name, strategy) {
   levelStrategy[name] = strategy;
 }
 
+const descriptionTable = {};
+
+export function getDescription(entity) {
+  return descriptionTable[`${entity.name}-${entity.variant}`];
+}
+
+export function setDescription(entityName, entityVariant, table) {
+  descriptionTable[`${entityName}-${entityVariant}`] = table;
+}
+
 const dropTable = {};
 
 export function getDrop(entity) {

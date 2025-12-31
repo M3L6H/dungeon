@@ -13,6 +13,7 @@ import {
 } from "./behaviors.js";
 import {
   setBaseXp,
+  setDescription,
   setDifficultyForEntityCreator,
   setDropTable,
   setLevelStrategy,
@@ -21,8 +22,12 @@ import { Entity, startEntity } from "./entity.js";
 
 const NAMESPACE = "slime";
 
-const basicPoisonTouch = registerFn(NAMESPACE, "basicPoisonTouch", (entity) => basicPoisonTouchTemplate(entity));
+const basicPoisonTouch = registerFn(NAMESPACE, "basicPoisonTouch", (entity) =>
+  basicPoisonTouchTemplate(entity),
+);
 
+const blueSlimeName = "blue-slime";
+const smallVariant = "small";
 /**
  * Creates a small blue slime.
  * @returns {Entity} A small blue slime entity
@@ -32,13 +37,8 @@ export async function createBlueSlimeSmall(x, y) {
   return await startEntity(
     new Entity({
       displayName: "Slime",
-      name: "blue-slime",
-      variant: "small",
-      description: {
-        0: (self) =>
-          `${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
-        3: (self) => `${self.displayName} does physical damage.`,
-      },
+      name: blueSlimeName,
+      variant: smallVariant,
       w,
       h,
       strength: 2,
@@ -56,9 +56,9 @@ export async function createBlueSlimeSmall(x, y) {
   );
 }
 setDifficultyForEntityCreator(1, createBlueSlimeSmall);
-setBaseXp("blue-slime", 2);
-setLevelStrategy("blue-slime", [0, 0.3, 0.3, 0, 0.4, 0]);
-setDropTable("blue-slime", {
+setBaseXp(blueSlimeName, 2);
+setLevelStrategy(blueSlimeName, [0, 0.3, 0.3, 0, 0.4, 0]);
+setDropTable(blueSlimeName, {
   0.3: (entity) => ({
     itemId: goldPile.id,
     additionalProps: {
@@ -67,7 +67,13 @@ setDropTable("blue-slime", {
     },
   }),
 });
+setDescription(blueSlimeName, smallVariant, {
+  0: (self) =>
+    `${self.displayName} is semi-translucent. Its gelatinous body wobbles as it moves around.`,
+  3: (self) => `${self.displayName} does physical damage.`,
+});
 
+const greenSlimeName = "green-slime";
 /**
  * Creates a small green slime.
  * @returns {Entity} A small green slime entity
@@ -77,13 +83,8 @@ export async function createGreenSlimeSmall(x, y) {
   return await startEntity(
     new Entity({
       displayName: "Poison Slime",
-      name: "green-slime",
-      variant: "small",
-      description: {
-        0: (self) =>
-          `${self.displayName} is tinged a venomous green. Its gelatinous body wobbles as it moves around.`,
-        3: (self) => `${self.displayName} is slightly poisonous.`,
-      },
+      name: greenSlimeName,
+      variant: smallVariant,
       w,
       h,
       wisdom: 3,
@@ -108,9 +109,9 @@ export async function createGreenSlimeSmall(x, y) {
   );
 }
 setDifficultyForEntityCreator(3, createGreenSlimeSmall);
-setBaseXp("green-slime", 3);
-setLevelStrategy("green-slime", [0, 0.2, 0.2, 0.3, 0, 0.3]);
-setDropTable("green-slime", {
+setBaseXp(greenSlimeName, 3);
+setLevelStrategy(greenSlimeName, [0, 0.2, 0.2, 0.3, 0, 0.3]);
+setDropTable(greenSlimeName, {
   0.2: () => ({ itemId: healthPotionMinor.id }),
   0.2: (entity) => ({
     itemId: goldPile.id,
@@ -119,4 +120,9 @@ setDropTable("green-slime", {
       pickup: gold,
     },
   }),
+});
+setDescription(greenSlimeName, smallVariant, {
+  0: (self) =>
+    `${self.displayName} is tinged a venomous green. Its gelatinous body wobbles as it moves around.`,
+  3: (self) => `${self.displayName} is slightly poisonous.`,
 });

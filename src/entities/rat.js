@@ -1,30 +1,29 @@
 import { registerFn } from "../functions.js";
 import { getMap, getTime } from "../gameState.js";
 import { exploreTemplate, fleeTemplate, rest, wander } from "./behaviors.js";
-import { setBaseXp, setLevelStrategy } from "./data.js";
+import { setBaseXp, setDescription, setLevelStrategy } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
 const NAMESPACE = "rat";
 
-const explore = registerFn(NAMESPACE, "explore", (entity) => exploreTemplate(entity));
+const explore = registerFn(NAMESPACE, "explore", (entity) =>
+  exploreTemplate(entity),
+);
 const flee = registerFn(NAMESPACE, "flee", (entity) => fleeTemplate(entity));
 
+const name = "rat";
+const normalVariant = "normal";
 /**
  * Creates a rat.
  * @returns {Promise<Entity>} A rat entity
  */
-const name = "rat";
 export async function createRat(x, y, props) {
   const { w, h } = getMap();
   return await startEntity(
     new Entity({
       displayName: "Rat",
       name,
-      description: {
-        0: (self) =>
-          `${self.displayName} is small and whiskered. It sniffs the air nervously.`,
-        3: () => `Rats are notorious thieves, but they are also very cowardly.`,
-      },
+      variant: normalVariant,
       w,
       h,
       agility: 4,
@@ -42,6 +41,11 @@ export async function createRat(x, y, props) {
 }
 setBaseXp(name, 1);
 setLevelStrategy(name, [0.5, 0.25, 0.25, 0, 0, 0]);
+setDescription(name, normalVariant, {
+  0: (self) =>
+    `${self.displayName} is small and whiskered. It sniffs the air nervously.`,
+  3: () => `Rats are notorious thieves, but they are also very cowardly.`,
+});
 
 export function resetRat(rat, props) {
   rat.nextActionTime = getTime();
