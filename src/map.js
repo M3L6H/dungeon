@@ -316,7 +316,15 @@ export const RoomType = {
 };
 
 export class Map {
-  constructor(width, height, origins, rooms, edges) {
+  static fromData(data) {
+    const map = new Map(0, 0);
+    for (const key in data) {
+      map[key] = data[key];
+    }
+    return map;
+  }
+ 
+  constructor(width, height, origins, rooms) {
     this.w = width;
     this.h = height;
     this.origins = origins;
@@ -324,12 +332,14 @@ export class Map {
     this.entities = {};
     this.tiles = new Array(width * height);
     this.tileToId = {};
-
+  }
+  
+  initMap(edges) {
     for (let i = 0; i < this.tiles.length; ++i) {
       this.tiles[i] = [Tile.wall.id];
     }
 
-    rooms.forEach((points) => {
+    this.points.forEach((points) => {
       this._fillRect(points[0], points[6], Tile.floor, points[0].id);
       this._fillRect(points[10], points[4], Tile.floor, points[0].id);
     });
@@ -604,6 +614,14 @@ export class Map {
         }
       }
     }
+  }
+  
+  toData() {
+    const data = {};
+    for (const key in Object.keys(this)) {
+      data[key] = this[key];
+    }
+    return data;
   }
 
   updateMemory(entity) {
@@ -981,7 +999,9 @@ export async function generateMap() {
   const rooms = generateRooms(origins);
   const nodes = roomsToNodes(rooms);
   const edges = await generateEdges(origins.length, nodes);
-  return new Map(COLS, ROWS, origins, rooms, edges);
+  const map = new Map(COLS, ROWS, origins, rooms);
+  map.initMap(edges);
+  return map;
 }
 
 async function init() {
