@@ -1,3 +1,4 @@
+import { registerFn } from "../functions.js";
 import { getMap } from "../gameState.js";
 import { gold, goldPile } from "../items/gold.js";
 import { healthPotionMinor } from "../items/healthPotion.js";
@@ -5,7 +6,7 @@ import { STATUS } from "../statuses.js";
 import {
   findTarget,
   hunt,
-  basicPoisonTouch,
+  basicPoisonTouchTemplate,
   rest,
   simpleAttack,
   wander,
@@ -17,6 +18,10 @@ import {
   setLevelStrategy,
 } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
+
+const NAMESPACE = "slime";
+
+const basicPoisonTouch = registerFn(NAMESPACE, "basicPoisonTouch", (entity) => basicPoisonTouchTemplate(entity));
 
 /**
  * Creates a small blue slime.

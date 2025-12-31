@@ -1,7 +1,13 @@
+import { registerFn } from "../functions.js";
 import { getMap, getTime } from "../gameState.js";
-import { explore, flee, rest, wander } from "./behaviors.js";
+import { exploreTemplate, fleeTemplate, rest, wander } from "./behaviors.js";
 import { setBaseXp, setLevelStrategy } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
+
+const NAMESPACE = "rat";
+
+const explore = registerFn(NAMESPACE, "explore", (entity) => exploreTemplate(entity));
+const flee = registerFn(NAMESPACE, "flee", (entity) => fleeTemplate(entity));
 
 /**
  * Creates a rat.

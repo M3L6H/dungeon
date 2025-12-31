@@ -1,3 +1,4 @@
+import { registerFn } from "../functions.js";
 import {
   ATTACK,
   EXAMINE,
@@ -15,12 +16,14 @@ import { poisonTouch } from "../skills.js";
 import { CARDINAL_DIRS, DIRS, Heap, permuteArr } from "../utils.js";
 import { Entity, getEntityById } from "./entity.js";
 
+const BEHAVIOR = "behavior";
+
 /**
  * Behavior where entity will use the Poison Touch skill on an adjacent target
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function basicPoisonTouch(entity, baseChance = 0.5) {
-  if (Math.random() >= baseChance) return false;
+export async function basicPoisonTouchTemplate(entity, chance = 0.5) {
+  if (Math.random() >= chance) return false;
   const targetLoc = getTargetLoc(entity);
   if (!targetLoc) return false;
   const { x: tX, y: tY } = targetLoc;
@@ -35,7 +38,7 @@ export async function basicPoisonTouch(entity, baseChance = 0.5) {
  * Behavior where entity will use examine to look around itself
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function explore(entity, range = 2) {
+export async function exploreTemplate(entity, range = 2) {
   const { x, y } = entity;
   const opts = [];
   for (let dx = -range; dx <= range; ++dx) {
@@ -63,7 +66,7 @@ export async function explore(entity, range = 2) {
  * Behavior where entity will search for the first target in its memory that is on the targets list
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function findTarget(entity) {
+export const findTarget = registerFn(BEHAVIOR, "findTarget", async function(entity) {
   const { entityMemory, tSet } = entity;
   if (tSet.size === 0) return false;
   if (entity.targetId !== null) return false;
@@ -78,13 +81,13 @@ export async function findTarget(entity) {
     }
   }
   return false;
-}
+});
 
 /**
  * Behavior where entity will flee from things it is afraid of.
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function flee(entity, afraid = () => true) {
+export async function fleeTemplate(entity, afraid = () => true) {
   const { w, h } = getMap();
   const { entityMemory, name, sightRange, x, y } = entity;
   const options = {};
@@ -175,7 +178,7 @@ export async function flee(entity, afraid = () => true) {
  * Behavior where entity will path to the entity identified by targetId based on its memory
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function hunt(entity) {
+export const hunt = registerFn(BEHAVIOR, "hunt", async function(entity) {
   const { searching, x, y } = entity;
   const targetLoc = getTargetLoc(entity);
   if (!targetLoc) return false;
@@ -201,13 +204,13 @@ export async function hunt(entity) {
 
   await logBehavior(entity, "hunting");
   return await act(entity, MOVE, path[1]);
-}
+});
 
 /**
  * Behavior where entity will fly like a projectile
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function projectile(entity) {
+export const projectile = registerFn(BEHAVIOR, "projectile", async function(entity) {
   const { dir, displayName, x, y } = entity;
   const [dx, dy] = DIRS[dir];
   const target = { x: x + dx, y: y + dy };
@@ -235,13 +238,13 @@ export async function projectile(entity) {
   await act(entity, MOVE, { ...target, silent: true });
   await logBehavior(entity, `flying ${CARDINAL_DIRS[dir]}`);
   return true;
-}
+});
 
 /**
  * Behavior where entity will attack an adjacent target
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function simpleAttack(entity) {
+export const simpleAttack = registerFn(BEHAVIOR, "simpleAttack", async function(entity) {
   const targetLoc = getTargetLoc(entity);
   if (!targetLoc) return false;
   const { x: tX, y: tY } = targetLoc;
@@ -250,13 +253,13 @@ export async function simpleAttack(entity) {
     return await act(entity, ATTACK, target);
   }
   return false;
-}
+});
 
 /**
  * Behavior where entity will wander randomly
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function wander(entity) {
+export const wander = registerFn(BEHAVIOR, "wander", async function(entity) {
   const { x, y } = entity;
   let [dx, dy] = DIRS[entity.dir];
   let target = { x: x + dx, y: y + dy };
@@ -274,16 +277,16 @@ export async function wander(entity) {
 
   await logBehavior(entity, "wandering");
   return await act(entity, MOVE, target);
-}
+});
 
 /**
  * Behavior where an entity will rest
  * @param entity {Entity} - The entity this behavior is for
  */
-export async function rest(entity) {
+export const rest = registerFn(BEHAVIOR, "rest", async function(entity) {
   const { x, y } = entity;
   return await act(entity, MOVE, { x, y });
-}
+});
 
 function getTargetLoc(entity) {
   const { targetId } = entity;
