@@ -1,6 +1,18 @@
+import { registerFn } from "../functions.js";
 import { SKILL, act, addEntity, getMap, inRange } from "../gameState.js";
 import { pickup } from "../skills.js";
 import { renderViewport } from "../viewport.js";
+
+const NAMESPACE = "item";
+
+const pickupBehavior = registerFn(NAMESPACE, "pickup", async function (entity) {
+  const { x, y } = entity;
+  const data = pickup(this, x, y, this._pickup, this._count);
+  if (inRange(this, SKILL, data)) {
+    return await act(this, SKILL, data);
+  }
+  return false;
+});
 
 export function spawnItem(item, x, y, additionalProps = {}) {
   const entity = new ItemEntity({ item, ...additionalProps });
@@ -25,15 +37,7 @@ export class ItemEntity {
   }
 
   get behaviors() {
-    return [
-      async ({ x, y }) => {
-        const data = pickup(this, x, y, this._pickup, this._count);
-        if (inRange(this, SKILL, data)) {
-          return await act(this, SKILL, data);
-        }
-        return false;
-      },
-    ];
+    return [pickupBehavior];
   }
 
   get description() {
