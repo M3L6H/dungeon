@@ -1,19 +1,23 @@
+import { call, callAsync, registerFn } from "../functions.js";
 import { addTileEntity } from "../gameState.js";
+import { getDescription } from "./data.js";
+
+const NAMESPACE = "tileEntity";
+
+const defaultCanInteract = registerFn(NAMESPACE, "canInteract", () => false);
+const defaultIsOpaque = registerFn(NAMESPACE, "canInteract", () => false);
+const defaultIsTraversable = registerFn(NAMESPACE, "canInteract", () => true);
 
 export class TileEntity {
   constructor(props) {
-    this.name = props.name ?? "Unknown";
+    this.name = props.name;
     this._displayName = props.displayName ?? this.name;
     this.getSprite = props.getSprite;
     this._sprite = props.sprite ?? "none";
 
-    this.description = props.description ?? {
-      0: () => `You see nothing interesting about ${this.name}`,
-    };
-
-    this._canInteract = props.canInteract ?? (() => false);
-    this._isOpaque = props.isOpaque ?? (() => false);
-    this._isTraversable = props.isTraversable ?? (() => true);
+    this._canInteract = props.canInteract ?? defaultCanInteract;
+    this._isOpaque = props.isOpaque ?? defaultIsOpaque;
+    this._isTraversable = props.isTraversable ?? defaultIsTraversable;
     this.onEnter = props.onEnter;
     this.onInteract = props.onInteract;
     this.onTick = props.onTick;
@@ -24,15 +28,19 @@ export class TileEntity {
 
   canInteract(entity, item) {
     if (!this._canInteract) return undefined;
-    return this._canInteract(this.state, entity, item);
+    return call(this._canInteract, this.state, entity, item);
   }
 
   examine({ perception }) {
     const details = [];
-    for (const threshold in this.description) {
+    const description = getDescription(this) ?? {
+      0: () => `You see nothing interesting about ${this.name}`,
+    };
+
+    for (const threshold in description) {
       if (perception >= threshold) {
         details.push(
-          this.description[threshold]({
+          description[threshold]({
             displayName: this.displayName,
             ...this.state,
           }),
@@ -44,29 +52,29 @@ export class TileEntity {
 
   enter(entity) {
     if (this.onEnter !== undefined) {
-      return this.onEnter(this.state, entity);
+      return call(this.onEnter, this.state, entity);
     }
     return false;
   }
 
   async interact(entity, item) {
     if (this.onInteract !== undefined) {
-      return await this.onInteract(this.state, entity, item);
+      return await callAsync(this.onInteract, this.state, entity, item);
     }
     return undefined;
   }
 
   isOpaque(entity) {
-    return this._isOpaque(this.state, entity);
+    return call(this._isOpaque, this.state, entity);
   }
 
   isTraversable(entity) {
-    return this._isTraversable(this.state, entity);
+    return call(this._isTraversable, this.state, entity);
   }
 
   async tick(time) {
     if (this.onTick !== undefined) {
-      await this.onTick(this.state, time);
+      await call(this.onTick, this.state, time);
     }
   }
 
@@ -76,7 +84,7 @@ export class TileEntity {
 
   get sprite() {
     if (this.getSprite !== undefined) {
-      return this.getSprite(this.state);
+      return call(this.getSprite, this.state);
     }
     return this._sprite;
   }

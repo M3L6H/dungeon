@@ -6,7 +6,7 @@ import {
   entityInteract,
   getXpValue,
 } from "./entities/index.js";
-import { call } from "./functions.js";
+import { callAsync } from "./functions.js";
 import { Item } from "./items/item.js";
 import {
   addDangerLog,
@@ -100,7 +100,7 @@ export async function getInput(entity) {
     return;
   }
   for (const behavior of entity.behaviors) {
-    if (await call(behavior, entity)) {
+    if (await callAsync(behavior, entity)) {
       return;
     }
   }

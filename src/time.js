@@ -4,7 +4,7 @@ import {
   getEntityById,
   releaseControl,
 } from "./entities/index.js";
-import { call } from "./functions.js";
+import { callAsync } from "./functions.js";
 import {
   getEntities,
   getInput,
@@ -55,7 +55,7 @@ export async function tick() {
     for (let i = entity.statuses.length - 1; i >= 0; --i) {
       const { count, effect, freq, id, offset, type } = entity.statuses[i];
       if ((time + offset) % freq !== 0) continue;
-      await call(effect, entity);
+      await callAsync(effect, entity);
       --entity.statuses[i].count;
       if (count <= 0) {
         await logSafe(

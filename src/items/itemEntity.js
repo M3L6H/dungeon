@@ -7,9 +7,9 @@ const NAMESPACE = "item";
 
 const pickupBehavior = registerFn(NAMESPACE, "pickup", async function (entity) {
   const { x, y } = entity;
-  const data = pickup(this, x, y, this._pickup, this._count);
-  if (inRange(this, SKILL, data)) {
-    return await act(this, SKILL, data);
+  const data = pickup(entity, x, y, entity._pickup, entity._count);
+  if (inRange(entity, SKILL, data)) {
+    return await act(entity, SKILL, data);
   }
   return false;
 });

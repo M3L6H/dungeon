@@ -2,6 +2,7 @@ import {
   getRandomEntityForDifficultyRange,
   examineEntity,
 } from "./entities/index.js";
+import { call } from "./functions.js";
 import { getTileEntities } from "./gameState.js";
 import {
   getNameForCombat,
@@ -793,10 +794,7 @@ export class Map {
             prev[1].x,
             prev[1].y,
             sign(
-              {
-                0: () =>
-                  `The sign says: "Go ${CARDINAL[dir]} to find ${room.name}."`,
-              },
+              `The sign says: "Go ${CARDINAL[dir]} to find ${room.name}."`,
               dir,
             ),
           );
@@ -909,7 +907,7 @@ export class Map {
     const tileEntity = getTileEntities()[tileEntityData?.id];
     return (
       (tile?.isTraversable(entity) ?? false) &&
-      (tileEntity?._isTraversable(tileEntityData?.state, entity) ?? true)
+      (tileEntity?.isTraversable(entity) ?? true)
     );
   }
 
