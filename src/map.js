@@ -321,13 +321,12 @@ export class Map {
     this.h = height;
     this.origins = origins;
     this.points = rooms;
-    this.entities = new Array(width * height);
+    this.entities = {};
     this.tiles = new Array(width * height);
-    this.tileToId = new Array(width * height).fill();
+    this.tileToId = {};
 
     for (let i = 0; i < this.tiles.length; ++i) {
-      this.entities[i] = [];
-      this.tiles[i] = [Tile.wall, undefined];
+      this.tiles[i] = [Tile.wall.id];
     }
 
     rooms.forEach((points) => {
@@ -419,9 +418,14 @@ export class Map {
 
   getEntities(x, y) {
     const idx = x + y * this.w;
+    if (this.entities[idx] === undefined) return [];
     this.entities[idx] = this.entities[idx].filter(
       ({ dead, x: eX, y: eY }) => !dead && x === eX && y === eY,
     );
+    if (this.entities[idx].length === 0) {
+      delete this.entities[idx];
+      return [];
+    }
     return this.entities[idx];
   }
 
@@ -433,14 +437,14 @@ export class Map {
    * @returns {Tile} The tile at x, y
    */
   getTile(x, y) {
-    return this.tiles[x + y * this.w][0];
+    return Tile.idToTile[this.tiles[x + y * this.w][0]];
   }
 
   /**
    * @returns {TileEntity} The tile entity at x, y
    */
   getTileEntity(x, y) {
-    return this.tiles[x + y * this.w][1];
+    return getTileEntities()[this.tiles[x + y * this.w][1]];
   }
 
   isTraversable(entity, x, y) {
@@ -473,7 +477,10 @@ export class Map {
       }
     }
 
-    this.getEntities(tX, tY).push(entityToMove);
+    const targetEntities = this.getEntities(tX, tY);
+    targetEntities.push(entityToMove);
+    this._setEntities(tX, tY, targetEntities);
+
     entityToMove.x = tX;
     entityToMove.y = tY;
 
@@ -955,12 +962,17 @@ export class Map {
     return Math.sign(n) * Math.round(Math.abs(n));
   }
 
+  _setEntities(x, y, entities) {
+    const idx = x + y * this.w;
+    this.entities[idx] = entities;
+  }
+
   _setTile(x, y, tile) {
-    this.tiles[x + y * this.w][0] = tile;
+    this.tiles[x + y * this.w][0] = tile.id;
   }
 
   _setTileEntity(x, y, tileEntity) {
-    this.tiles[x + y * this.w][1] = tileEntity;
+    this.tiles[x + y * this.w][1] = tileEntity.id;
   }
 }
 

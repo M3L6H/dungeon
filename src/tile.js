@@ -20,6 +20,8 @@ const defaultIsTraversable = registerFn(
 const defaultIsOpaque = registerFn(NAMESPACE, "defaultIsOpaque", () => false);
 
 export class Tile {
+  static idToTile = [];
+
   static floor = new Tile({
     name: "Dungeon Floor",
     url: "url('images/floor.png')",
@@ -66,6 +68,7 @@ export class Tile {
   };
 
   constructor(props) {
+    this.id = Tile.idToTile.length;
     this.name = props.name;
     this.url = props.url ?? "none";
 
@@ -78,6 +81,8 @@ export class Tile {
 
     this._isOpaque = props.isOpaque ?? defaultIsOpaque;
     this._isTraversable = props.isTraversable ?? defaultIsTraversable;
+
+    Tile.idToTile.push(this);
   }
 
   examine(entity) {
