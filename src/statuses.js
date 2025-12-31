@@ -1,3 +1,4 @@
+import { registerFn } from "./functions.js";
 import { logDanger, logSafe } from "./gameState.js";
 
 export const STATUS = {
@@ -5,63 +6,81 @@ export const STATUS = {
   poison: "poison",
 };
 
-const healingMinorEffect = 2;
+const NAMESPACE = "status";
+
+const healingMinorPotency = 2;
+const healingMinorEffect = registerFn(
+  NAMESPACE,
+  "healingMinor",
+  async (entity) => {
+    entity.health += healingMinorPotency;
+    await logSafe(
+      entity,
+      `${entity.displayName} recovers ${healingMinorPotency} health from ${STATUS.healing}.`,
+    );
+  },
+);
 export const healingMinor = (id) => ({
   id,
   type: STATUS.healing,
   freq: 4,
   count: 5,
-  effect: async (entity) => {
-    entity.health += healingMinorEffect;
-    await logSafe(
-      entity,
-      `${entity.displayName} recovers ${healingMinorEffect} health from ${STATUS.healing}.`,
-    );
-  },
+  effect: healingMinorEffect,
 });
 
-const healingImprovedEffect = healingMinorEffect * 2;
+const healingImprovedPotency = healingMinorPotency * 2;
+const healingImprovedEffect = registerFn(
+  NAMESPACE,
+  "healingImproved",
+  async (entity) => {
+    entity.health += healingImprovedPotency;
+    await logSafe(
+      entity,
+      `${entity.displayName} recovers ${healingImprovedPotency} health from ${STATUS.healing}.`,
+    );
+  },
+);
 export const healingImproved = (id) => ({
   id,
   type: STATUS.healing,
   freq: 4,
   count: 5,
-  effect: async (entity) => {
-    entity.health += healingImprovedEffect;
-    await logSafe(
-      entity,
-      `${entity.displayName} recovers ${healingImprovedEffect} health from ${STATUS.healing}.`,
-    );
-  },
+  effect: healingImprovedEffect,
 });
 
-const healingMajorEffect = healingImprovedEffect * 2;
+const healingMajorPotency = healingImprovedPotency * 2;
+const healingMajorEffect = registerFn(
+  NAMESPACE,
+  "healingMajor",
+  async (entity) => {
+    entity.health += healingMajorPotency;
+    await logSafe(
+      entity,
+      `${entity.displayName} recovers ${healingMajorPotency} health from ${STATUS.healing}.`,
+    );
+  },
+);
 export const healingMajor = (id) => ({
   id,
   type: STATUS.healing,
   freq: 4,
   count: 5,
-  effect: async (entity) => {
-    entity.health += healingMajorEffect;
-    await logSafe(
-      entity,
-      `${entity.displayName} recovers ${healingMajorEffect} health from ${STATUS.healing}.`,
-    );
-  },
+  effect: healingMajorEffect,
 });
 
-const poisonWeakEffect = 1;
+const poisonWeakPotency = 1;
+const poisonWeakEffect = registerFn(NAMESPACE, "poisonWeak", async (entity) => {
+  await logDanger(
+    entity,
+    `${entity.displayName} loses ${poisonWeakPotency} health & stamina from ${STATUS.poison}.`,
+  );
+  entity.health -= poisonWeakPotency;
+  entity.stamina -= poisonWeakPotency;
+});
 export const poisonWeak = (id) => ({
   id,
   type: STATUS.poison,
   freq: 4,
   count: 5,
-  effect: async (entity) => {
-    await logDanger(
-      entity,
-      `${entity.displayName} loses ${poisonWeakEffect} health & stamina from ${STATUS.poison}.`,
-    );
-    entity.health -= poisonWeakEffect;
-    entity.stamina -= poisonWeakEffect;
-  },
+  effect: poisonWeakEffect,
 });
