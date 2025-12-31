@@ -1,3 +1,24 @@
+import { call, registerFn } from "./functions.js";
+
+const NAMESPACE = "tile";
+
+const descriptionTable = {};
+
+export function getDescription(tile) {
+  return descriptionTable[tile.name];
+}
+
+export function setDescription(tileName, table) {
+  descriptionTable[tileName] = table;
+}
+
+const defaultIsTraversable = registerFn(
+  NAMESPACE,
+  "defaultIsTraversable",
+  () => true,
+);
+const defaultIsOpaque = registerFn(NAMESPACE, "defaultIsOpaque", () => false);
+
 export class Tile {
   static floor = new Tile({
     name: "Dungeon Floor",
@@ -21,8 +42,8 @@ export class Tile {
           : "The dungeon wall is slightly damp. Moss grows in the cracks between bricks.";
       },
     },
-    isTraversable: () => true,
-    isOpaque: () => true,
+    isTraversable: registerFn(NAMESPACE, "secretWallIsTraversable", () => true),
+    isOpaque: registerFn(NAMESPACE, "secretWallIsOpaque", () => true),
   });
 
   static wall = new Tile({
@@ -34,8 +55,8 @@ export class Tile {
           ? "The dungeon wall is made of solid dark stone."
           : "The dungeon wall is slightly damp. Moss grows in the cracks between bricks.",
     },
-    isTraversable: () => false,
-    isOpaque: () => true,
+    isTraversable: registerFn(NAMESPACE, "wallIsTraversable", () => false),
+    isOpaque: registerFn(NAMESPACE, "wallIsOpaque", () => true),
   });
 
   static nameToTile = {
@@ -45,25 +66,37 @@ export class Tile {
   };
 
   constructor(props) {
-    this.name = props.name ?? "Unknown";
+    this.name = props.name;
     this.url = props.url ?? "none";
 
-    this.description = props.description ?? {
-      0: () => `You see nothing interesting about ${this.name}`,
-    };
+    setDescription(
+      this.name,
+      props.description ?? {
+        0: () => `You see nothing interesting about ${this.name}`,
+      },
+    );
 
-    this.isTraversable = props.isTraversable ?? (() => true);
-    this.isOpaque = props.isOpaque ?? (() => false);
+    this._isOpaque = props.isOpaque ?? defaultIsOpaque;
+    this._isTraversable = props.isTraversable ?? defaultIsTraversable;
   }
 
   examine(entity) {
     const { perception } = entity;
     const details = [];
-    for (const threshold in this.description) {
+    const description = getDescription(this);
+    for (const threshold in description) {
       if (perception >= threshold) {
-        details.push(this.description[threshold](this, entity));
+        details.push(description[threshold](this, entity));
       }
     }
     return details.join("\r\n");
+  }
+
+  isOpaque(entity) {
+    return call(this._isOpaque, entity);
+  }
+
+  isTraversable(entity) {
+    return call(this._isTraversable, entity);
   }
 }

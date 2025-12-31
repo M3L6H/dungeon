@@ -27,6 +27,8 @@ export class ItemEntity {
     for (const k in data.setAfter) {
       itemEntity[k] = data.setAfter[k];
     }
+    // We cannot persist the timeline, so we have to recalculate actions
+    itemEntity.nextActionTime = 0;
     return itemEntity;
   }
 
