@@ -1,4 +1,4 @@
-import { getLogs, getSettings, getTime } from "./gameState.js";
+import { getLogs, getPlayer, getSettings, getTime } from "./gameState.js";
 import {
   highlight,
   renderViewport,
@@ -51,7 +51,7 @@ export function addWarnLog(msg, wait = true) {
   return addStyledLog(msg, "warn", wait);
 }
 
-export async function waitForReading(logElt, msg) {
+export async function waitForReading(logElt) {
   return new Promise((resolve) => {
     const elts = logElt.querySelectorAll("[data-id]");
     if (elts.length > 0) {
@@ -87,6 +87,17 @@ function init() {
     if (elt.dataset.id === undefined) return;
     highlight(elt.dataset.id);
   });
+}
+
+export function setUpLogs() {
+  getLogs().forEach((log) => {
+    const logElt = document.createElement("p");
+    logElt.classList.add("log");
+    logElt.innerHTML = log;
+    logsElt.appendChild(logElt);
+  });
+
+  logsElt.scrollTop = logsElt.scrollHeight;
 }
 
 document.addEventListener("DOMContentLoaded", init);

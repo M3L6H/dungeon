@@ -1,12 +1,18 @@
+import { registerFn } from "../functions.js";
 import { getMap } from "../gameState.js";
 import { healthPotionMinor } from "../items/healthPotion.js";
 import { key } from "../items/key.js";
 import { setDescription } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
+const NAMESPACE = "player";
+
 const name = "player";
 const maleVariant = "male";
 const femaleVariant = "female";
+const canInteract = registerFn(NAMESPACE, "canInteract", (self, _, item) => {
+  return item.isHealthPotion && self.health < self.maxHealth;
+});
 export async function createPlayer() {
   const {
     w,
@@ -28,9 +34,7 @@ export async function createPlayer() {
       additionalProps: {
         picksItems: true,
       },
-      canInteract: (self, _, item) => {
-        return item.isHealthPotion && self.health < self.maxHealth;
-      },
+      canInteract,
     }),
     x,
     y,

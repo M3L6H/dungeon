@@ -82,7 +82,7 @@ export function resetRat(rat, props) {
   rat.inventory = {};
   rat.statuses = [];
   rat.targetId = null;
-  rat.tSet = props.tSet ?? new Set(["player"]);
+  rat.tSet = props.tSet ?? ["player"];
   for (const k in props.additionalProps ?? {}) {
     rat[k] = props.additionalProps[k];
   }

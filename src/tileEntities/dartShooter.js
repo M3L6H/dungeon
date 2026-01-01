@@ -1,5 +1,6 @@
 import { createDart, resetDart, startEntity } from "../entities/index.js";
 import { registerFn } from "../functions.js";
+import { getEntities } from "../gameState.js";
 import { setDescription } from "./data.js";
 import { TileEntity } from "./tileEntity.js";
 
@@ -16,14 +17,15 @@ const canInteract = registerFn(NAMESPACE, "canInteract", () => false);
 const isOpaque = registerFn(NAMESPACE, "isOpaque", () => true);
 const isTraversable = registerFn(NAMESPACE, "isTraversable", () => false);
 const onTick = registerFn(NAMESPACE, "onTick", async (state, time) => {
-  const { offset, dart, spawnDir, spawnX, spawnY } = state;
+  const { offset, dartId, spawnDir, spawnX, spawnY } = state;
   if ((time + offset) % DIV !== 0) return;
-  if (dart !== undefined && !dart.dead) return;
-  if (dart === undefined) {
-    state.dart = await createDart(spawnX, spawnY, { dir: spawnDir });
+  if (dartId !== undefined && !getEntities()[dartId].dead) return;
+  if (dartId === undefined) {
+    const dart = await createDart(spawnX, spawnY, { dir: spawnDir });
+    state.dartId = dart.id;
   } else {
-    resetDart(state.dart, { dir: spawnDir });
-    await startEntity(state.dart, spawnX, spawnY);
+    resetDart(getEntities()[dartId], { dir: spawnDir });
+    await startEntity(getEntities()[dartId], spawnX, spawnY);
   }
 });
 export function dartShooter(spawnX, spawnY, spawnDir) {
@@ -35,7 +37,7 @@ export function dartShooter(spawnX, spawnY, spawnDir) {
     isTraversable,
     onTick,
     initialState: {
-      dart: undefined,
+      dartId: undefined,
       offset: Math.floor(Math.random() * DIV),
       spawnX,
       spawnY,

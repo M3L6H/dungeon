@@ -1,3 +1,4 @@
+import { call } from "../functions.js";
 import {
   addEntity,
   getEntities,
@@ -5,6 +6,7 @@ import {
   getInput,
   getMap,
   getSelectedItem,
+  getTileEntities,
   getTime,
   interrupt,
   logDanger,
@@ -110,10 +112,13 @@ export async function startEntity(entity, x, y) {
 
 export class Entity {
   static fromData(data) {
-    const entity = new Entity({
-      ...data.props,
-      additionalProps: data.additionalProps,
-    });
+    const entity = new Entity(
+      {
+        ...data.props,
+        additionalProps: data.additionalProps,
+      },
+      false,
+    );
     for (const k in data.setAfter) {
       entity[k] = data.setAfter[k];
     }
@@ -122,7 +127,7 @@ export class Entity {
     return entity;
   }
 
-  constructor(props) {
+  constructor(props, firstTime = true) {
     this._displayName = props.displayName ?? props.name;
     this.name = props.name;
     this.variant = props.variant;
@@ -141,7 +146,9 @@ export class Entity {
     this.wisdom = props.wisdom ?? 1;
 
     this.level = props.level ?? 1;
-    for (let i = 1; i < this.level; ++i) levelUp(this);
+    if (firstTime) {
+      for (let i = 1; i < this.level; ++i) levelUp(this);
+    }
     this._xp = 0;
 
     this.attackRange = props.attackRange ?? 1;
@@ -163,11 +170,11 @@ export class Entity {
 
     this.dead = false;
     this.idToLoc = {};
-    this.immunities = props.immunities ?? new Set();
+    this.immunities = new Set(props.immunities ?? []);
     this.inventory = props.inventory ?? {};
     this.statuses = [];
     this.targetId = null;
-    this.tSet = props.tSet ?? new Set(["player"]);
+    this.tSet = new Set(props.tSet ?? ["player"]);
     this._unique = props.unique ?? false;
 
     for (const k in props.additionalProps ?? {}) {
@@ -196,7 +203,7 @@ export class Entity {
 
   canInteract(entity, item) {
     if (!this._canInteract) return undefined;
-    return this._canInteract(this, entity, item);
+    return call(this._canInteract, this, entity, item);
   }
 
   getEntitiesInMemory(x, y) {
@@ -217,7 +224,7 @@ export class Entity {
   }
 
   getTileEntityInMemory(x, y) {
-    return this.tileEntityMemory[x + y * getMap().w];
+    return getTileEntities()[this.tileEntityMemory[x + y * getMap().w]];
   }
 
   getTileInMemory(x, y) {
@@ -231,7 +238,7 @@ export class Entity {
 
   async interact(entity, item) {
     if (this.onInteract !== undefined) {
-      return await this.onInteract(this, entity, item);
+      return await call(this.onInteract, this, entity, item);
     }
     return undefined;
   }
@@ -240,7 +247,7 @@ export class Entity {
     --this.inventory[item.id];
 
     if (this.inventory[item.id] <= 0 && getSelectedItem().id === item.id) {
-      setSelectedItem(undefined);
+      setSelectedItem(null);
     }
   }
 
@@ -292,7 +299,7 @@ export class Entity {
     const r = idx & 31; // Modulo 32
     const flags = this.memory[q] ?? ZERO;
     this.memory[q] = flags | (1 << r);
-    if (tileEntity !== undefined) this.tileEntityMemory[idx] = tileEntity;
+    if (tileEntity !== undefined) this.tileEntityMemory[idx] = tileEntity.id;
   }
 
   toData() {
@@ -347,6 +354,10 @@ export class Entity {
       data.props[key] = this[key];
       allKeys.delete(key);
     }
+
+    // immunities and tSet are special
+    data.props.immunities = [...this.immunities];
+    data.props.tSet = [...this.tSet];
 
     for (const key of setAfterKeys) {
       data.setAfter[key] = this[key];

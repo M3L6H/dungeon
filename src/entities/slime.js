@@ -45,8 +45,8 @@ export async function createBlueSlimeSmall(x, y) {
       attackDelayMod: 1,
       speedMod: -1,
       behaviors: [simpleAttack, findTarget, hunt, wander, rest],
-      immunities: new Set([STATUS.poison]),
-      tSet: new Set(["player", "rat"]),
+      immunities: [STATUS.poison],
+      tSet: ["player", "rat"],
       additionalProps: {
         hands: false,
       },
@@ -98,8 +98,8 @@ export async function createGreenSlimeSmall(x, y) {
         wander,
         rest,
       ],
-      immunities: new Set([STATUS.poison]),
-      tSet: new Set(["player", "rat"]),
+      immunities: [STATUS.poison],
+      tSet: ["player", "rat"],
       additionalProps: {
         hands: false,
       },

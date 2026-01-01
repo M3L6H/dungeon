@@ -2,7 +2,7 @@ import {
   getRandomEntityForDifficultyRange,
   examineEntity,
 } from "./entities/index.js";
-import { getTileEntities } from "./gameState.js";
+import { getEntities, getTileEntities } from "./gameState.js";
 import {
   getNameForCombat,
   getNameForSecret,
@@ -323,7 +323,7 @@ export class Map {
     }
     return map;
   }
- 
+
   constructor(width, height, origins, rooms) {
     this.w = width;
     this.h = height;
@@ -333,7 +333,7 @@ export class Map {
     this.tiles = new Array(width * height);
     this.tileToId = {};
   }
-  
+
   initMap(edges) {
     for (let i = 0; i < this.tiles.length; ++i) {
       this.tiles[i] = [Tile.wall.id];
@@ -429,14 +429,15 @@ export class Map {
   getEntities(x, y) {
     const idx = x + y * this.w;
     if (this.entities[idx] === undefined) return [];
-    this.entities[idx] = this.entities[idx].filter(
-      ({ dead, x: eX, y: eY }) => !dead && x === eX && y === eY,
-    );
+    this.entities[idx] = this.entities[idx].filter((entityId) => {
+      const { dead, x: eX, y: eY } = getEntities()[entityId];
+      return !dead && x === eX && y === eY;
+    });
     if (this.entities[idx].length === 0) {
       delete this.entities[idx];
       return [];
     }
-    return this.entities[idx];
+    return this.entities[idx].map((entityId) => getEntities()[entityId]);
   }
 
   getRandomRoom() {
@@ -487,9 +488,10 @@ export class Map {
       }
     }
 
-    const targetEntities = this.getEntities(tX, tY);
-    targetEntities.push(entityToMove);
-    this._setEntities(tX, tY, targetEntities);
+    const idx = tX + tY * this.w;
+    const targetEntities = this.entities[idx] ?? [];
+    targetEntities.push(entityToMove.id);
+    this.entities[idx] = targetEntities;
 
     entityToMove.x = tX;
     entityToMove.y = tY;
@@ -615,10 +617,10 @@ export class Map {
       }
     }
   }
-  
+
   toData() {
     const data = {};
-    for (const key in Object.keys(this)) {
+    for (const key of Object.keys(this)) {
       data[key] = this[key];
     }
     return data;
@@ -978,11 +980,6 @@ export class Map {
 
   _round(n) {
     return Math.sign(n) * Math.round(Math.abs(n));
-  }
-
-  _setEntities(x, y, entities) {
-    const idx = x + y * this.w;
-    this.entities[idx] = entities;
   }
 
   _setTile(x, y, tile) {

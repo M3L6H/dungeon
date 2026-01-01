@@ -14,6 +14,7 @@ import {
   getTimeline,
   incrementTime,
   logSafe,
+  saveAll,
 } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
@@ -26,6 +27,7 @@ export async function advance() {
     ticking = false;
   }
   renderViewport();
+  saveAll();
 }
 
 export function isTicking() {

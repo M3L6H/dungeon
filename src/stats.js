@@ -1,4 +1,4 @@
-import { getPlayer, logSafe } from "./gameState.js";
+import { getPlayer, logSafe, saveAll } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
 const statsElt = document.getElementById("level-up");
@@ -63,6 +63,7 @@ export function showStats(
       `${entity.displayName} leveled up to level ${entity.level}. Health, Mana, and Stamina restored. Statuses cleared.`,
       false,
     );
+    saveAll();
     renderViewport();
   };
 

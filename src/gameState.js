@@ -1,5 +1,6 @@
 import { renderActions } from "./actions.js";
 import {
+  Entity,
   canEntityInteract,
   createPlayer,
   entityInControl,
@@ -18,6 +19,8 @@ import {
   waitForReading,
 } from "./logs.js";
 import { Map, generateMap } from "./map.js";
+import { loadItemData, saveItemData } from "./storage.js";
+import { TileEntity } from "./tileEntities/tileEntity.js";
 import { schedule } from "./time.js";
 import { renderViewport } from "./viewport.js";
 
@@ -30,6 +33,16 @@ export const INTERACT = "interact";
 export const RIGHT = "right";
 export const SETTINGS = "settings";
 export const SKILL = "skill";
+
+const ENTITIES_KEY = "entities";
+const ENTITY_LABELS_KEY = "entityLabels";
+const LOGS_KEY = "logs";
+const MAP_KEY = "map";
+const SELECTED_KEY = "selected";
+const SELECTED_ITEM_KEY = "selectedItem";
+const SETTINGS_KEY = "settings";
+const TILE_ENTITIES_KEY = "tileEntities";
+const TIME_KEY = "time";
 
 class GameState {
   constructor() {
@@ -63,11 +76,31 @@ let gameState = {
   tileEntities: [],
 };
 
-export async function newGame() {
+export async function createOrLoadGame(create = false) {
+  if (create || !loadGame()) {
+    gameState = new GameState();
+    gameState.map = await generateMap();
+    gameState.player = await createPlayer();
+    await gameState.map.spawnEntities();
+  }
+  saveAll();
+}
+
+function loadGame() {
   gameState = new GameState();
-  gameState.map = await generateMap();
-  gameState.player = await createPlayer();
-  await gameState.map.spawnEntities();
+  const success =
+    loadMap() &&
+    loadEntities() &&
+    loadTileEntities() &&
+    loadEntityLabels() &&
+    loadLogs() &&
+    loadSelected() &&
+    loadSettings() &&
+    loadTime();
+
+  if (!success) return false;
+  gameState.player = getEntities()[0];
+  return true;
 }
 
 export function addEntity(entity) {
@@ -161,11 +194,13 @@ export function getTimeline() {
 
 export function setSelectedIndex(i) {
   gameState.selected = i;
+  saveSelected();
 }
 
 export function setSelectedItem(itemId) {
   gameState.selectedItem = itemId;
   renderActions();
+  saveSelected();
 }
 
 export async function act(entity, action, data) {
@@ -536,6 +571,106 @@ export function roll(n) {
 
 export function roundMin(n, min = 1) {
   return Math.max(Math.floor(n), min);
+}
+
+function loadEntities() {
+  const itemData = loadItemData(ENTITIES_KEY);
+  if (!itemData) return false;
+  gameState.entities = itemData.map((datum) => Entity.fromData(datum));
+  return !gameState.entities[0].dead;
+}
+
+function loadEntityLabels() {
+  gameState.entityLabels = loadItemData(ENTITY_LABELS_KEY);
+  return gameState.entityLabels !== undefined;
+}
+
+function loadLogs() {
+  gameState.logs = loadItemData(LOGS_KEY);
+  return gameState.logs !== undefined;
+}
+
+function loadMap() {
+  const itemData = loadItemData(MAP_KEY);
+  if (!itemData) return false;
+  gameState.map = Map.fromData(itemData);
+  return true;
+}
+
+function loadSelected() {
+  gameState.selected = loadItemData(SELECTED_KEY);
+  gameState.selectedItem = loadItemData(SELECTED_ITEM_KEY);
+  return gameState.selected !== undefined;
+}
+
+function loadSettings() {
+  gameState.settings = loadItemData(SETTINGS_KEY);
+  return gameState.settings !== undefined;
+}
+
+function loadTileEntities() {
+  const itemData = loadItemData(TILE_ENTITIES_KEY);
+  if (!itemData) return false;
+  gameState.tileEntities = itemData.map((datum) => TileEntity.fromData(datum));
+  return true;
+}
+
+function loadTime() {
+  gameState.time = loadItemData(TIME_KEY);
+  return gameState.time !== undefined;
+}
+
+export function saveAll() {
+  saveEntities();
+  saveEntityLabels();
+  saveMap();
+  saveLogs();
+  saveMap();
+  saveSelected();
+  saveSettings();
+  saveTileEntities();
+  saveTime();
+}
+
+function saveEntities() {
+  saveItemData(
+    ENTITIES_KEY,
+    getEntities().map((entity) => entity.toData()),
+  );
+}
+
+function saveEntityLabels() {
+  saveItemData(ENTITY_LABELS_KEY, gameState.entityLabels);
+}
+
+function saveLogs() {
+  saveItemData(LOGS_KEY, gameState.logs);
+}
+
+function saveMap() {
+  saveItemData(MAP_KEY, getMap().toData());
+}
+
+function saveSelected() {
+  saveItemData(SELECTED_KEY, gameState.selected);
+  if (gameState.selectedItem !== undefined) {
+    saveItemData(SELECTED_ITEM_KEY, gameState.selectedItem);
+  }
+}
+
+function saveSettings() {
+  saveItemData(SETTINGS_KEY, gameState.settings);
+}
+
+function saveTileEntities() {
+  saveItemData(
+    TILE_ENTITIES_KEY,
+    getTileEntities().map((tileEntity) => tileEntity.toData()),
+  );
+}
+
+function saveTime() {
+  saveItemData(TIME_KEY, gameState.time);
 }
 
 function turnToFaceTarget(entity, target) {
