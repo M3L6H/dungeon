@@ -66,22 +66,30 @@ export async function exploreTemplate(entity, range = 2) {
  * Behavior where entity will search for the first target in its memory that is on the targets list
  * @param entity {Entity} - The entity this behavior is for
  */
-export const findTarget = registerFn(BEHAVIOR, "findTarget", async function(entity) {
-  const { entityMemory, tSet } = entity;
-  if (tSet.size === 0) return false;
-  if (entity.targetId !== null) return false;
-  for (const k in entityMemory) {
-    const entities = entityMemory[k];
-    for (const { id } of entities) {
-      const other = getEntityById(id);
-      if (!other.isItem && !other.dead && tSet.has(other.name.toLowerCase())) {
-        entity.targetId = id;
-        return false;
+export const findTarget = registerFn(
+  BEHAVIOR,
+  "findTarget",
+  async function (entity) {
+    const { entityMemory, tSet } = entity;
+    if (tSet.size === 0) return false;
+    if (entity.targetId !== null) return false;
+    for (const k in entityMemory) {
+      const entities = entityMemory[k];
+      for (const { id } of entities) {
+        const other = getEntityById(id);
+        if (
+          !other.isItem &&
+          !other.dead &&
+          tSet.has(other.name.toLowerCase())
+        ) {
+          entity.targetId = id;
+          return false;
+        }
       }
     }
-  }
-  return false;
-});
+    return false;
+  },
+);
 
 /**
  * Behavior where entity will flee from things it is afraid of.
@@ -110,9 +118,9 @@ export async function fleeTemplate(entity, afraid = () => true) {
       const [eX, eY] = [x + dx, y + dy];
       if (eX < 0 || eY < 0 || eX >= w || eY >= h) continue;
       const entities = entityMemory[eX + eY * w] ?? [];
-      for (const { dir, id } of entities) {
-        if (dir === undefined) continue;
+      for (const { id } of entities) {
         const other = getEntityById(id);
+        if (other.isItem) continue;
         if (!other.dead && other.name !== name && afraid(other)) {
           enemiesInRange = true;
           for (let ddx = -3; ddx <= 3; ++ddx) {
@@ -178,7 +186,7 @@ export async function fleeTemplate(entity, afraid = () => true) {
  * Behavior where entity will path to the entity identified by targetId based on its memory
  * @param entity {Entity} - The entity this behavior is for
  */
-export const hunt = registerFn(BEHAVIOR, "hunt", async function(entity) {
+export const hunt = registerFn(BEHAVIOR, "hunt", async function (entity) {
   const { searching, x, y } = entity;
   const targetLoc = getTargetLoc(entity);
   if (!targetLoc) return false;
@@ -210,56 +218,64 @@ export const hunt = registerFn(BEHAVIOR, "hunt", async function(entity) {
  * Behavior where entity will fly like a projectile
  * @param entity {Entity} - The entity this behavior is for
  */
-export const projectile = registerFn(BEHAVIOR, "projectile", async function(entity) {
-  const { dir, displayName, x, y } = entity;
-  const [dx, dy] = DIRS[dir];
-  const target = { x: x + dx, y: y + dy };
+export const projectile = registerFn(
+  BEHAVIOR,
+  "projectile",
+  async function (entity) {
+    const { dir, displayName, x, y } = entity;
+    const [dx, dy] = DIRS[dir];
+    const target = { x: x + dx, y: y + dy };
 
-  for (const other of getMap().getEntities(x, y)) {
-    if (!other.isProjectile && !other.isItem) {
-      await logCombatDanger(
-        entity,
-        other,
-        `${other.displayName} was hit by a ${displayName} and took ${entity.damage} damage!`,
-      );
+    for (const other of getMap().getEntities(x, y)) {
+      if (!other.isProjectile && !other.isItem) {
+        await logCombatDanger(
+          entity,
+          other,
+          `${other.displayName} was hit by a ${displayName} and took ${entity.damage} damage!`,
+        );
 
-      other.health -= entity.damage;
+        other.health -= entity.damage;
+        entity.dead = true;
+
+        return true;
+      }
+    }
+
+    if (!inRange(entity, MOVE, target)) {
       entity.dead = true;
-
       return true;
     }
-  }
 
-  if (!inRange(entity, MOVE, target)) {
-    entity.dead = true;
+    await act(entity, MOVE, { ...target, silent: true });
+    await logBehavior(entity, `flying ${CARDINAL_DIRS[dir]}`);
     return true;
-  }
-
-  await act(entity, MOVE, { ...target, silent: true });
-  await logBehavior(entity, `flying ${CARDINAL_DIRS[dir]}`);
-  return true;
-});
+  },
+);
 
 /**
  * Behavior where entity will attack an adjacent target
  * @param entity {Entity} - The entity this behavior is for
  */
-export const simpleAttack = registerFn(BEHAVIOR, "simpleAttack", async function(entity) {
-  const targetLoc = getTargetLoc(entity);
-  if (!targetLoc) return false;
-  const { x: tX, y: tY } = targetLoc;
-  const target = { x: tX, y: tY };
-  if (inRange(entity, ATTACK, target)) {
-    return await act(entity, ATTACK, target);
-  }
-  return false;
-});
+export const simpleAttack = registerFn(
+  BEHAVIOR,
+  "simpleAttack",
+  async function (entity) {
+    const targetLoc = getTargetLoc(entity);
+    if (!targetLoc) return false;
+    const { x: tX, y: tY } = targetLoc;
+    const target = { x: tX, y: tY };
+    if (inRange(entity, ATTACK, target)) {
+      return await act(entity, ATTACK, target);
+    }
+    return false;
+  },
+);
 
 /**
  * Behavior where entity will wander randomly
  * @param entity {Entity} - The entity this behavior is for
  */
-export const wander = registerFn(BEHAVIOR, "wander", async function(entity) {
+export const wander = registerFn(BEHAVIOR, "wander", async function (entity) {
   const { x, y } = entity;
   let [dx, dy] = DIRS[entity.dir];
   let target = { x: x + dx, y: y + dy };
@@ -283,7 +299,7 @@ export const wander = registerFn(BEHAVIOR, "wander", async function(entity) {
  * Behavior where an entity will rest
  * @param entity {Entity} - The entity this behavior is for
  */
-export const rest = registerFn(BEHAVIOR, "rest", async function(entity) {
+export const rest = registerFn(BEHAVIOR, "rest", async function (entity) {
   const { x, y } = entity;
   return await act(entity, MOVE, { x, y });
 });
