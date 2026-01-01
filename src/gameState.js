@@ -590,7 +590,7 @@ function loadLogs() {
   return gameState.logs !== undefined;
 }
 
-function loadMap() {
+export function loadMap() {
   const itemData = loadItemData(MAP_KEY);
   if (!itemData) return false;
   gameState.map = Map.fromData(itemData);

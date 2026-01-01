@@ -1,9 +1,5 @@
-import { setUpActions } from "./actions.js";
-import { createOrLoadGame, getPlayer } from "./gameState.js";
-import { setUpInventory } from "./inventory.js";
-import { setUpLogs } from "./logs.js";
-import { setUpStats, showStats } from "./stats.js";
-import { renderViewport, setUpViewport } from "./viewport.js";
+import { setUpMainMenu } from "./main-menu.js";
+import { setUpViewport } from "./viewport.js";
 
 function setSize() {
   const main = document.getElementById("main");
@@ -16,19 +12,8 @@ function setSize() {
 
 async function init() {
   setSize();
-
-  await createOrLoadGame();
-
+  setUpMainMenu();
   setUpViewport();
-  setUpActions();
-  setUpInventory();
-  setUpStats();
-  setUpLogs();
-  renderViewport();
-
-  if (getPlayer().level === 0) {
-    showStats(getPlayer(), true, 5);
-  }
 }
 
 addEventListener("load", async () => await init());

@@ -36,6 +36,15 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+button:not(:disabled):hover {
+  filter: brightness(0.8);
+}
+
 h1,
 h2,
 h3 {
@@ -55,10 +64,33 @@ section {
   width: 100%;
 }
 
+#game {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+}
+
 #main {
   margin: auto;
   height: 100vh;
   position: relative;
+}
+
+#main-menu {
+  position: absolute;
+  inset: 0;
+  background-color: #232333;
+  color: white;
+  z-index: 99;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #level-up {
@@ -86,16 +118,6 @@ section {
 
   display: flex;
   flex-direction: column;
-}
-
-#game {
-  height: 100%;
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  position: relative;
 }
 
 #title {
@@ -265,6 +287,24 @@ section {
   font-weight: bold;
 }
 
+.buttons {
+  display: flex;
+  flex-direction: column;
+  margin-top: 36px;
+  padding: 0 32px;
+  width: 100%;
+  padding-bottom: 32px;
+}
+
+.buttons button {
+  border: none;
+  font-size: 2em;
+  margin-bottom: 16px;
+  padding: 4px 8px;
+  background-color: #696570;
+  color: #232333;
+}
+
 .close-button {
   background-color: #ff5555;
   border-radius: 4px;
@@ -355,6 +395,21 @@ section {
   100% {
     opacity: 0;
   }
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-bottom: 16px;
+}
+
+.game-title {
+  color: white;
+  font-family: "Jacquard 12", system-ui;
+  font-size: 6rem;
+  text-align: center;
 }
 
 .hidden {
