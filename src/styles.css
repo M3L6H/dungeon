@@ -326,6 +326,10 @@ select {
   content: "settings";
 }
 
+.action[data-action="skill"]::after {
+  content: "point_scan";
+}
+
 .action span {
   position: absolute;
   background-color: #454555;

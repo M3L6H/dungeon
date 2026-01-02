@@ -52,7 +52,7 @@ class GameState {
       INTERACT,
       LEFT,
       RIGHT,
-      NONE,
+      SKILL,
       NONE,
       NONE,
       NONE,
