@@ -13,7 +13,7 @@ const femaleVariant = "female";
 const canInteract = registerFn(NAMESPACE, "canInteract", (self, _, item) => {
   return item.isHealthPotion && self.health < self.maxHealth;
 });
-export async function createPlayer() {
+export async function createPlayer(background, props) {
   const {
     w,
     h,
@@ -22,19 +22,25 @@ export async function createPlayer() {
   return await startEntity(
     new Entity({
       name,
-      variant: femaleVariant,
       level: 0,
       w,
       h,
-      inventory: {
-        [key.id]: 2,
-        [healthPotionMinor.id]: 1,
-      },
+      inventory:
+        background === "nobody"
+          ? {
+              [key.id]: 2,
+              [healthPotionMinor.id]: 1,
+            }
+          : {
+              [healthPotionMinor.id]: 1,
+            },
       unique: true,
       additionalProps: {
+        background,
         picksItems: true,
       },
       canInteract,
+      ...props,
     }),
     x,
     y,

@@ -110,6 +110,53 @@
           <span class="version">1.0.0-alpha</span>
         </div>
       </div>
+      <div id="new-game" class="hidden">
+        <h1>New Game</h1>
+        <form>
+          <div class="form-inputs">
+            <fieldset>
+              <legend>Name</legend>
+              <input type="text" id="player-name" />
+            </fieldset>
+            <fieldset id="player-variant">
+              <legend>Variant</legend>
+              <div>
+                <label for="male">A</label>
+                <input
+                  type="radio"
+                  name="player-variant"
+                  id="male"
+                  value="male"
+                  checked
+                />
+              </div>
+              <div>
+                <label for="female">B</label>
+                <input
+                  type="radio"
+                  name="player-variant"
+                  id="female"
+                  value="female"
+                />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Background</legend>
+              <select value="nobody" id="player-background">
+                <option value="nobody">Nobody</option>
+                <option value="agility">Circus Performer (+1 Agility)</option>
+                <option value="constitution">Farmer (+1 Constitution)</option>
+                <option value="endurance">Laborer (+1 Endurance)</option>
+                <option value="intelligence">Scholar (+1 Intelligence)</option>
+                <option value="strength">Soldier (+1 Strength)</option>
+                <option value="wisdom">Sage (+1 Wisdom)</option>
+              </select>
+            </fieldset>
+          </div>
+          <img id="player-preview" src="images/player-male-2.png" />
+          <button class="submit" disabled>Confirm</button>
+        </form>
+      </div>
     </main>
   </body>
 </html>

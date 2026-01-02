@@ -76,11 +76,14 @@ let gameState = {
   tileEntities: [],
 };
 
-export async function createOrLoadGame(create = false) {
+export async function createOrLoadGame(create = false, playerData) {
   if (create || !loadGame()) {
     gameState = new GameState();
     gameState.map = await generateMap();
-    gameState.player = await createPlayer();
+    gameState.player = await createPlayer(
+      playerData.background,
+      playerData.props,
+    );
     await gameState.map.spawnEntities();
   }
   saveAll();

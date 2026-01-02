@@ -1,4 +1,5 @@
-import { setUpMainMenu } from "./main-menu.js";
+import { setUpMainMenu } from "./mainMenu.js";
+import { setUpNewGame } from "./newGame.js";
 import { setUpViewport } from "./viewport.js";
 
 function setSize() {
@@ -14,6 +15,7 @@ async function init() {
   setSize();
   setUpMainMenu();
   setUpViewport();
+  setUpNewGame();
 }
 
 addEventListener("load", async () => await init());

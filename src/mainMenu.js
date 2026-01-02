@@ -1,8 +1,9 @@
 import { setUpActions } from "./actions.js";
-import { createOrLoadGame, getPlayer, loadMap } from "./gameState.js";
+import { createOrLoadGame, loadMap } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
-import { setUpStats, showStats } from "./stats.js";
+import { showNewGame } from "./newGame.js";
+import { setUpStats } from "./stats.js";
 import { renderViewport } from "./viewport.js";
 
 const mainMenuElt = document.getElementById("main-menu");
@@ -17,16 +18,8 @@ function init() {
       !loadMap() ||
       confirm("This will overwrite your saved game. Are you sure?")
     ) {
-      await createOrLoadGame(true);
-
-      setUpActions();
-      setUpInventory();
-      setUpStats();
-      setUpLogs();
-      renderViewport();
       mainMenuElt.classList.add("hidden");
-
-      showStats(getPlayer(), true, 5);
+      showNewGame();
     }
   });
 
