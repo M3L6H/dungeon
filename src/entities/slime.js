@@ -1,7 +1,6 @@
 import { registerFn } from "../functions.js";
 import { getMap } from "../gameState.js";
-import { gold, goldPile } from "../items/gold.js";
-import { healthPotionMinor } from "../items/healthPotion.js";
+import { gold, goldPile,healthPotionMinor, key } from "../items/index.js";
 import { STATUS } from "../statuses.js";
 import {
   findTarget,
@@ -112,6 +111,7 @@ setDifficultyForEntityCreator(3, createGreenSlimeSmall);
 setBaseXp(greenSlimeName, 3);
 setLevelStrategy(greenSlimeName, [0, 0.2, 0.2, 0.3, 0, 0.3]);
 setDropTable(greenSlimeName, {
+  0.1: () => ({ itemId: key.id }),
   0.2: () => ({ itemId: healthPotionMinor.id }),
   0.2: (entity) => ({
     itemId: goldPile.id,
