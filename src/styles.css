@@ -189,6 +189,15 @@ select {
   flex-direction: column;
 }
 
+#pause-menu {
+  position: absolute;
+  inset: 0;
+  background-color: #232333;
+  color: white;
+  z-index: 99;
+  padding-top: 48px;
+}
+
 #title {
   color: white;
   position: absolute;

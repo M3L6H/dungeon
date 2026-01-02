@@ -90,6 +90,7 @@ function init() {
 }
 
 export function setUpLogs() {
+  logsElt.innerHTML = "";
   getLogs().forEach((log) => {
     const logElt = document.createElement("p");
     logElt.classList.add("log");

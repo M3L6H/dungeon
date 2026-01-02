@@ -64,6 +64,7 @@ class GameState {
     this.entityLabels = {};
     this.logs = [];
     this.selected = 0;
+    this.selectedItem = undefined;
     this.settings = {
       gameSpeed: 250,
     };
@@ -72,10 +73,7 @@ class GameState {
   }
 }
 
-let gameState = {
-  entities: [],
-  tileEntities: [],
-};
+let gameState = new GameState();
 
 export async function createOrLoadGame(create = false, playerData) {
   if (create || !loadGame()) {
@@ -199,6 +197,7 @@ export function getTimeline() {
 export function setSelectedIndex(i) {
   gameState.selected = i;
   saveSelected();
+  saveLogs();
 }
 
 export function setSelectedItem(itemId) {
@@ -647,7 +646,7 @@ function saveEntityLabels() {
   saveItemData(ENTITY_LABELS_KEY, gameState.entityLabels);
 }
 
-function saveLogs() {
+export function saveLogs() {
   saveItemData(LOGS_KEY, gameState.logs);
 }
 
@@ -655,7 +654,7 @@ function saveMap() {
   saveItemData(MAP_KEY, getMap().toData());
 }
 
-function saveSelected() {
+export function saveSelected() {
   saveItemData(SELECTED_KEY, gameState.selected);
   if (gameState.selectedItem !== undefined) {
     saveItemData(SELECTED_ITEM_KEY, gameState.selectedItem);

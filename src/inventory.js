@@ -3,7 +3,7 @@ import { Item } from "./items/item.js";
 
 const inventoryElt = document.getElementById("inventory");
 let contentsElt;
-let initialCount = 0;
+const initialCount = 1;
 
 export function hideInventory() {
   inventoryElt.classList.add("hidden");
@@ -38,11 +38,10 @@ export function showInventory(onSelect, showFinger = false) {
 }
 
 export function setUpInventory() {
-  inventoryElt.querySelector(".close-button")?.addEventListener("click", () => {
+  inventoryElt.querySelector(".close-button").onclick = () => {
     hideInventory();
-  });
+  };
   contentsElt = inventoryElt.querySelector(".contents");
-  initialCount = contentsElt.children.length;
 }
 
 function createInventoryItem() {

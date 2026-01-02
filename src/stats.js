@@ -113,17 +113,6 @@ function hideStats() {
 }
 
 function init() {
-  const { agility, constitution, endurance, intelligence, strength, wisdom } =
-    getPlayer();
-  const stats = [
-    agility,
-    constitution,
-    endurance,
-    intelligence,
-    strength,
-    wisdom,
-  ];
-
   statsElt.querySelectorAll(".stat-bar").forEach((sb, i) => {
     const minus = document.createElement("button");
     minus.classList.add("material-symbols-outlined", "pip", "minus");
@@ -132,7 +121,6 @@ function init() {
     for (let j = 1; j <= 25; ++j) {
       const pip = document.createElement("span");
       pip.classList.add("pip");
-      if (j <= stats[i]) pip.classList.add("filled");
       sb.appendChild(pip);
     }
     const plus = document.createElement("button");

@@ -7,9 +7,11 @@ import {
   NONE,
   setSelectedIndex,
   setSelectedItem,
+  SETTINGS,
 } from "./gameState.js";
 import { hideInventory, showInventory } from "./inventory.js";
 import { addLog } from "./logs.js";
+import { showPauseMenu } from "./pauseMenu.js";
 import { renderViewport } from "./viewport.js";
 
 const actionsElt = document.getElementById("actions");
@@ -48,6 +50,10 @@ function createAction() {
   actionElt.addEventListener("click", () => {
     const action = actionElt.dataset.action;
     if (action === NONE) return;
+    if (action === SETTINGS) {
+      showPauseMenu();
+      return;
+    }
     if (
       action === INTERACT &&
       (!getSelectedItem() || getSelectedAction() === action)

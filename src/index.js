@@ -1,6 +1,12 @@
+import { setUpActions } from "./actions.js";
 import { setUpMainMenu } from "./mainMenu.js";
 import { setUpNewGame } from "./newGame.js";
+import { setUpPauseMenu } from "./pauseMenu.js";
+import { setUpStats } from "./stats.js";
+import { setUpVersion } from "./version.js";
 import { setUpViewport } from "./viewport.js";
+
+const mainElt = document.getElementById("main");
 
 function setSize() {
   const main = document.getElementById("main");
@@ -13,9 +19,15 @@ function setSize() {
 
 async function init() {
   setSize();
+  setUpActions();
   setUpMainMenu();
-  setUpViewport();
   setUpNewGame();
+  setUpPauseMenu();
+  setUpStats();
+  setUpVersion();
+  setUpViewport();
+
+  mainElt.classList.remove("hidden");
 }
 
 addEventListener("load", async () => await init());

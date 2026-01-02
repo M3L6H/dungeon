@@ -23,7 +23,7 @@
     <script src="./index.js" type="module"></script>
   </head>
   <body>
-    <main id="main">
+    <main id="main" class="hidden">
       <div id="level-up" class="hidden">
         <section class="top-bar">
           <h3 class="title">Level Up</h3>
@@ -98,7 +98,7 @@
         <section id="actions"></section>
         <section id="logs"></section>
       </div>
-      <div id="main-menu">
+      <div id="main-menu" class="hidden">
         <div class="game-title">Dungeon</div>
         <div class="buttons">
           <button id="main-menu-new-game">New Game</button>
@@ -107,7 +107,7 @@
           <button id="main-menu-wiki" disabled>Wiki</button>
         </div>
         <div class="footer">
-          <span class="version">1.0.0-alpha</span>
+          <span class="version"></span>
         </div>
       </div>
       <div id="new-game" class="hidden">
@@ -156,6 +156,18 @@
           <img id="player-preview" src="images/player-male-2.png" />
           <button class="submit" disabled>Confirm</button>
         </form>
+      </div>
+      <div id="pause-menu" class="hidden">
+        <h1>Paused</h1>
+        <div class="buttons">
+          <button id="pause-menu-resume">Resume</button>
+          <button id="pause-menu-main-menu">Main Menu</button>
+          <button id="pause-menu-settings" disabled>Settings</button>
+          <button id="pause-menu-wiki" disabled>Wiki</button>
+        </div>
+        <div class="footer">
+          <span class="version"></span>
+        </div>
       </div>
     </main>
   </body>

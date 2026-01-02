@@ -1,8 +1,8 @@
-import { setUpActions } from "./actions.js";
+import { renderActions } from "./actions.js";
 import { createOrLoadGame, getPlayer } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
-import { setUpStats, showStats } from "./stats.js";
+import { showStats } from "./stats.js";
 import { renderViewport } from "./viewport.js";
 
 const newGameElt = document.getElementById("new-game");
@@ -62,10 +62,9 @@ function init() {
       props,
     });
 
-    setUpActions();
     setUpInventory();
-    setUpStats();
     setUpLogs();
+    renderActions();
     renderViewport();
     showStats(getPlayer(), true, 5);
     hideNewGame();

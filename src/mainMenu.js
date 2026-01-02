@@ -1,9 +1,8 @@
-import { setUpActions } from "./actions.js";
-import { createOrLoadGame, getEntities, loadEntities } from "./gameState.js";
+import { renderActions } from "./actions.js";
+import { createOrLoadGame, loadEntities } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
 import { showNewGame } from "./newGame.js";
-import { setUpStats } from "./stats.js";
 import { renderViewport } from "./viewport.js";
 
 const mainMenuElt = document.getElementById("main-menu");
@@ -14,6 +13,7 @@ const wikiBtn = document.getElementById("main-menu-wiki");
 
 export function showMainMenu() {
   mainMenuElt.classList.remove("hidden");
+  continueBtn.disabled = !hasSavedGame();
 }
 
 function hideMainMenu() {
@@ -35,17 +35,17 @@ function init() {
     }
   });
 
-  continueBtn.disabled = !hasSavedGame();
   continueBtn.addEventListener("click", async () => {
     await createOrLoadGame(false);
 
-    setUpActions();
     setUpInventory();
-    setUpStats();
     setUpLogs();
+    renderActions();
     renderViewport();
     hideMainMenu();
   });
+
+  showMainMenu();
 }
 
 export function setUpMainMenu() {
