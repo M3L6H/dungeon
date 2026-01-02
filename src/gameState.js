@@ -73,6 +73,7 @@ class GameState {
 }
 
 let gameState = {
+  entities: [],
   tileEntities: [],
 };
 
@@ -576,7 +577,7 @@ export function roundMin(n, min = 1) {
   return Math.max(Math.floor(n), min);
 }
 
-function loadEntities() {
+export function loadEntities() {
   const itemData = loadItemData(ENTITIES_KEY);
   if (!itemData) return false;
   gameState.entities = itemData.map((datum) => Entity.fromData(datum));
@@ -593,7 +594,7 @@ function loadLogs() {
   return gameState.logs !== undefined;
 }
 
-export function loadMap() {
+function loadMap() {
   const itemData = loadItemData(MAP_KEY);
   if (!itemData) return false;
   gameState.map = Map.fromData(itemData);

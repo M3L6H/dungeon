@@ -1,5 +1,5 @@
 import { setUpActions } from "./actions.js";
-import { createOrLoadGame, loadMap } from "./gameState.js";
+import { createOrLoadGame, getEntities, loadEntities } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
 import { showNewGame } from "./newGame.js";
@@ -12,18 +12,30 @@ const continueBtn = document.getElementById("main-menu-continue");
 const settingsBtn = document.getElementById("main-menu-settings");
 const wikiBtn = document.getElementById("main-menu-wiki");
 
+export function showMainMenu() {
+  mainMenuElt.classList.remove("hidden");
+}
+
+function hideMainMenu() {
+  mainMenuElt.classList.add("hidden");
+}
+
+function hasSavedGame() {
+  return loadEntities(); // TODO: add version check
+}
+
 function init() {
   newGameBtn.addEventListener("click", async () => {
     if (
-      !loadMap() ||
+      !hasSavedGame() ||
       confirm("This will overwrite your saved game. Are you sure?")
     ) {
-      mainMenuElt.classList.add("hidden");
+      hideMainMenu();
       showNewGame();
     }
   });
 
-  continueBtn.disabled = !loadMap();
+  continueBtn.disabled = !hasSavedGame();
   continueBtn.addEventListener("click", async () => {
     await createOrLoadGame(false);
 
@@ -32,7 +44,7 @@ function init() {
     setUpStats();
     setUpLogs();
     renderViewport();
-    mainMenuElt.classList.add("hidden");
+    hideMainMenu();
   });
 }
 

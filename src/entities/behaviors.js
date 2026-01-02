@@ -77,10 +77,14 @@ export const findTarget = registerFn(
       const entities = entityMemory[k];
       for (const { id } of entities) {
         const other = getEntityById(id);
+        if (!other.isItem && !other.name) {
+          console.error("Missing entity name", other);
+          continue;
+        }
         if (
           !other.isItem &&
           !other.dead &&
-          tSet.has(other.name?.toLowerCase())
+          tSet.has(other.name.toLowerCase())
         ) {
           entity.targetId = id;
           return false;
