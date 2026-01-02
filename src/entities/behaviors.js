@@ -80,7 +80,7 @@ export const findTarget = registerFn(
         if (
           !other.isItem &&
           !other.dead &&
-          tSet.has(other.name.toLowerCase())
+          tSet.has(other.name?.toLowerCase())
         ) {
           entity.targetId = id;
           return false;
