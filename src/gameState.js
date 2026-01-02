@@ -270,7 +270,7 @@ export function inRange(entity, action, data) {
           entity.stamina > 0)
       );
     case "skill":
-      return data.inRange();
+      return !!data.inRange && data.inRange();
     default:
       return false;
   }
