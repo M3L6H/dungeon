@@ -16,7 +16,7 @@ function hideSettingsMenu() {
 
 function renderGameSpeed() {
   const minus = gameSpeedElt.querySelector(".slow");
-  const gameSpeedIndex = 5 - (getSettings().gameSpeed ?? 250) / 50;
+  const gameSpeedIndex = 5 - (getSettings()?.gameSpeed ?? 250) / 50;
   minus.disabled = gameSpeedIndex === 0;
   minus.onclick = () => {
     setGameSpeed(gameSpeedIndex - 1);
