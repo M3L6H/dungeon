@@ -607,7 +607,8 @@ function loadSelected() {
 }
 
 export function loadSettings() {
-  gameState.settings = loadItemData(SETTINGS_KEY);
+  const settings = loadItemData(SETTINGS_KEY);
+  if (settings) gameState.settings = settings;
   return gameState.settings !== undefined;
 }
 
