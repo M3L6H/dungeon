@@ -381,11 +381,17 @@ select {
 }
 
 .buttons button {
+  background-image: url("images/dungeon-wall.png");
+  background-size: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+
   font-size: 2em;
   margin-bottom: 16px;
   padding: 4px 8px;
   background-color: #696570;
-  color: #232333;
+  color: white;
 }
 
 .close-button {
