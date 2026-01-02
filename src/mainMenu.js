@@ -3,6 +3,7 @@ import { createOrLoadGame, loadEntities } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
 import { showNewGame } from "./newGame.js";
+import { showSettingsMenu } from "./settingsMenu.js";
 import { renderViewport } from "./viewport.js";
 
 const mainMenuElt = document.getElementById("main-menu");
@@ -43,6 +44,10 @@ function init() {
     renderActions();
     renderViewport();
     hideMainMenu();
+  });
+
+  settingsBtn.addEventListener("click", () => {
+    showSettingsMenu();
   });
 
   showMainMenu();

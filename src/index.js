@@ -2,6 +2,7 @@ import { setUpActions } from "./actions.js";
 import { setUpMainMenu } from "./mainMenu.js";
 import { setUpNewGame } from "./newGame.js";
 import { setUpPauseMenu } from "./pauseMenu.js";
+import { setUpSettingsMenu } from "./settingsMenu.js";
 import { setUpStats } from "./stats.js";
 import { setUpVersion } from "./version.js";
 import { setUpViewport } from "./viewport.js";
@@ -23,6 +24,7 @@ async function init() {
   setUpMainMenu();
   setUpNewGame();
   setUpPauseMenu();
+  setUpSettingsMenu();
   setUpStats();
   setUpVersion();
   setUpViewport();

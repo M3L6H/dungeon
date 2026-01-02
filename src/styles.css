@@ -38,6 +38,7 @@ body {
 button {
   font-family: "Tiny5", sans-serif;
   cursor: pointer;
+  border: none;
 }
 
 button:disabled {
@@ -104,6 +105,10 @@ select {
   flex-direction: column;
   justify-content: flex-start;
   position: relative;
+}
+
+#game-speed .pip::after {
+  font-size: 18px;
 }
 
 #main {
@@ -189,7 +194,8 @@ select {
   flex-direction: column;
 }
 
-#pause-menu {
+#pause-menu,
+#settings-menu {
   position: absolute;
   inset: 0;
   background-color: #232333;
@@ -375,7 +381,6 @@ select {
 }
 
 .buttons button {
-  border: none;
   font-size: 2em;
   margin-bottom: 16px;
   padding: 4px 8px;
@@ -576,6 +581,7 @@ select {
   flex: 1 1 auto;
   border-radius: 4px;
   background-color: #454555;
+  position: relative;
 }
 
 .pip::after {
@@ -602,6 +608,10 @@ select {
   background-color: #0ac848;
 }
 
+.pip.fast::after {
+  content: "directions_run";
+}
+
 .pip.minus {
   background-color: #a82a00;
   border: none;
@@ -620,6 +630,10 @@ select {
 
 .pip.plus::after {
   content: "add";
+}
+
+.pip.slow::after {
+  content: "directions_walk";
 }
 
 .submit {

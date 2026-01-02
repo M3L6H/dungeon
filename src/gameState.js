@@ -606,7 +606,7 @@ function loadSelected() {
   return gameState.selected !== undefined;
 }
 
-function loadSettings() {
+export function loadSettings() {
   gameState.settings = loadItemData(SETTINGS_KEY);
   return gameState.settings !== undefined;
 }
@@ -661,7 +661,7 @@ export function saveSelected() {
   }
 }
 
-function saveSettings() {
+export function saveSettings() {
   saveItemData(SETTINGS_KEY, gameState.settings);
 }
 

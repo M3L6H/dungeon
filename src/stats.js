@@ -1,4 +1,4 @@
-import { getPlayer, logSafe, saveAll } from "./gameState.js";
+import { logSafe, saveAll } from "./gameState.js";
 import { renderViewport } from "./viewport.js";
 
 const statsElt = document.getElementById("level-up");
@@ -113,7 +113,7 @@ function hideStats() {
 }
 
 function init() {
-  statsElt.querySelectorAll(".stat-bar").forEach((sb, i) => {
+  statsElt.querySelectorAll(".stat-bar").forEach((sb) => {
     const minus = document.createElement("button");
     minus.classList.add("material-symbols-outlined", "pip", "minus");
     minus.disabled = true;

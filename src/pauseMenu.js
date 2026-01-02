@@ -1,4 +1,5 @@
 import { showMainMenu } from "./mainMenu.js";
+import { showSettingsMenu } from "./settingsMenu.js";
 
 const pauseMenuElt = document.getElementById("pause-menu");
 const resumeButton = document.getElementById("pause-menu-resume");
@@ -22,6 +23,10 @@ function init() {
   mainMenuButton.addEventListener("click", () => {
     showMainMenu();
     hidePauseMenu();
+  });
+
+  settingsBtn.addEventListener("click", () => {
+    showSettingsMenu();
   });
 }
 
