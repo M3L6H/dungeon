@@ -14,6 +14,7 @@ const playerFemaleElt = document.getElementById("female");
 const playerBackground = document.getElementById("player-background");
 const submitButton = newGameForm.querySelector(".submit");
 
+let displayName = "";
 let variant = "male";
 
 function hideNewGame() {
@@ -29,7 +30,8 @@ function init() {
     e.preventDefault();
   });
   playerNameElt.addEventListener("change", () => {
-    submitButton.disabled = playerNameElt.value.length === 0;
+    displayName = playerNameElt.value;
+    submitButton.disabled = displayName.length === 0;
   });
   playerMaleElt.addEventListener("click", () => {
     if (playerMaleElt.checked) {
@@ -45,6 +47,7 @@ function init() {
   });
   submitButton.addEventListener("click", async () => {
     const props = {
+      displayName,
       variant,
     };
 
