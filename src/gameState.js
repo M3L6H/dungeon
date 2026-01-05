@@ -22,6 +22,7 @@ import { Map, generateMap } from "./map.js";
 import { loadItemData, saveItemData } from "./storage.js";
 import { TileEntity } from "./tileEntities/tileEntity.js";
 import { schedule } from "./time.js";
+import { saveVersion } from "./version.js";
 import { renderViewport } from "./viewport.js";
 
 export const NONE = "none";
@@ -641,6 +642,7 @@ export function saveAll() {
   saveSettings();
   saveTileEntities();
   saveTime();
+  saveVersion();
 }
 
 function saveEntities() {

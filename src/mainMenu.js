@@ -4,6 +4,7 @@ import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
 import { showNewGame } from "./newGame.js";
 import { showSettingsMenu } from "./settingsMenu.js";
+import { isVersionCompatible } from "./version.js";
 import { renderViewport } from "./viewport.js";
 
 const mainMenuElt = document.getElementById("main-menu");
@@ -22,7 +23,7 @@ function hideMainMenu() {
 }
 
 function hasSavedGame() {
-  return loadEntities(); // TODO: add version check
+  return isVersionCompatible() && loadEntities();
 }
 
 function init() {
