@@ -64,7 +64,7 @@ class GameState {
     this.entityLabels = {};
     this.logs = [];
     this.selected = 0;
-    this.selectedItem = undefined;
+    this.selectedItems = {};
     this.settings = {
       gameSpeed: 250,
     };
@@ -174,8 +174,15 @@ export function getSelectedIndex() {
   return gameState.selected;
 }
 
-export function getSelectedItem() {
-  return Item.idToItem[gameState.selectedItem];
+/**
+ * Returns the selected item in the slot specified by i or the current selected slot.
+ */
+export function getSelectedItem(i) {
+  return Item.idToItem[gameState.selectedItems[i ?? getSelectedIndex()]];
+}
+
+export function getSelectedItems() {
+  return gameState.selectedItems;
 }
 
 export function getSettings() {
@@ -200,8 +207,8 @@ export function setSelectedIndex(i) {
   saveLogs();
 }
 
-export function setSelectedItem(itemId) {
-  gameState.selectedItem = itemId;
+export function setSelectedItem(itemId, i) {
+  gameState.selectedItems[i ?? getSelectedIndex()] = itemId;
   renderActions();
   saveSelected();
 }
@@ -602,7 +609,7 @@ function loadMap() {
 
 function loadSelected() {
   gameState.selected = loadItemData(SELECTED_KEY);
-  gameState.selectedItem = loadItemData(SELECTED_ITEM_KEY);
+  gameState.selectedItems = loadItemData(SELECTED_ITEM_KEY);
   return gameState.selected !== undefined;
 }
 
@@ -657,8 +664,8 @@ function saveMap() {
 
 export function saveSelected() {
   saveItemData(SELECTED_KEY, gameState.selected);
-  if (gameState.selectedItem !== undefined) {
-    saveItemData(SELECTED_ITEM_KEY, gameState.selectedItem);
+  if (gameState.selectedItems !== undefined) {
+    saveItemData(SELECTED_ITEM_KEY, gameState.selectedItems);
   }
 }
 

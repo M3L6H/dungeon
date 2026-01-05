@@ -23,9 +23,9 @@ export function renderActions() {
 
     if (action !== INTERACT) {
       actionElt.querySelector(".se").classList.add("hidden");
-    } else if (getSelectedItem()) {
+    } else if (getSelectedItem(i)) {
       const badge = actionElt.querySelector(".se");
-      badge.style.backgroundImage = getSelectedItem().sprite;
+      badge.style.backgroundImage = getSelectedItem(i).sprite;
       badge.classList.remove("hidden");
     } else {
       const badge = actionElt.querySelector(".se");
@@ -40,7 +40,7 @@ export function renderActions() {
   });
 }
 
-function createAction() {
+function createAction(index) {
   const actionElt = document.createElement("div");
   actionElt.classList.add("action");
   actionElt.classList.add("material-symbols-outlined");
@@ -56,7 +56,7 @@ function createAction() {
     }
     if (
       action === INTERACT &&
-      (!getSelectedItem() || getSelectedAction() === action)
+      (!getSelectedItem(index) || getSelectedIndex() === index)
     ) {
       showInventory((selectedItem) => {
         setSelectedItem(selectedItem);
@@ -65,8 +65,8 @@ function createAction() {
         renderViewport();
       }, true);
     }
-    if (getSelectedAction() === action) return;
-    setSelectedIndex(getActions().indexOf(action));
+    if (getSelectedIndex() === index) return;
+    setSelectedIndex(index);
     renderActions();
     renderViewport();
     addLog(`Changed selected action to '${action}'`, false);
@@ -75,6 +75,6 @@ function createAction() {
 }
 
 export function setUpActions() {
-  getActions().forEach(() => actionsElt.appendChild(createAction()));
+  getActions().forEach((_, idx) => actionsElt.appendChild(createAction(idx)));
   renderActions();
 }

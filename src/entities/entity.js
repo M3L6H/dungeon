@@ -5,7 +5,7 @@ import {
   getEntityLabels,
   getInput,
   getMap,
-  getSelectedItem,
+  getSelectedItems,
   getTileEntities,
   getTime,
   interrupt,
@@ -246,8 +246,12 @@ export class Entity {
   removeItem(item) {
     --this.inventory[item.id];
 
-    if (this.inventory[item.id] <= 0 && getSelectedItem().id === item.id) {
-      setSelectedItem(null);
+    if (this.inventory[item.id] <= 0) {
+      for (const slot in getSelectedItems()) {
+        if (getSelectedItems()[slot] === item.id) {
+          setSelectedItem(null, slot);
+        }
+      }
     }
   }
 
