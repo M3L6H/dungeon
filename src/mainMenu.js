@@ -4,7 +4,7 @@ import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
 import { showNewGame } from "./newGame.js";
 import { showSettingsMenu } from "./settingsMenu.js";
-import { isVersionCompatible } from "./version.js";
+import { getVersion, isVersionCompatible, VERSION } from "./version.js";
 import { renderViewport } from "./viewport.js";
 
 const mainMenuElt = document.getElementById("main-menu");
@@ -15,7 +15,7 @@ const wikiBtn = document.getElementById("main-menu-wiki");
 
 export function showMainMenu() {
   mainMenuElt.classList.remove("hidden");
-  continueBtn.disabled = !hasSavedGame();
+  continueBtn.disabled = !isVersionCompatible() || !hasSavedGame();
 }
 
 function hideMainMenu() {
@@ -23,14 +23,19 @@ function hideMainMenu() {
 }
 
 function hasSavedGame() {
-  return isVersionCompatible() && loadEntities();
+  return loadEntities();
 }
 
 function init() {
   newGameBtn.addEventListener("click", async () => {
     if (
       !hasSavedGame() ||
-      confirm("This will overwrite your saved game. Are you sure?")
+      (isVersionCompatible() &&
+        confirm("This will overwrite your saved game. Are you sure?")) ||
+      (!isVersionCompatible() &&
+        confirm(
+          `You have an old save game from ${getVersion()} that is not compatible with ${VERSION}. This will overwrite it. Are you sure?`,
+        ))
     ) {
       hideMainMenu();
       showNewGame();
