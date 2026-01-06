@@ -1,12 +1,13 @@
 import {
   getActions,
-  getSelectedAction,
   getSelectedIndex,
   getSelectedItem,
+  getSelectedSkill,
   INTERACT,
   NONE,
   setSelectedIndex,
   setSelectedItem,
+  setSelectedSkill,
   SETTINGS,
   SKILL,
 } from "./gameState.js";

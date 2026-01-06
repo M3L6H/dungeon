@@ -1,5 +1,6 @@
 import {
   getMap,
+  getPlayer,
   logCombatDanger,
   logCombatWarn,
   logSafe,
