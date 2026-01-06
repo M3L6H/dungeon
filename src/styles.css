@@ -182,18 +182,6 @@ select {
   flex-direction: column;
 }
 
-#inventory {
-  position: absolute;
-  inset: 10%;
-  background-color: #35354d;
-  border-radius: 8px;
-  padding: 16px;
-  z-index: 20;
-
-  display: flex;
-  flex-direction: column;
-}
-
 #pause-menu,
 #settings-menu {
   position: absolute;
@@ -553,6 +541,18 @@ select {
   position: absolute;
   bottom: -0.7em;
   right: -0.5em;
+}
+
+.item-holder {
+  position: absolute;
+  inset: 10%;
+  background-color: #35354d;
+  border-radius: 8px;
+  padding: 16px;
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .log.danger {

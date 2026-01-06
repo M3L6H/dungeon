@@ -8,10 +8,12 @@ import {
   setSelectedIndex,
   setSelectedItem,
   SETTINGS,
+  SKILL,
 } from "./gameState.js";
 import { hideInventory, showInventory } from "./inventory.js";
 import { addLog } from "./logs.js";
 import { showPauseMenu } from "./pauseMenu.js";
+import { hideSkills, showSkills } from "./skills.js";
 import { renderViewport } from "./viewport.js";
 
 const actionsElt = document.getElementById("actions");
@@ -21,11 +23,15 @@ export function renderActions() {
     const actionElt = actionsElt.children[i];
     actionElt.dataset.action = action;
 
-    if (action !== INTERACT) {
+    if (action !== INTERACT && action !== SKILL) {
       actionElt.querySelector(".se").classList.add("hidden");
     } else if (getSelectedItem(i)) {
       const badge = actionElt.querySelector(".se");
       badge.style.backgroundImage = getSelectedItem(i).sprite;
+      badge.classList.remove("hidden");
+    } else if (getSelectedSkill(i)) {
+      const badge = actionElt.querySelector(".se");
+      badge.style.backgroundImage = getSelectedSkill(i).sprite;
       badge.classList.remove("hidden");
     } else {
       const badge = actionElt.querySelector(".se");
@@ -64,6 +70,16 @@ function createAction(index) {
         addLog(`Selected ${getSelectedItem().name} for interaction.`, false);
         renderViewport();
       }, true);
+    } else if (
+      action === SKILL &&
+      (!getSelectedSkill(index) || getSelectedIndex() === index)
+    ) {
+      showSkills((selectedSkill) => {
+        setSelectedSkill(selectedSkill);
+        hideSkills();
+        addLog(`Selected ${getSelectedSkill().name} for skill.`, false);
+        renderViewport();
+      });
     }
     if (getSelectedIndex() === index) return;
     setSelectedIndex(index);

@@ -1,7 +1,7 @@
 import { registerFn } from "../functions.js";
 import { getMap } from "../gameState.js";
-import { healthPotionMinor } from "../items/healthPotion.js";
-import { key } from "../items/key.js";
+import { healthPotionMinor, key } from "../items/index.js";
+import { poisonTouchSkill } from "../skills.js";
 import { setDescription } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
@@ -38,6 +38,9 @@ export async function createPlayer(background, props) {
       additionalProps: {
         background,
         picksItems: true,
+        skills: {
+          [poisonTouchSkill.id]: true,
+        },
       },
       canInteract,
       ...props,

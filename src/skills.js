@@ -7,6 +7,8 @@ import {
 } from "./gameState.js";
 import { poisonWeak } from "./statuses.js";
 
+export const idToSkill = [];
+
 export const pickup = (entity, tX, tY, pickupItem, count) => {
   const filter = (other) => other.picksItems;
   return {
@@ -80,3 +82,65 @@ export const poisonTouch = (entity, tX, tY) => {
     },
   };
 };
+export const poisonTouchSkill = {
+  id: idToSkill.length,
+  name: "Poison Touch",
+  skill: poisonTouch,
+  sprite: 'url("images/skill-book-poison-touch.png")',
+};
+idToSkill.push(poisonTouchSkill);
+
+const skillsElt = document.getElementById("skills");
+let contentsElt;
+
+export function hideSkills() {
+  skillsElt.classList.add("hidden");
+}
+
+export function showSkills(onSelect) {
+  skillsElt.classList.remove("hidden");
+
+  const { skills } = getPlayer();
+  let i = 0;
+
+  for (const skill in skills) {
+    createOrUpdateSkillItem(i, idToSkill[skill]);
+    ++i;
+  }
+
+  for (; i < contentsElt.children.length; ++i) {
+    contentsElt.children[i].classList.add("hidden");
+  }
+
+  contentsElt.querySelectorAll(".inventory-button").forEach((btn) => {
+    btn.onclick = () => onSelect(btn.dataset.skill);
+  });
+}
+
+export function setUpSkills() {
+  skillsElt.querySelector(".close-button").onclick = () => {
+    hideSkills();
+  };
+  contentsElt = skillsElt.querySelector(".contents");
+}
+
+function createSkillItem() {
+  const skillItemElt = document.createElement("span");
+  skillItemElt.classList.add("inventory-button");
+  return skillItemElt;
+}
+
+function createOrUpdateSkillItem(i, { id, sprite }) {
+  let skillItemElt;
+
+  if (i >= contentsElt.children.length) {
+    skillItemElt = createSkillItem();
+    contentsElt.appendChild(skillItemElt);
+  } else {
+    skillItemElt = contentsElt.children[i];
+  }
+
+  skillItemElt.classList.remove("hidden");
+  skillItemElt.style.backgroundImage = sprite;
+  skillItemElt.dataset.skill = id;
+}

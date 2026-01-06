@@ -3,6 +3,7 @@ import { setUpMainMenu } from "./mainMenu.js";
 import { setUpNewGame } from "./newGame.js";
 import { setUpPauseMenu } from "./pauseMenu.js";
 import { setUpSettingsMenu } from "./settingsMenu.js";
+import { setUpSkills } from "./skills.js";
 import { setUpStats } from "./stats.js";
 import { setUpVersion } from "./version.js";
 import { setUpViewport } from "./viewport.js";
@@ -25,6 +26,7 @@ async function init() {
   setUpNewGame();
   setUpPauseMenu();
   setUpSettingsMenu();
+  setUpSkills();
   setUpStats();
   setUpVersion();
   setUpViewport();

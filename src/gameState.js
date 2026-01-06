@@ -19,6 +19,7 @@ import {
   waitForReading,
 } from "./logs.js";
 import { Map, generateMap } from "./map.js";
+import { idToSkill } from "./skills.js";
 import { loadItemData, saveItemData } from "./storage.js";
 import { TileEntity } from "./tileEntities/tileEntity.js";
 import { schedule } from "./time.js";
@@ -41,6 +42,7 @@ const LOGS_KEY = "logs";
 const MAP_KEY = "map";
 const SELECTED_KEY = "selected";
 const SELECTED_ITEM_KEY = "selectedItem";
+const SELECTED_SKILL_KEY = "selectedSkill";
 const SETTINGS_KEY = "settings";
 const TILE_ENTITIES_KEY = "tileEntities";
 const TIME_KEY = "time";
@@ -66,6 +68,7 @@ class GameState {
     this.logs = [];
     this.selected = 0;
     this.selectedItems = {};
+    this.selectedSkills = {};
     this.settings = {
       gameSpeed: 250,
     };
@@ -188,6 +191,17 @@ export function getSelectedItems() {
   return gameState.selectedItems;
 }
 
+/**
+ * Returns the selected skill in the slot specified by i or the current selected slot.
+ */
+export function getSelectedSkill(i) {
+  return idToSkill[gameState.selectedSkills[i ?? getSelectedIndex()]];
+}
+
+export function getSelectedSkills() {
+  return gameState.selectedSkills;
+}
+
 export function getSettings() {
   return gameState.settings;
 }
@@ -212,6 +226,12 @@ export function setSelectedIndex(i) {
 
 export function setSelectedItem(itemId, i) {
   gameState.selectedItems[i ?? getSelectedIndex()] = itemId;
+  renderActions();
+  saveSelected();
+}
+
+export function setSelectedSkill(skillId, i) {
+  gameState.selectedSkills[i ?? getSelectedIndex()] = skillId;
   renderActions();
   saveSelected();
 }
@@ -613,6 +633,7 @@ function loadMap() {
 function loadSelected() {
   gameState.selected = loadItemData(SELECTED_KEY);
   gameState.selectedItems = loadItemData(SELECTED_ITEM_KEY);
+  gameState.selectedSkills = loadItemData(SELECTED_SKILL_KEY);
   return gameState.selected !== undefined;
 }
 
@@ -670,6 +691,9 @@ export function saveSelected() {
   saveItemData(SELECTED_KEY, gameState.selected);
   if (gameState.selectedItems !== undefined) {
     saveItemData(SELECTED_ITEM_KEY, gameState.selectedItems);
+  }
+  if (gameState.selectedSkills !== undefined) {
+    saveItemData(SELECTED_SKILL_KEY, gameState.selectedSkills);
   }
 }
 

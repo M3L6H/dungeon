@@ -290,7 +290,7 @@ function roomsToNodes(rooms) {
 
 function generateEdges(count, nodes) {
   return new Promise((resolve) => {
-    const edgeWorker = new Worker("edgeWorker.js" + `?${Math.random()}`);
+    const edgeWorker = new Worker("edgeWorker.js");
     edgeWorker.postMessage({ count, nodes });
     edgeWorker.onmessage = function (event) {
       resolve(event.data);
