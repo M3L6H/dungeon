@@ -632,8 +632,8 @@ function loadMap() {
 
 function loadSelected() {
   gameState.selected = loadItemData(SELECTED_KEY);
-  gameState.selectedItems = loadItemData(SELECTED_ITEM_KEY);
-  gameState.selectedSkills = loadItemData(SELECTED_SKILL_KEY);
+  gameState.selectedItems = loadItemData(SELECTED_ITEM_KEY) ?? {};
+  gameState.selectedSkills = loadItemData(SELECTED_SKILL_KEY) ?? {};
   return gameState.selected !== undefined;
 }
 
