@@ -1,6 +1,6 @@
 const VERSION_KEY = "version";
 
-export const VERSION = "1.3.1-alpha";
+export const VERSION = "1.3.2-alpha";
 
 export function isVersionCompatible() {
   const savedVersion = localStorage.getItem(VERSION_KEY) ?? "0.0.0-none";

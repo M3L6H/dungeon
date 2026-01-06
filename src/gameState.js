@@ -79,6 +79,8 @@ let gameState = new GameState();
 export async function createOrLoadGame(create = false, playerData) {
   if (create || !loadGame()) {
     gameState = new GameState();
+    // Always load settings
+    loadSettings();
     gameState.map = await generateMap();
     gameState.player = await createPlayer(
       playerData.background,
