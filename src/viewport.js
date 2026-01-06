@@ -4,7 +4,9 @@ import {
   getMap,
   getPlayer,
   getSelectedAction,
+  getSelectedSkill,
   inRange,
+  SKILL,
 } from "./gameState.js";
 import { advance, isTicking } from "./time.js";
 
@@ -74,10 +76,14 @@ function renderMemoryTile(tile, tileEntitySprite, tileElt) {
 
 function renderRange(tX, tY, tileElt) {
   const target = { x: tX, y: tY };
+  const data =
+    getSelectedAction() === SKILL
+      ? { ...getSelectedSkill().skill(getPlayer(), tX, tY), ...target }
+      : target;
   if (
     isTicking() ||
     !entityInControl(getPlayer()) ||
-    !inRange(getPlayer(), getSelectedAction(), target)
+    !inRange(getPlayer(), getSelectedAction(), data)
   ) {
     tileElt.classList.remove("in-range");
     return;
@@ -86,7 +92,7 @@ function renderRange(tX, tY, tileElt) {
   tileElt.classList.add("in-range");
   tileElt.onclick = async () => {
     if (!entityInControl(getPlayer()) || getPlayer().dead) return;
-    if (await act(getPlayer(), getSelectedAction(), target)) {
+    if (await act(getPlayer(), getSelectedAction(), data)) {
       await advance();
     }
   };
