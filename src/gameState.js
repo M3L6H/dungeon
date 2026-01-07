@@ -8,7 +8,7 @@ import {
   getXpValue,
 } from "./entities/index.js";
 import { callAsync } from "./functions.js";
-import { Item } from "./items/item.js";
+import { Item } from "./items/index.js";
 import {
   addDangerLog,
   addEndLog,

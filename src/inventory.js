@@ -62,6 +62,10 @@ function createOrUpdateInventoryItem(i, { id, sprite }, count) {
 
   inventoryItemElt.classList.remove("hidden");
   inventoryItemElt.style.backgroundImage = sprite;
-  if (count > 1) inventoryItemElt.dataset.count = count;
+  if (count > 1) {
+    inventoryItemElt.dataset.count = count;
+  } else if (inventoryItemElt.dataset.count) {
+    delete inventoryElt.dataset.count;
+  }
   inventoryItemElt.dataset.item = id;
 }
