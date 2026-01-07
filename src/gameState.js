@@ -62,8 +62,7 @@ class GameState {
       NONE,
       SETTINGS,
     ];
-    this.entityId = 0;
-    this.entities = {};
+    this.entities = [];
     this.tileEntities = [];
     this.entityLabels = {};
     this.logs = [];
@@ -113,8 +112,8 @@ function loadGame() {
 }
 
 export function addEntity(entity) {
-  entity.id = gameState.entityId++;
-  gameState.entities[entity.id] = entity;
+  entity.id = gameState.entities.length;
+  gameState.entities.push(entity);
 }
 
 export function addTileEntity(tileEntity) {
@@ -610,13 +609,7 @@ export function roundMin(n, min = 1) {
 export function loadEntities() {
   const itemData = loadItemData(ENTITIES_KEY);
   if (!itemData) return false;
-  gameState.entityId = loadItemData(ENTITY_ID_KEY);
-  gameState.entities = {};
-  
-  for (const id in itemData) {
-    gameState.entities[id] = Entity.fromData(itemData[id]);
-  }
- 
+  gameState.entities = itemData.map((datum) => Entity.fromData(datum));
   return !gameState.entities[0].dead;
 }
 
@@ -676,11 +669,10 @@ export function saveAll() {
 }
 
 function saveEntities() {
-  saveItemData(ENTITY_ID_KEY, gameState.entityId);
-  const entityData = {};
-  for (const id in getEntities()) {
-    entityData[id] = getEntities()[id].toData();
-  }
+  saveItemData(
+    ENTITIES_KEY,
+    getEntities().map((entity) => entity.toData()),
+  );
 }
 
 function saveEntityLabels() {

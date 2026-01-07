@@ -76,7 +76,7 @@ function renderMemoryTile(tile, tileEntitySprite, tileElt) {
 
 function renderRange(tX, tY, tileElt) {
   const data =
-    getSelectedAction() === SKILL
+    getSelectedAction() === SKILL && !!getSelectedSkill()
       ? getSelectedSkill().skill(getPlayer(), tX, tY)
       : { x: tX, y: tY };
   if (
