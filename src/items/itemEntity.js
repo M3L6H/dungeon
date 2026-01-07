@@ -1,5 +1,5 @@
-import { registerFn } from "../functions.js";
-import { SKILL, act, addEntity, getMap, inRange } from "../gameState.js";
+import { callAsync, registerFn } from "../functions.js";
+import { SKILL, act, addEntity, getMap, inRange, logSafe } from "../gameState.js";
 import { pickup } from "../skills.js";
 import { renderViewport } from "../viewport.js";
 
@@ -7,7 +7,7 @@ const NAMESPACE = "item";
 
 const pickupBehavior = registerFn(NAMESPACE, "pickup", async function (entity) {
   const { x, y } = entity;
-  const data = pickup(entity, x, y, entity._pickup, entity._count);
+  const data = pickup(entity, x, y);
   if (inRange(entity, SKILL, data)) {
     return await act(entity, SKILL, data);
   }
@@ -65,6 +65,10 @@ export class ItemEntity {
   get behaviors() {
     return [pickupBehavior];
   }
+  
+  get count() {
+    return this._count;
+  }
 
   get description() {
     return this.item?.description;
@@ -81,8 +85,25 @@ export class ItemEntity {
   get item() {
     return this._item;
   }
+  
+  get pickup() {
+    return this._pickup;
+  }
 
   get sprite() {
     return this.item?.sprite;
+  }
+  
+  async onPickup(other) {
+    if (!!this.item.onPickup) {
+      return await callAsync(this.item.onPickup, this, other);
+    }
+    
+    other.inventory[this.pickup.id] =
+        (other.inventory[this.pickup.id] ?? 0) + this.count;
+    await logSafe(
+      other,
+      `${other.displayName} has picked up ${this.displayName}.`,
+    );
   }
 }

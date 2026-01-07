@@ -7,6 +7,7 @@ import {
   goldPile,
   healthPotionMinor,
   key,
+  poisonTouchSkillBook,
   spawnItem,
 } from "../items/index.js";
 import { permuteArr, randInRange } from "../utils.js";
@@ -70,9 +71,10 @@ setDescription(NAMES[4], {
 
 const LOOT_TABLES = [
   {
+    0.01: () => ({ itemId: poisonTouchSkillBook.id }),
     0.1: () => ({ itemId: key.id }),
     0.4: () => ({ itemId: healthPotionMinor.id }),
-    0.5: () => ({
+    1: () => ({
       itemId: goldPile.id,
       additionalProps: {
         count: Math.floor(Math.random() * 10),
@@ -81,6 +83,9 @@ const LOOT_TABLES = [
     }),
   },
   {
+    0.02: () => ({ itemId: poisonTouchSkillBook.id }),
+    0.05: () => ({ itemId: key.id }),
+    0.3: () => ({ itemId: healthPotionMinor.id }),
     1: () => ({
       itemId: goldPile.id,
       additionalProps: {

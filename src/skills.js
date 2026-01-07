@@ -8,9 +8,14 @@ import {
 } from "./gameState.js";
 import { poisonWeak } from "./statuses.js";
 
-export const idToSkill = [];
+export const idToSkill = {};
 
-export const pickup = (entity, tX, tY, pickupItem, count) => {
+function registerSkill(id, skill) {
+  skill.id = id;
+  idToSkill[id] = skill;
+}
+
+export const pickup = (entity, tX, tY) => {
   const filter = (other) => other.picksItems;
   return {
     x: tX,
@@ -27,16 +32,12 @@ export const pickup = (entity, tX, tY, pickupItem, count) => {
     skill: async (other) => {
       if (entity.dead) return;
       entity.dead = true;
-      other.inventory[pickupItem.id] =
-        (other.inventory[pickupItem.id] ?? 0) + count;
-      await logSafe(
-        other,
-        `${other.displayName} has picked up ${entity.displayName}.`,
-      );
+      await entity.onPickup(other);
     },
   };
 };
 
+const poisonTouchName = "Poison Touch";
 export const poisonTouch = (entity, tX, tY) => {
   const dx = Math.abs(tX - entity.x);
   const dy = Math.abs(tY - entity.y);
@@ -47,7 +48,7 @@ export const poisonTouch = (entity, tX, tY) => {
   return {
     x: tX,
     y: tY,
-    name: "Poison Touch",
+    name: poisonTouchName,
     manaCost,
     staminaCost,
     timeTaken: 3,
@@ -68,7 +69,7 @@ export const poisonTouch = (entity, tX, tY) => {
         await logCombatWarn(
           entity,
           other,
-          `${other.displayName} dodged (${dodge}) a skill (${attack}) from ${entity.displayName}.`,
+          `${other.displayName} dodged (${dodge}) ${poisonTouchName} (${attack}) from ${entity.displayName}.`,
         );
         return;
       }
@@ -84,12 +85,11 @@ export const poisonTouch = (entity, tX, tY) => {
   };
 };
 export const poisonTouchSkill = {
-  id: idToSkill.length,
-  name: "Poison Touch",
+  name: poisonTouchName,
   skill: poisonTouch,
   sprite: 'url("images/skill-book-poison-touch.png")',
 };
-idToSkill.push(poisonTouchSkill);
+registerSkill("poisonTouchSkill", poisonTouchSkill);
 
 const skillsElt = document.getElementById("skills");
 let contentsElt;

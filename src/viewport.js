@@ -75,11 +75,10 @@ function renderMemoryTile(tile, tileEntitySprite, tileElt) {
 }
 
 function renderRange(tX, tY, tileElt) {
-  const target = { x: tX, y: tY };
   const data =
     getSelectedAction() === SKILL
-      ? { ...getSelectedSkill().skill(getPlayer(), tX, tY), ...target }
-      : target;
+      ? getSelectedSkill().skill(getPlayer(), tX, tY)
+      : { x: tX, y: tY };
   if (
     isTicking() ||
     !entityInControl(getPlayer()) ||

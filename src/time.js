@@ -51,8 +51,14 @@ export async function tick() {
   for (const [_, event] of events) {
     await event();
   }
-  for (const entity of getEntities()) {
-    if (entity.dead || entity.isItem) continue;
+  const entities = getEntities();
+  for (const id in entities) {
+    const entity = entities[id];
+    if (entity.dead) {
+      delete entities[id];
+      continue;
+    }
+    if (entity.isItem) continue;
     entity.mana = Math.min(entity.mana + 1, entity.maxMana);
     for (let i = entity.statuses.length - 1; i >= 0; --i) {
       const { count, effect, freq, id, offset, type } = entity.statuses[i];

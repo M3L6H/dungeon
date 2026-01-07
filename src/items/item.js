@@ -5,6 +5,7 @@ export class Item {
     this._id = props.id;
     this._name = props.name ?? "Unknown";
     this._description = props.description;
+    this._onPickup = props.onPickup;
     this._sprite = props.sprite;
 
     for (const k in props.additionalProps ?? {}) {
@@ -34,9 +35,13 @@ export class Item {
   get id() {
     return this._id;
   }
-
+  
   get name() {
     return this._name;
+  }
+  
+  get onPickup() {
+    return this._onPickup;
   }
 
   get sprite() {
