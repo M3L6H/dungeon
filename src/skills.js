@@ -79,7 +79,7 @@ export const dash = (entity, tX, tY) => {
 export const dashSkill = {
   name: dashName,
   skill: dash,
-  sprite: 'url("images/skill-book-dash.png")',
+  sprite: 'url("images/skill-dash.png")',
 };
 registerSkill("dashSkill", dashSkill);
 
@@ -133,7 +133,7 @@ export const poisonTouch = (entity, tX, tY) => {
 export const poisonTouchSkill = {
   name: poisonTouchName,
   skill: poisonTouch,
-  sprite: 'url("images/skill-book-poison-touch.png")',
+  sprite: 'url("images/skill-poison-touch.png")',
 };
 registerSkill("poisonTouchSkill", poisonTouchSkill);
 
