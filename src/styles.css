@@ -267,7 +267,12 @@ select {
 
 .action {
   background-color: #6b6b84;
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: 8px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 
   position: relative;
   cursor: pointer;
@@ -318,6 +323,10 @@ select {
   content: "point_scan";
 }
 
+.action.hide-icon::after {
+  content: "";
+}
+
 .action span {
   position: absolute;
   background-color: #454555;
@@ -332,6 +341,9 @@ select {
 
 .action .se {
   bottom: -8px;
+  color: white;
+  font-size: 12px;
+  text-align: center;
   right: 0;
 }
 

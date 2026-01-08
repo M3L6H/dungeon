@@ -1,5 +1,6 @@
 import {
   getActions,
+  getPlayer,
   getSelectedIndex,
   getSelectedItem,
   getSelectedSkill,
@@ -23,19 +24,27 @@ export function renderActions() {
   getActions().forEach((action, i) => {
     const actionElt = actionsElt.children[i];
     actionElt.dataset.action = action;
+    const badge = actionElt.querySelector(".se");
 
     if (action !== INTERACT && action !== SKILL) {
-      actionElt.querySelector(".se").classList.add("hidden");
+      actionElt.style.backgroundImage = "none";
+      badge.classList.add("hidden");
     } else if (getSelectedItem(i)) {
-      const badge = actionElt.querySelector(".se");
-      badge.style.backgroundImage = getSelectedItem(i).sprite;
-      badge.classList.remove("hidden");
+      actionElt.style.backgroundImage = getSelectedItem(i).sprite;
+      actionElt.classList.add("hide-icon");
+      const count = getPlayer().inventory[getSelectedItem(i).id];
+      badge.textContent = count > 1 ? count : "";
+
+      if (count > 1) {
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
     } else if (getSelectedSkill(i)) {
-      const badge = actionElt.querySelector(".se");
-      badge.style.backgroundImage = getSelectedSkill(i).sprite;
-      badge.classList.remove("hidden");
+      actionElt.style.backgroundImage = getSelectedSkill(i).sprite;
+      actionElt.classList.add("hide-icon");
     } else {
-      const badge = actionElt.querySelector(".se");
+      actionElt.style.backgroundImage = "none";
       badge.classList.add("hidden");
     }
 

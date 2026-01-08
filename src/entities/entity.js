@@ -1,3 +1,4 @@
+import { renderActions } from "../actions.js";
 import { call } from "../functions.js";
 import {
   addEntity,
@@ -253,6 +254,8 @@ export class Entity {
         }
       }
     }
+
+    renderActions();
   }
 
   setEntitiesInMemory(x, y, entities) {
