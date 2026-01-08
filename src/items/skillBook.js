@@ -1,6 +1,6 @@
 import { registerFn } from "../functions.js";
 import { logSafe } from "../gameState.js";
-import { poisonTouchSkill } from "../skills.js";
+import { dashSkill, poisonTouchSkill } from "../skills.js";
 import { Item } from "./item.js";
 
 const NAMESPACE = "item";
@@ -23,6 +23,17 @@ export const skillPickup = registerFn(
     );
   },
 );
+
+export const dashSkillBook = new Item({
+  id: "dashSkillBook",
+  name: "Dash Skill Book",
+  sprite: "skill-book-dash",
+  onPickup: skillPickup,
+  additionalProps: {
+    skillName: dashSkill.name,
+    skillId: dashSkill.id,
+  },
+});
 
 export const poisonTouchSkillBook = new Item({
   id: "poisonTouchSkillBook",

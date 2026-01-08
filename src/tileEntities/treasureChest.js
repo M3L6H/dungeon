@@ -2,6 +2,7 @@ import { registerFn } from "../functions.js";
 import { logActionEnd } from "../gameState.js";
 import {
   Item,
+  dashSkillBook,
   emptyHand,
   gold,
   goldPile,
@@ -72,6 +73,7 @@ setDescription(NAMES[4], {
 const LOOT_TABLES = [
   {
     0.01: () => ({ itemId: poisonTouchSkillBook.id }),
+    0.02: () => ({ itemId: dashSkillBook.id }),
     0.1: () => ({ itemId: key.id }),
     0.4: () => ({ itemId: healthPotionMinor.id }),
     1: () => ({
@@ -84,6 +86,7 @@ const LOOT_TABLES = [
   },
   {
     0.02: () => ({ itemId: poisonTouchSkillBook.id }),
+    0.04: () => ({ itemId: dashSkillBook.id }),
     0.05: () => ({ itemId: key.id }),
     0.3: () => ({ itemId: healthPotionMinor.id }),
     1: () => ({
