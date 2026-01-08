@@ -53,7 +53,9 @@ export async function tick() {
   }
   for (const entity of getEntities()) {
     if (entity.dead || entity.isItem) continue;
-    entity.mana = Math.min(entity.mana + 1, entity.maxMana);
+    if (time % 7 === 0) {
+      entity.mana += Math.max(1, entity.wisdom);
+    }
     for (let i = entity.statuses.length - 1; i >= 0; --i) {
       const { count, effect, freq, id, offset, type } = entity.statuses[i];
       if ((time + offset) % freq !== 0) continue;
