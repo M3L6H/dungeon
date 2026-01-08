@@ -470,14 +470,19 @@ async function move(entity, target) {
   return true;
 }
 
-export async function rest(entity, full = false) {
-  const time = full
-    ? Math.ceil(entity.maxStamina / entity.constitution) + 1
-    : 1;
-  schedule(entity, time, async () => {
-    entity.stamina += full ? entity.maxStamina : entity.constitution;
+async function restEffect(entity, full) {
+  entity.stamina += entity.constitution;
+  if (entity.stamina < entity.maxStamina && full) {
     await logActionEnd(entity, "rested");
-  });
+  } else {
+    schedule(entity, 1, async () => await restEffect(entity, full));
+    entity.dataset.action = "rest";
+    await logActionStart(entity, "resting");
+  } 
+}
+
+export async function rest(entity, full = false) {
+  schedule(entity, 1, async () => await restEffect(entity, full));
   entity.dataset.action = "rest";
   await logActionStart(entity, "resting");
   return true;
