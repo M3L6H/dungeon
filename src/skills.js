@@ -37,6 +37,59 @@ export const pickup = (entity, tX, tY) => {
   };
 };
 
+const dashName = "Dash";
+export const dash = (entity, tX, tY) => {
+  const dxRaw = tX - entity.x;
+  const dyRaw = tY - entity.y;
+  const dx = Math.abs(dxRaw);
+  const dy = Math.abs(dyRaw);
+  const filter = () => true;
+  const manaCost = 0;
+  const staminaCost = 5;
+  return {
+    x: tX,
+    y: tY,
+    name: dashName,
+    manaCost,
+    staminaCost,
+    timeTaken: 2,
+    filter,
+    inRange: () => {
+      if (dx + dy > 2 || dx + dy <= 0 || (dx !== 0 && dy !== 0)) return false;
+      let isTraversable = true;
+      for (let i = 1; i <= dx + dy; ++i) {
+        const x = Math.sign(dxRaw) * i + entity.x;
+        const y = Math.sign(dyRaw) * i + entity.y;
+        isTraversable = isTraversable && getMap().isTraversable(x, y);
+      }
+      return (
+        entity.stamina >= staminaCost &&
+        isTraversable
+      );
+    },
+    skill: async () => {
+      let isTraversable = true;
+      for (let i = 1; i <= dx + dy; ++i) {
+        const x = Math.sign(dxRaw) * i + entity.x;
+        const y = Math.sign(dyRaw) * i + entity.y;
+        if (getMap().isTraversable(x, y)) {
+          getMap().moveEntity(entity, x, y);
+        }
+      }
+      await logSafe(
+        entity,
+        `${entity.displayName} dashed.`,
+      );
+    },
+  };
+};
+export const dashSkill = {
+  name: dashName,
+  skill: dash,
+  sprite: 'url("images/skill-book-dash.png")',
+};
+registerSkill("dashSkill", dashSkill);
+
 const poisonTouchName = "Poison Touch";
 export const poisonTouch = (entity, tX, tY) => {
   const dx = Math.abs(tX - entity.x);

@@ -1,6 +1,7 @@
 import { registerFn } from "../functions.js";
 import { getMap } from "../gameState.js";
 import { healthPotionMinor, key } from "../items/index.js";
+import { dashSkill } from "../skills.js";
 import { setDescription } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
@@ -37,7 +38,9 @@ export async function createPlayer(background, props) {
       additionalProps: {
         background,
         picksItems: true,
-        skills: {},
+        skills: {
+          [dashSkill.id]: true,
+        },
       },
       canInteract,
       ...props,
