@@ -473,12 +473,11 @@ async function move(entity, target) {
 async function restEffect(entity, full) {
   entity.stamina += entity.constitution;
   if (entity.stamina < entity.maxStamina && full) {
-    await logActionEnd(entity, "rested");
-  } else {
     schedule(entity, 1, async () => await restEffect(entity, full));
     entity.dataset.action = "rest";
-    await logActionStart(entity, "resting");
-  } 
+  } else {
+    await logActionEnd(entity, "rested");
+  }
 }
 
 export async function rest(entity, full = false) {

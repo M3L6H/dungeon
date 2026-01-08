@@ -1,6 +1,6 @@
 const VERSION_KEY = "version";
 
-export const VERSION = "2.2.3-alpha";
+export const VERSION = "2.2.4-alpha";
 
 export function getVersion() {
   return localStorage.getItem(VERSION_KEY) ?? "0.0.0-none";
