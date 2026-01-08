@@ -3,7 +3,6 @@ import {
   Entity,
   canEntityInteract,
   createPlayer,
-  entityInControl,
   entityInteract,
   getXpValue,
 } from "./entities/index.js";
