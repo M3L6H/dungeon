@@ -315,7 +315,6 @@ export function incrementTime() {
  */
 export function interrupt(entity, interrupter, log = true) {
   turnToFaceTarget(entity, interrupter);
-  if (entityInControl(entity)) return;
   const events = getTimeline()[entity.nextActionTime];
   if (!events) return;
   for (let i = events.length - 1; i >= 0; --i) {
