@@ -479,7 +479,7 @@ async function restEffect(entity, full) {
 }
 
 export async function rest(entity, full = false) {
-  schedule(entity, 1, async () => await restEffect(entity, full));
+  schedule(entity, full ? 3 : 1, async () => await restEffect(entity, full));
   entity.dataset.action = "rest";
   await logActionStart(entity, "resting");
   return true;
