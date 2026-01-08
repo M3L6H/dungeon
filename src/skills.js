@@ -43,7 +43,6 @@ export const dash = (entity, tX, tY) => {
   const dyRaw = tY - entity.y;
   const dx = Math.abs(dxRaw);
   const dy = Math.abs(dyRaw);
-  const filter = () => true;
   const manaCost = 0;
   const staminaCost = 5;
   return {
@@ -53,33 +52,27 @@ export const dash = (entity, tX, tY) => {
     manaCost,
     staminaCost,
     timeTaken: 2,
-    filter,
     inRange: () => {
       if (dx + dy > 2 || dx + dy <= 0 || (dx !== 0 && dy !== 0)) return false;
       let isTraversable = true;
       for (let i = 1; i <= dx + dy; ++i) {
         const x = Math.sign(dxRaw) * i + entity.x;
         const y = Math.sign(dyRaw) * i + entity.y;
-        isTraversable = isTraversable && getMap().isTraversable(x, y);
+        isTraversable = isTraversable && getMap().isTraversable(entity, x, y);
       }
-      return (
-        entity.stamina >= staminaCost &&
-        isTraversable
-      );
+      return entity.stamina >= staminaCost && isTraversable;
     },
-    skill: async () => {
-      let isTraversable = true;
+    skill: () => {
+      const { x: origX, y: origY } = entity;
       for (let i = 1; i <= dx + dy; ++i) {
-        const x = Math.sign(dxRaw) * i + entity.x;
-        const y = Math.sign(dyRaw) * i + entity.y;
-        if (getMap().isTraversable(x, y)) {
+        const x = Math.sign(dxRaw) * i + origX;
+        const y = Math.sign(dyRaw) * i + origY;
+        if (getMap().isTraversable(entity, x, y)) {
           getMap().moveEntity(entity, x, y);
+        } else {
+          break;
         }
       }
-      await logSafe(
-        entity,
-        `${entity.displayName} dashed.`,
-      );
     },
   };
 };

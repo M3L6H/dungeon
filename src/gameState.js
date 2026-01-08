@@ -488,19 +488,28 @@ async function skill(entity, data) {
   turnToFaceTarget(entity, data);
 
   schedule(entity, timeTaken, async () => {
-    const entities = getMap()
-      .getEntities(x, y)
-      .filter((entity) => filter(entity) && !entity.isItem);
-    for (const other of entities) {
-      if (entity.stamina < staminaCost || entity.mana < manaCost) return;
+    let suffix = "";
+
+    if (!!filter) {
+      const entities = getMap()
+        .getEntities(x, y)
+        .filter((entity) => filter(entity) && !entity.isItem);
+      for (const other of entities) {
+        if (entity.stamina < staminaCost || entity.mana < manaCost) break;
+        entity.mana -= manaCost;
+        entity.stamina -= staminaCost;
+        if (!entity.isItem && entity.name !== other.name) {
+          other.tSet.add(entity.name);
+        }
+        await skill(other);
+      }
+      suffix = entities.length === 0 ? " and hit nothing" : "";
+    } else {
       entity.mana -= manaCost;
       entity.stamina -= staminaCost;
-      if (!entity.isItem && entity.name !== other.name) {
-        other.tSet.add(entity.name);
-      }
-      await skill(other);
+      await skill();
     }
-    const suffix = entities.length === 0 ? " and hit nothing" : "";
+
     await logActionEnd(entity, `used ${data.name}${suffix}`);
   });
 
