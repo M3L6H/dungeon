@@ -10,9 +10,11 @@ import {
   getTileEntities,
   getTime,
   interrupt,
+  logCombatWarn,
   logDanger,
   logSafe,
   logWarn,
+  roll,
   setSelectedItem,
 } from "../gameState.js";
 import { Item, spawnItem } from "../items/index.js";
@@ -160,6 +162,9 @@ export class Entity {
     this.dodgeMod = props.dodgeMod ?? 0;
     this.speedMod = props.speedMod ?? 0;
 
+    this.magiRes = props.magiRes ?? 0;
+    this.physRes = props.physRes ?? 0;
+
     this._health = this.maxHealth;
     this._mana = this.maxMana;
     this._stamina = this.maxStamina;
@@ -200,6 +205,40 @@ export class Entity {
     this.statuses.push(status);
 
     return true;
+  }
+
+  async calcDamage({ magi, phys, pure }, otherName, otherEntity) {
+    const magiRes = roll(this.magiRes);
+    const physRes = roll(this.physRes) - 1;
+    const magiDmg = Math.max(0, Math.round((magi ?? 0) / magiRes));
+    const physDmg = Math.max(0, (phys ?? 0) - physRes);
+    const damageReceived = magiDmg + physDmg + (pure ?? 0);
+
+    if (damageReceived <= 0 && magi > 0 && magiRes >= magi) {
+      const msg = `${this.displayName} resisted the magic damage from ${otherName}`;
+
+      if (!!otherEntity) {
+        await logCombatWarn(this, otherEntity, msg);
+      } else {
+        await logWarn(this, msg);
+      }
+
+      return 0;
+    }
+
+    if (damageReceived <= 0 && phys > 0 && physRes >= phys) {
+      const msg = `${this.displayName} blocked the physical damage from ${other.displayName}`;
+
+      if (!!otherEntity) {
+        await logCombatWarn(this, other, msg);
+      } else {
+        await logWarn(this, msg);
+      }
+
+      return 0;
+    }
+
+    return damageReceived;
   }
 
   canInteract(entity, item) {
@@ -326,8 +365,10 @@ export class Entity {
       "intelligence",
       "inventory",
       "level",
+      "magiRes",
       "name",
       "onInteract",
+      "physRes",
       "speedMod",
       "strength",
       "tSet",

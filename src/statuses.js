@@ -70,11 +70,22 @@ export const healingMajor = (id) => ({
 
 const poisonWeakPotency = 1;
 const poisonWeakEffect = registerFn(NAMESPACE, "poisonWeak", async (entity) => {
-  await logDanger(
-    entity,
-    `${entity.displayName} loses ${poisonWeakPotency} health & stamina from ${STATUS.poison}.`,
+  const damageDealt = await entity.calcDamage(
+    { pure: poisonWeakPotency },
+    STATUS.poison,
   );
-  entity.health -= poisonWeakPotency;
+  if (damageDealt > 0) {
+    await logDanger(
+      entity,
+      `${entity.displayName} loses ${damageDealt} health and ${poisonWeakPotency} stamina from ${STATUS.poison}`,
+    );
+  } else {
+    await logDanger(
+      entity,
+      `${entity.displayName} loses ${poisonWeakPotency} stamina from ${STATUS.poison}`,
+    );
+  }
+  entity.health -= damageDealt;
   entity.stamina -= poisonWeakPotency;
 });
 export const poisonWeak = (id) => ({

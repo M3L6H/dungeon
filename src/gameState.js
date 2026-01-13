@@ -380,18 +380,26 @@ async function attack(entity, target) {
         );
         return;
       }
-      const damageDealt = roll(damage);
-      await logCombatDanger(
+      const damageDealt = await other.calcDamage(
+        { phys: roll(damage) },
+        displayName,
         entity,
-        other,
-        `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
       );
-      other.health -= damageDealt;
+
+      if (damageDealt > 0) {
+        await logCombatDanger(
+          entity,
+          other,
+          `${displayName} attacked ${other.displayName} and dealt ${damageDealt} damage!`,
+        );
+        other.health -= damageDealt;
+      }
+
       if (other.dead) {
         const xp = getXpValue(other);
         await logSafe(
           entity,
-          `${entity.displayName} earned ${xp} xp from defeating ${other.displayName}.`,
+          `${displayName} earned ${xp} xp from defeating ${other.displayName}.`,
         );
         entity.xp += xp;
       }

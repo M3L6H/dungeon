@@ -230,13 +230,19 @@ export const projectile = registerFn(
 
     for (const other of getMap().getEntities(x, y)) {
       if (!other.isProjectile && !other.isItem) {
-        await logCombatDanger(
+        const damageDealt = await other.calcDamage(
+          { phys: entity.damage },
+          entity.displayName,
           entity,
-          other,
-          `${other.displayName} was hit by a ${displayName} and took ${entity.damage} damage!`,
         );
-
-        other.health -= entity.damage;
+        if (damageDealt > 0) {
+          await logCombatDanger(
+            entity,
+            other,
+            `${other.displayName} was hit by a ${displayName} and took ${damageDealt} damage!`,
+          );
+          other.health -= damageDealt;
+        }
         entity.dead = true;
 
         return true;
