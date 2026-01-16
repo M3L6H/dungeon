@@ -265,6 +265,10 @@ select {
   overflow-y: auto;
 }
 
+#person {
+  width: 100%;
+}
+
 .action {
   background-color: #6b6b84;
   background-size: cover;
@@ -292,6 +296,10 @@ select {
 
 .action[data-action="none"] {
   background-color: #454555;
+}
+
+.action[data-action="equipment"]::after {
+  content: "shield";
 }
 
 .action[data-action="examine"]::after {
@@ -403,6 +411,10 @@ select {
   border-radius: 4px;
   color: black;
   cursor: pointer;
+}
+
+.character {
+  position: relative;
 }
 
 .contents {
@@ -527,7 +539,8 @@ select {
   opacity: 0.25;
 }
 
-.inventory-button {
+.inventory-button,
+.slot {
   aspect-ratio: 1/1;
   background-color: #454555;
   background-repeat: no-repeat;
@@ -656,6 +669,56 @@ select {
 
 .pip.slow::after {
   content: "directions_walk";
+}
+
+.slot {
+  position: absolute;
+}
+
+.slot.chest {
+  top: 33%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.slot.feet {
+  bottom: 5%;
+}
+
+.slot.feet.left {
+  left: 30%;
+  transform: translateX(-50%);
+}
+
+.slot.feet.right {
+  right: 30%;
+  transform: translateX(50%);
+}
+
+.slot.hands {
+  bottom: 33%;
+}
+
+.slot.hands.left {
+  left: 20%;
+  transform: translateX(-50%);
+}
+
+.slot.hands.right {
+  right: 20%;
+  transform: translateX(50%);
+}
+
+.slot.head {
+  top: 9%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.slot.legs {
+  bottom: 28%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .submit {

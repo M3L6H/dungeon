@@ -1,4 +1,5 @@
 import { renderActions } from "./actions.js";
+import { setUpEquipment } from "./equipment.js";
 import { createOrLoadGame, getPlayer } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
@@ -62,6 +63,7 @@ function init() {
       props,
     });
 
+    setUpEquipment();
     setUpInventory();
     setUpLogs();
     renderActions();

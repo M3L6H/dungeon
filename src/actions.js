@@ -1,4 +1,6 @@
+import { showEquipment } from "./equipment.js";
 import {
+  EQUIPMENT,
   getActions,
   getPlayer,
   getSelectedIndex,
@@ -68,6 +70,10 @@ function createAction(index) {
     if (action === NONE) return;
     if (action === SETTINGS) {
       showPauseMenu();
+      return;
+    }
+    if (action === EQUIPMENT) {
+      showEquipment();
       return;
     }
     if (

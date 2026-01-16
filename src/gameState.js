@@ -29,6 +29,7 @@ export const NONE = "none";
 export const ATTACK = "attack";
 export const LEFT = "left";
 export const MOVE = "move";
+export const EQUIPMENT = "equipment";
 export const EXAMINE = "examine";
 export const INTERACT = "interact";
 export const RIGHT = "right";
@@ -55,7 +56,7 @@ class GameState {
       LEFT,
       RIGHT,
       SKILL,
-      NONE,
+      EQUIPMENT,
       NONE,
       NONE,
       NONE,

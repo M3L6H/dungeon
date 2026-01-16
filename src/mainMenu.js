@@ -1,4 +1,5 @@
 import { renderActions } from "./actions.js";
+import { setUpEquipment } from "./equipment.js";
 import { createOrLoadGame, loadEntities } from "./gameState.js";
 import { setUpInventory } from "./inventory.js";
 import { setUpLogs } from "./logs.js";
@@ -45,6 +46,7 @@ function init() {
   continueBtn.addEventListener("click", async () => {
     await createOrLoadGame(false);
 
+    setUpEquipment();
     setUpInventory();
     setUpLogs();
     renderActions();
