@@ -35,11 +35,11 @@ export class Item {
   get id() {
     return this._id;
   }
-  
+
   get name() {
     return this._name;
   }
-  
+
   get onPickup() {
     return this._onPickup;
   }

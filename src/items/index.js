@@ -1,4 +1,6 @@
+export * from "./dagger.js";
 export * from "./emptyHand.js";
+export * from "./equipment.js";
 export * from "./gold.js";
 export * from "./healthPotion.js";
 export * from "./item.js";
