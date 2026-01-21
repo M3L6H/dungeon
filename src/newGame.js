@@ -13,6 +13,7 @@ const playerNameElt = document.getElementById("player-name");
 const playerMaleElt = document.getElementById("male");
 const playerFemaleElt = document.getElementById("female");
 const playerBackground = document.getElementById("player-background");
+const playerClass = document.getElementById("player-class");
 const submitButton = newGameForm.querySelector(".submit");
 
 let displayName = "";
@@ -58,8 +59,11 @@ function init() {
       props[background] = 2;
     }
 
+    const clazz = playerClass.value;
+
     await createOrLoadGame(true, {
       background,
+      clazz,
       props,
     });
 

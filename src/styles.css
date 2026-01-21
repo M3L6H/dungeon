@@ -141,7 +141,7 @@ select {
 
 #new-game form {
   position: relative;
-  height: 300px;
+  height: 330px;
 }
 
 #new-game form > * {

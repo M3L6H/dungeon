@@ -1,6 +1,6 @@
 import { registerFn } from "../functions.js";
 import { getMap } from "../gameState.js";
-import { healthPotionMinor, key } from "../items/index.js";
+import { dagger, healthPotionMinor, key } from "../items/index.js";
 import { setDescription } from "./data.js";
 import { Entity, startEntity } from "./entity.js";
 
@@ -12,27 +12,32 @@ const femaleVariant = "female";
 const canInteract = registerFn(NAMESPACE, "canInteract", (self, _, item) => {
   return item.isHealthPotion && self.health < self.maxHealth;
 });
-export async function createPlayer(background, props) {
+export async function createPlayer(background, clazz, props) {
   const {
     w,
     h,
     start: { x, y },
   } = getMap();
+
+  const inventory = {
+    [healthPotionMinor.id]: 1,
+  };
+
+  if (background === "nobody") {
+    inventory[key.id] = 2;
+  }
+
+  if (clazz === "rogue") {
+    inventory[dagger.id] = 2;
+  }
+
   return await startEntity(
     new Entity({
       name,
       level: 0,
       w,
       h,
-      inventory:
-        background === "nobody"
-          ? {
-              [key.id]: 2,
-              [healthPotionMinor.id]: 1,
-            }
-          : {
-              [healthPotionMinor.id]: 1,
-            },
+      inventory,
       unique: true,
       additionalProps: {
         background,

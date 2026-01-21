@@ -87,6 +87,7 @@ export async function createOrLoadGame(create = false, playerData) {
     gameState.map = await generateMap();
     gameState.player = await createPlayer(
       playerData.background,
+      playerData.clazz,
       playerData.props,
     );
     await gameState.map.spawnEntities();
